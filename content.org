@@ -1,0 +1,63 @@
+#+TITLE: I'm the title
+#+DATE: <2021-12-27 Mon>
+
+# some comments
+
+* about page
+
+I'm the about page.
+
+* 404
+
+I'm the 404 page.
+
+* index
+
+I'm the index page.
+
+* article 1
+
+I'm the *article 1*.
+
+* article 2
+
+I don't support latex.
+
+* article 3
+
+I'm the *article 2*.
+
+I've some code in block with the result shown:
+
+#+BEGIN_SRC bash :results output
+ls -A
+#+END_SRC
+
+#+RESULTS:
+: content.org
+: #osta.el#
+: osta.el
+: README.org
+
+And an external link to [[https://tonyaldon.com][tonyaldon.com]].
+
+I use ~highlightjs~ (at build time) to highlight code like this one:
+
+#+BEGIN_SRC clojure
+(defn str
+  "With no args, returns the empty string. With one arg x, returns
+  x.toString().  (str nil) returns the empty string. With more than
+  one arg, returns the concatenation of the str values of the args."
+  {:tag String
+   :added "1.0"
+   :static true}
+  (^String [] "")
+  (^String [^Object x]
+   (if (nil? x) "" (. x (toString))))
+  (^String [x & ys]
+     ((fn [^StringBuilder sb more]
+          (if more
+            (recur (. sb  (append (str (first more)))) (next more))
+            (str sb)))
+      (new StringBuilder (str x)) ys)))
+#+END_SRC
