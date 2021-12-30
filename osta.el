@@ -105,9 +105,9 @@ Use for debugging/exploring purpose."
         (text (org-export-data (org-element-property :title headline) info)))
     (format "<div><h%s>%s</h%s>%s</div>" level text level contents)))
 
-(defun osta-ox-section (section contents info) (format "<div>%s</div>" contents))
-(defun osta-ox-paragraph (paragraph contents info) (format "<p>%s</p>" contents))
-(defun osta-ox-plain-text (text info) (osta-escape text))
+(defun osta-ox-section (_section contents _info) (format "<div>%s</div>" contents))
+(defun osta-ox-paragraph (_paragraph contents _info) (format "<p>%s</p>" contents))
+(defun osta-ox-plain-text (text _info) (osta-escape text))
 (defun osta-ox-bold (_bold contents _info) (format "<b>%s</b>" contents))
 (defun osta-ox-italic (_italic contents _info) (format "<i>%s</i>" contents))
 (defun osta-ox-strike-through (_strike-through contents _info) (format "<del>%s</del>" contents))
@@ -124,7 +124,7 @@ Use for debugging/exploring purpose."
                  (other (error "`osta' doesn't support list type: %s" other)))))
     (format "<%s>%s</%s>" type contents type)))
 
-(defun osta-ox-item (item contents info)
+(defun osta-ox-item (_item contents _info)
   (format "<li>%s</li>" contents))
 
 (setq osta-pygmentize-cmd "/home/tony/work/projects/osta/.venv/bin/pygmentize")
@@ -140,7 +140,7 @@ Use for debugging/exploring purpose."
     (with-temp-file tmpfile (insert code))
     (shell-command-to-string cmd)))
 
-(defun osta-ox-src-block (src-block _contents info)
+(defun osta-ox-src-block (src-block _contents _info)
   "Return html string of the code `highlighted' using `pygmentize' external process."
   (let* ((lang (org-element-property :language src-block))
          (code (car (org-export-unravel-code src-block))))
