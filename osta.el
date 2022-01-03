@@ -85,13 +85,57 @@ Use for debugging/exploring purpose."
   (should (string= (osta-escape "<...>...&...\"...'") "&lt;...&gt;...&amp;...&quot;...&apos;")))
 
 (ert-deftest osta-ox-test ()
+  ;; osta-ox-headline
+  (let (headline _info)
+    (org-test-with-parsed-data "* headline 1<point>"
+      (setq headline (org-element-at-point))
+      (setq _info info))
+    (should (string= (osta-ox-headline headline "<div>contents<div>" _info)
+                     "<div><h1>headline 1</h1><div>contents<div></div>"))
+    (org-test-with-parsed-data "* headline 1\n** headline 2<point>"
+      (setq headline (org-element-at-point))
+      (setq _info info))
+    (should (string= (osta-ox-headline headline "<div>contents<div>" _info)
+                     "<div><h2>headline 2</h2><div>contents<div></div>")))
+
+  ;; section, paragraph, plain-text, bold, italic, strike-through, underline
+  (should (string= (osta-ox-section nil "section" nil) "<div>section</div>"))
+  (should (string= (osta-ox-paragraph nil "paragraph" nil) "<p>paragraph</p>"))
+  (should (string= (osta-ox-plain-text "<...>...&" nil) "&lt;...&gt;...&amp;"))
   (should (string= (osta-ox-bold nil "bold" nil) "<b>bold</b>"))
   (should (string= (osta-ox-italic nil "italic" nil) "<i>italic</i>"))
   (should (string= (osta-ox-strike-through nil "strike-through" nil) "<del>strike-through</del>"))
   (should (string= (osta-ox-underline nil "underline" nil) "<u>underline</u>"))
-  ;; (osta-ox-code nil nil nil) ;;
-  ;; (osta-ox-verbatim nil nil nil) ;;
-  )
+
+  ;; code and verbatim nodes
+  (let ((code (org-test-with-temp-text "before the ~inline code<point>~"
+                (org-element-context)))
+        (verbatim (org-test-with-temp-text "before the ~verbatim<point>~"
+                    (org-element-context))))
+    (should (string= (osta-ox-code code nil nil) "<code>inline code</code>"))
+    (should (string= (osta-ox-verbatim verbatim nil nil) "<code>verbatim</code>")))
+
+  ;; plain-list, item
+  (let ((ordered-list
+         (org-test-with-temp-text "<point>1) first
+2) second
+3) third"
+           (org-element-at-point)))
+        (unordered-list
+         (org-test-with-temp-text "<point>- first
+- second
+- third"
+           (org-element-at-point)))
+        (other-list
+         (org-test-with-temp-text "<point>- first :: description 1
+- second :: description 2
+- third :: description 3"
+           (org-element-at-point))))
+    (should (string= (osta-ox-plain-list ordered-list "contents" nil) "<ol>contents</ol>"))
+    (should (string= (osta-ox-plain-list unordered-list "contents" nil) "<ul>contents</ul>"))
+    (should-error (osta-ox-plain-list other-list "contents" nil)))
+  (should (string= (osta-ox-item nil "item" nil) "<li>item</li>")))
+
 ;;;;; macro from org-mode repository
 
 (comment
