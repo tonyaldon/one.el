@@ -79,8 +79,10 @@ Use for debugging/exploring purpose."
   (should (string= (osta-escape "<") "&lt;"))
   (should (string= (osta-escape ">") "&gt;"))
   (should (string= (osta-escape "&") "&amp;"))
+  (should (string= (osta-escape "\"") "&quot;"))
+  (should (string= (osta-escape "'") "&apos;"))
   (should (string= (osta-escape "regular text") "regular text"))
-  (should (string= (osta-escape "<...>...&") "&lt;...&gt;...&amp;")))
+  (should (string= (osta-escape "<...>...&...\"...'") "&lt;...&gt;...&amp;...&quot;...&apos;")))
 
 (ert-deftest osta-ox-test ()
   (should (string= (osta-ox-bold nil "bold" nil) "<b>bold</b>"))
@@ -140,8 +142,13 @@ variable, and communication channel under `info'."
   "Return the string S with some caracters escaped.
 `<', `>' and `&' are escaped."
   (replace-regexp-in-string
-   "\\(<\\)\\|\\(>\\)\\|\\(&\\)"
-   (lambda (m) (pcase m ("<" "&lt;") (">" "&gt;") ("&" "&amp;")))
+   "\\(<\\)\\|\\(>\\)\\|\\(&\\)\\|\\(\"\\)\\|\\('\\)"
+   (lambda (m) (pcase m
+                 ("<"  "&lt;")
+                 (">"  "&gt;")
+                 ("&"  "&amp;")
+                 ("\"" "&quot;")
+                 ("'"  "&apos;")))
    s))
 
 
