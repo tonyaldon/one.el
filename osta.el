@@ -90,6 +90,48 @@ Use for debugging/exploring purpose."
   ;; (osta-ox-code nil nil nil) ;;
   ;; (osta-ox-verbatim nil nil nil) ;;
   )
+;;;;; macro from org-mode repository
+
+(comment
+ ;; testing/org-test.el
+ (defmacro org-test-with-temp-text (text &rest body)
+   "Run body in a temporary buffer with Org mode as the active
+mode holding TEXT.  If the string \"<point>\" appears in TEXT
+then remove it and place the point there before running BODY,
+otherwise place the point at the beginning of the inserted text."
+   (declare (indent 1))
+   `(let ((inside-text (if (stringp ,text) ,text (eval ,text)))
+          (org-mode-hook nil))
+      (with-temp-buffer
+        (org-mode)
+        (let ((point (string-match "<point>" inside-text)))
+          (if point
+              (progn
+                (insert (replace-match "" nil nil inside-text))
+                (goto-char (1+ (match-beginning 0))))
+            (insert inside-text)
+            (goto-char (point-min))))
+        (font-lock-ensure (point-min) (point-max))
+        ,@body)))
+
+ ;; testing/lisp/test-ox.el
+ (defmacro org-test-with-parsed-data (data &rest body)
+   "Execute body with parsed data available.
+DATA is a string containing the data to be parsed.  BODY is the
+body to execute.  Parse tree is available under the `tree'
+variable, and communication channel under `info'."
+   (declare (debug (form body)) (indent 1))
+   `(org-test-with-temp-text ,data
+      (org-export--delete-comment-trees)
+      (let* ((tree (org-element-parse-buffer))
+             (info (org-combine-plists
+                    (org-export--get-export-attributes)
+                    (org-export-get-environment))))
+        (org-export--prune-tree tree info)
+        (org-export--remove-uninterpreted-data tree info)
+        (let ((info (org-combine-plists
+                     info (org-export--collect-tree-properties tree info))))
+          ,@body)))))
 
 ;;;; transcode functions
 
