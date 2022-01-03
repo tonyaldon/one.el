@@ -223,24 +223,20 @@ variable, and communication channel under `info'."
 (defun osta-ox-item (_item contents _info)
   (format "<li>%s</li>" contents))
 
-(setq osta-pygmentize-cmd "/home/tony/work/projects/osta/.venv/bin/pygmentize")
-
-(defun osta-pygmentize (code lang)
-  "Return an html string with CODE formatted with `pygmentize'."
-  (let* ((id (sha1 (mapconcat #'number-to-string (current-time) "")))
-         (tmpfile (concat "/tmp/pygmentize-" id))
-         (cmd (concat osta-pygmentize-cmd
-                      " -f html"
-                      " -l " lang
-                      " " tmpfile)))
-    (with-temp-file tmpfile (insert code))
-    (shell-command-to-string cmd)))
-
 (defun osta-ox-src-block (src-block _contents _info)
-  "Return html string of the code `highlighted' using `pygmentize' external process."
+  "Return SRC-BLOCK element htmlized using `htmlize'.
+
+Use `org-html-fontify-code'."
   (let* ((lang (org-element-property :language src-block))
-         (code (car (org-export-unravel-code src-block))))
-    (osta-pygmentize code lang)))
+         (code (car (org-export-unravel-code src-block)))
+         (org-html-htmlize-font-prefix "osta-hl-")
+         (org-html-htmlize-output-type 'css))
+    (concat "<pre><code class=\"osta-hl\">"
+            (replace-regexp-in-string "<span class=\"osta-hl-default\">\\([^<]*\\)</span>"
+                                      "\\1"
+                                      (org-html-fontify-code code lang))
+            "</pre></code>")
+    ))
 
 ;;; org-element nodes not supported
 ;;;; template
