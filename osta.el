@@ -51,8 +51,12 @@ Use for debugging/exploring purpose."
 
 (global-set-key (kbd "C-<f2>")
                 (lambda () (interactive)
-                  (let ((exported (with-current-buffer "content.org"
-                                    (org-export-as 'osta))))
+                  (let* (
+                         ;; no evaluation of any source block,
+                         ;; they all are exported anyway.
+                         (org-export-use-babel nil)
+                         (exported (with-current-buffer "content.org"
+                                     (org-export-as 'osta))))
                     (with-current-buffer (get-buffer-create "*osta*")
                       (erase-buffer)
                       (insert "<!DOCTYPE html>")
