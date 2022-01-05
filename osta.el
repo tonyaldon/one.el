@@ -25,9 +25,9 @@
     (item . osta-ox-item)
 
     (src-block . osta-ox-src-block)
-    ;; (fixed-width . org-html-fixed-width)
     ;; (quote-block . org-html-quote-block)
     (example-block . osta-ox-example-block)
+    (fixed-width . osta-ox-fixed-width)
 
     ;; (link . org-html-link)
     )
@@ -267,8 +267,33 @@ A simple example
                      (concat "<pre><code class=\"osta-hl osta-hl-results\">"
                              "A simple example"
                              "</code></pre>"))))
-
-  )
+  ;; `osta-ox-fixed-width'
+  (let ((fixed-width (org-test-with-temp-text "
+: I'm a multiline fixed width
+: yes I am!<point>"
+                       (org-element-context)))
+        (fixed-width-results-1 (org-test-with-temp-text "
+#+RESULTS:
+: I'm a multiline fixed width
+: yes I am!<point>"
+                                 (org-element-context)))
+        (fixed-width-results-2 (org-test-with-temp-text "
+#+ATTR_OSTA_RESULTS:
+: I'm a multiline fixed width
+: yes I am!<point>"
+                                 (org-element-context))))
+    (should (string= (osta-ox-fixed-width fixed-width nil nil)
+                     (concat "<pre><code class=\"osta-hl osta-hl-block\">"
+                             "I'm a multiline fixed width\nyes I am!"
+                             "</code></pre>")))
+    (should (string= (osta-ox-fixed-width fixed-width-results-1 nil nil)
+                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+                             "I'm a multiline fixed width\nyes I am!"
+                             "</code></pre>")))
+    (should (string= (osta-ox-fixed-width fixed-width-results-2 nil nil)
+                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+                             "I'm a multiline fixed width\nyes I am!"
+                             "</code></pre>")))))
 
 ;;;;; macro from org-mode repository
 
@@ -403,6 +428,13 @@ Use `org-html-fontify-code'."
   (let* ((code (car (org-export-unravel-code example-block)))
          (lang "text")
          (is-results-p (osta-ox-is-results-p example-block)))
+    (osta-ox-htmlize code lang is-results-p)))
+
+(defun osta-ox-fixed-width (fixed-width _contents _info)
+  "Return FIXED-WIDTH element htmlized using `htmlize.el'."
+  (let* ((code (car (org-export-unravel-code fixed-width)))
+         (lang "text")
+         (is-results-p (osta-ox-is-results-p fixed-width)))
     (osta-ox-htmlize code lang is-results-p)))
 
 
