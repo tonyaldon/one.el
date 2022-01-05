@@ -25,9 +25,9 @@
     (item . osta-ox-item)
 
     (src-block . osta-ox-src-block)
-    ;; (example-block . org-html-example-block)
     ;; (fixed-width . org-html-fixed-width)
     ;; (quote-block . org-html-quote-block)
+    (example-block . osta-ox-example-block)
 
     ;; (link . org-html-link)
     )
@@ -236,6 +236,38 @@ echo \"Hello world!\"
                              "<span class=\"osta-hl-builtin\">echo</span> "
                              "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
                              "</code></pre>"))))
+
+  ;; `osta-ox-example-block'
+  (let ((example-block (org-test-with-temp-text "
+#+BEGIN_EXAMPLE
+A simple example
+#+END_EXAMPLE<point>"
+                         (org-element-context)))
+        (example-block-results-1 (org-test-with-temp-text "
+#+RESULTS:
+#+BEGIN_EXAMPLE
+A simple example
+#+END_EXAMPLE<point>"
+                                   (org-element-context)))
+        (example-block-results-2 (org-test-with-temp-text "
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_EXAMPLE
+A simple example
+#+END_EXAMPLE<point>"
+                                   (org-element-context))))
+    (should (string= (osta-ox-example-block example-block nil nil)
+                     (concat "<pre><code class=\"osta-hl osta-hl-block\">"
+                             "A simple example"
+                             "</code></pre>")))
+    (should (string= (osta-ox-example-block example-block-results-1 nil nil)
+                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+                             "A simple example"
+                             "</code></pre>")))
+    (should (string= (osta-ox-example-block example-block-results-2 nil nil)
+                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+                             "A simple example"
+                             "</code></pre>"))))
+
   )
 
 ;;;;; macro from org-mode repository
@@ -364,6 +396,13 @@ Use `org-html-fontify-code'."
   (let* ((code (car (org-export-unravel-code src-block)))
          (lang (org-element-property :language src-block))
          (is-results-p (osta-ox-is-results-p src-block)))
+    (osta-ox-htmlize code lang is-results-p)))
+
+(defun osta-ox-example-block (example-block _contents _info)
+  "Return EXAMPLE-BLOCK element htmlized using `htmlize.el'."
+  (let* ((code (car (org-export-unravel-code example-block)))
+         (lang "text")
+         (is-results-p (osta-ox-is-results-p example-block)))
     (osta-ox-htmlize code lang is-results-p)))
 
 
