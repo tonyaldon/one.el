@@ -116,8 +116,10 @@ Use for debugging/exploring purpose."
                 (org-element-context)))
         (verbatim (org-test-with-temp-text "before the ~verbatim<point>~"
                     (org-element-context))))
-    (should (string= (osta-ox-code code nil nil) "<code>inline code</code>"))
-    (should (string= (osta-ox-verbatim verbatim nil nil) "<code>verbatim</code>")))
+    (should (string= (osta-ox-code code nil nil)
+                     "<code class=\"osta-hl osta-hl-inline\">inline code</code>"))
+    (should (string= (osta-ox-verbatim verbatim nil nil)
+                     "<code class=\"osta-hl osta-hl-inline\">verbatim</code>")))
 
   ;; plain-list, item
   (let ((ordered-list
@@ -213,9 +215,9 @@ variable, and communication channel under `info'."
 (defun osta-ox-strike-through (_strike-through contents _info) (format "<del>%s</del>" contents))
 (defun osta-ox-underline (_underline contents _info) (format "<u>%s</u>" contents))
 (defun osta-ox-code (code _contents _info)
-  (format "<code>%s</code>" (osta-escape (org-element-property :value code))))
+  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>" (osta-escape (org-element-property :value code))))
 (defun osta-ox-verbatim (verbatim _contents _info)
-  (format "<code>%s</code>" (osta-escape (org-element-property :value verbatim))))
+  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>" (osta-escape (org-element-property :value verbatim))))
 
 (defun osta-ox-plain-list (plain-list contents _info)
   (let* ((type (pcase (org-element-property :type plain-list)
