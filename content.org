@@ -1,7 +1,10 @@
-#+TITLE: I'm the title
+#+TITLE: OSTA - Org Static
 #+DATE: <2021-12-27 Mon>
 
 # some comments
+
+Something before the first headline and with caracters that must be
+escaped when rendered into HTML: <, > and &.
 
 * about page
 
@@ -15,33 +18,40 @@ I'm the 404 page.
 
 I'm the index page.
 
-* article 1
+* article 1 - plain-list and item
+:PROPERTIES:
+:CUSTOM_ID: 2022-01-01-article-1
+:END:
 
-I'm the *article 1*.
+We want /unordered/ list:
 
-* article 2
+- first stuff
+- second stuff
+- third stuff
 
-I don't support latex.
+and also /ordered/ list:
 
-* article 3
+1) first
+2) second
+3) third
 
-I'm the *article 2*.
+* article 2 - src-block
 
-I've some code in block with the result shown:
+Here some code in a block with its evaluation rendered with a
+different design:
 
 #+BEGIN_SRC bash :results output
-ls -A
+ls
 #+END_SRC
 
 #+RESULTS:
 : content.org
-: #osta.el#
+: osta.css
 : osta.el
 : README.org
 
-And an external link to [[https://tonyaldon.com][tonyaldon.com]].
-
-I use ~highlightjs~ (at build time) to highlight code like this one:
+I use ~htmlize.el~ (at build time) to highlight code like this Clojure
+code:
 
 #+BEGIN_SRC clojure
 (defn str
@@ -61,3 +71,126 @@ I use ~highlightjs~ (at build time) to highlight code like this one:
             (str sb)))
       (new StringBuilder (str x)) ys)))
 #+END_SRC
+
+and also some Elisp code like this:
+
+#+BEGIN_SRC emacs-lisp
+(defconst clojure-font-lock-keywords
+  (eval-when-compile
+    `( ;; Top-level variable definition
+      (,(concat "(\\(?:clojure.core/\\)?\\("
+                (regexp-opt '("def" "defonce"))
+                ;; variable declarations
+                "\\)\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw+\\)?")
+       (1 font-lock-keyword-face)
+       (2 font-lock-variable-name-face nil t))
+      ;; ...
+      )))
+#+END_SRC
+
+and some HTML code where charaters like ~<~ and ~>~  must be escaped
+correctly (in the org file this code snippet contains also extra
+indentation that we doesn't want to appear in the exported HTML):
+
+#+BEGIN_SRC html
+    <!DOCTYPE html>
+    <html>
+      <body>
+
+        <h1>My First Heading</h1>
+        <p>My first paragraph.</p>
+
+      </body>
+    </html>
+#+END_SRC
+
+Sometime I want to say things like the following (and I want the
+second code snippet (the result of the evaluation) to have a different
+"design". To do so, we add the org attribute ~#+ATTR_OSTA_RESULTS:~ on
+the line before the second source block):
+
+After evaluating this code block:
+
+#+BEGIN_SRC emacs-lisp
+(plist-get '(:a "aaa" :b (:c "ccc" :d "ddd")) :b)
+#+END_SRC
+
+we get:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC emacs-lisp
+(:c "ccc" :d "ddd")
+#+END_SRC
+
+And code inside list:
+1. item 1
+
+   #+BEGIN_SRC emacs-lisp
+   (message "code in item 1")
+   #+END_SRC
+
+2. item 2
+3. item 3
+
+* article 3 - fixed-width
+** section 2.1
+
+I don't support latex.
+
+But I support ~fixed-width~ element:
+
+: I'm a fixed element
+
+and also inside list:
+- item 1
+  : fixed element
+- item 2
+  : fixed element line 1
+  : fixed element line 2
+
+** section 2.2
+
+Something here!
+
+*** section 2.2.1
+
+Another thing here!
+
+*** section 2.2.2
+
+Another thing here!
+
+* article 4 - example-block and quote-block
+
+Although I don't often use example blocks, here is one:
+
+#+BEGIN_EXAMPLE
+This an example!
+#+END_EXAMPLE
+
+I really like quotes like this one:
+
+#+BEGIN_QUOTE
+A quitter never wins and a winner never quits. —Napoleon Hill
+#+END_QUOTE
+
+* article 5 - links
+
+#+LINK: clj     /home/tony/work/tmp/clojure/
+# https://github.com/clojure/clojure
+
+- standard external link with description: [[https://tonyaldon.com][Tony Aldon]]
+- standard external link without description: https://tonyaldon.com
+- file: [[./osta.css][osta.css]]
+- abbreviated link to local file:
+- abbreviated link to local directory (that also can be mapped to an
+  external link)
+ ~[[clj][clojure]]~ [[clj][clojure]] -> ~<a href="https://github.com/clojure/clojure">clojure</a>~
+- ~custom_id~ ???
+- ~custom_id~ [[
+- other page this blog [[
