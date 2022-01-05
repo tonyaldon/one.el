@@ -229,20 +229,47 @@ variable, and communication channel under `info'."
 (defun osta-ox-item (_item contents _info)
   (format "<li>%s</li>" contents))
 
-(defun osta-ox-src-block (src-block _contents _info)
-  "Return SRC-BLOCK element htmlized using `htmlize'.
+;;;;; blocks
+
+(defun osta-ox-is-results-p (element)
+  "Return t if ELEMENT is considered to be a result block.
+In `org-mode', the following \"allowed\" blocks are result blocks:
+  - block after the line `#+RESULTS:',
+  - block after the line `#+ATTR_OSTA_RESULTS:'.
+Blocks that are \"allowed\" to be result blocks are of the type:
+  - `src-block',
+  - `fixed-width',
+  - `example-block'."
+  (or (org-element-property :results element)
+      (org-element-property :attr_osta_results element)))
+
+(defun osta-ox-htmlize (code lang &optional is-results-p)
+  "Return CODE string htmlized using `htmlize.el' in language LANG.
+
+If `is-results-p' is non-nil, CSS class of tag <code> in the returned
+string is \"osta-hl osta-hl-results\".
+If nil, the CSS class is `osta-hl osta-hl-block'.
 
 Use `org-html-fontify-code'."
-  (let* ((lang (org-element-property :language src-block))
-         (code (car (org-export-unravel-code src-block)))
-         (org-html-htmlize-font-prefix "osta-hl-")
-         (org-html-htmlize-output-type 'css))
-    (concat "<pre><code class=\"osta-hl\">"
-            (replace-regexp-in-string "<span class=\"osta-hl-default\">\\([^<]*\\)</span>"
-                                      "\\1"
-                                      (org-html-fontify-code code lang))
-            "</pre></code>")
-    ))
+  (let* ((org-html-htmlize-font-prefix "osta-hl-")
+         (org-html-htmlize-output-type 'css)
+         (class (if is-results-p
+                    "osta-hl osta-hl-results"
+                  "osta-hl osta-hl-block")))
+    (format "<pre><code class=\"%s\">%s</code></pre>"
+            class
+            (replace-regexp-in-string
+             "<span class=\"osta-hl-default\">\\([^<]*\\)</span>"
+             "\\1"
+             (org-html-fontify-code code lang)))))
+
+(defun osta-ox-src-block (src-block _contents _info)
+  "Return SRC-BLOCK element htmlized using `htmlize.el'."
+  (let* ((code (car (org-export-unravel-code src-block)))
+         (lang (org-element-property :language src-block))
+         (is-results-p (osta-ox-is-results-p src-block)))
+    (osta-ox-htmlize code lang is-results-p)))
+
 
 ;;; org-element nodes not supported
 ;;;; template
