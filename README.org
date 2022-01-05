@@ -1,10 +1,10 @@
 #+TITLE: osta (Org Static)
 #+AUTHOR: Tony aldon
-#+DATE: <2021-12-27 Mon>
+#+DATE: [2022-01-05 Wed]
 
 * About
 
-~osta~ (Org Static) provides few function/macros to build static website
+~osta~ (Org Static) provides few function/macros to build static websites
 using org-mode.
 
 * Goal
@@ -14,8 +14,8 @@ using org-mode.
 
 * Installation/Build
 
-- Emacs, org-mode, html template (charge.el)
-- highlightjs (code highlighting)
+- Emacs, org-mode, html template
+- htmlize.el (code highlighting)
 - browersync (hot-reloading)
 - lighthouse (performance)
 
