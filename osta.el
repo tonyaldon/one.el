@@ -143,6 +143,101 @@ Use for debugging/exploring purpose."
     (should (string= (osta-ox-verbatim verbatim nil nil)
                      "<code class=\"osta-hl osta-hl-inline\">verbatim</code>"))))
 
+(ert-deftest osta-ox-blocks-test ()
+  ;; blocks
+
+  ;; `osta-ox-is-results-p'
+  (let ((src-block (org-test-with-temp-text "
+#+BEGIN_SRC bash
+echo \"Hello world!\"
+#+END_SRC<point>"
+                     (org-element-context)))
+        (src-block-results (org-test-with-temp-text "
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC bash
+echo \"Hello world!\"
+#+END_SRC<point>"
+                             (org-element-context)))
+        (example-block (org-test-with-temp-text "
+#+BEGIN_EXAMPLE
+A simple example
+#+END_EXAMPLE<point>"
+                         (org-element-context)))
+        (example-block-results-1 (org-test-with-temp-text "
+#+RESULTS:
+#+BEGIN_EXAMPLE
+A simple example
+#+END_EXAMPLE<point>"
+                                   (org-element-context)))
+        (example-block-results-2 (org-test-with-temp-text "
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_EXAMPLE
+A simple example
+#+END_EXAMPLE<point>"
+                                   (org-element-context)))
+        (fixed-width (org-test-with-temp-text "
+: I'm a multiline fixed width
+: yes I am!<point>"
+                       (org-element-context)))
+        (fixed-width-results-1 (org-test-with-temp-text "
+#+RESULTS:
+: I'm a multiline fixed width
+: yes I am!<point>"
+                                 (org-element-context)))
+        (fixed-width-results-2 (org-test-with-temp-text "
+#+ATTR_OSTA_RESULTS:
+: I'm a multiline fixed width
+: yes I am!<point>"
+                                 (org-element-context))))
+    (should-not (osta-ox-is-results-p src-block))
+    (should (osta-ox-is-results-p src-block-results))
+    (should-not (osta-ox-is-results-p example-block))
+    (should (osta-ox-is-results-p example-block-results-1))
+    (should (osta-ox-is-results-p example-block-results-2))
+    (should-not (osta-ox-is-results-p fixed-width))
+    (should (osta-ox-is-results-p fixed-width-results-1))
+    (should (osta-ox-is-results-p fixed-width-results-2)))
+
+  ;; `osta-ox-htmlize'
+  ;; note that in `sh-mode', `echo' word has the face `font-lock-builtin-face',
+  ;; and strings have the faces `font-lock-string-face'.
+  ;; normal blocks
+  (should (string= (osta-ox-htmlize "echo \"Hello world!\"" "bash")
+                   (concat "<pre><code class=\"osta-hl osta-hl-block\">"
+                           "<span class=\"osta-hl-builtin\">echo</span> "
+                           "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+                           "</code></pre>")))
+  ;; results blocks
+  (should (string= (osta-ox-htmlize "echo \"Hello world!\"" "bash" t)
+                   (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+                           "<span class=\"osta-hl-builtin\">echo</span> "
+                           "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+                           "</code></pre>")))
+
+  ;; `osta-ox-src-block'
+  (let ((src-block (org-test-with-temp-text "
+#+BEGIN_SRC bash
+echo \"Hello world!\"
+#+END_SRC<point>"
+                     (org-element-context)))
+        (src-block-results (org-test-with-temp-text "
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC bash
+echo \"Hello world!\"
+#+END_SRC<point>"
+                             (org-element-context))))
+    (should (string= (osta-ox-src-block src-block nil nil )
+                     (concat "<pre><code class=\"osta-hl osta-hl-block\">"
+                             "<span class=\"osta-hl-builtin\">echo</span> "
+                             "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+                             "</code></pre>")))
+    (should (string= (osta-ox-src-block src-block-results nil nil )
+                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+                             "<span class=\"osta-hl-builtin\">echo</span> "
+                             "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+                             "</code></pre>"))))
+  )
+
 ;;;;; macro from org-mode repository
 
 (comment
