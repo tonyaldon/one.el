@@ -111,16 +111,6 @@ Use for debugging/exploring purpose."
   (should (string= (osta-ox-strike-through nil "strike-through" nil) "<del>strike-through</del>"))
   (should (string= (osta-ox-underline nil "underline" nil) "<u>underline</u>"))
 
-  ;; code and verbatim nodes
-  (let ((code (org-test-with-temp-text "before the ~inline code<point>~"
-                (org-element-context)))
-        (verbatim (org-test-with-temp-text "before the ~verbatim<point>~"
-                    (org-element-context))))
-    (should (string= (osta-ox-code code nil nil)
-                     "<code class=\"osta-hl osta-hl-inline\">inline code</code>"))
-    (should (string= (osta-ox-verbatim verbatim nil nil)
-                     "<code class=\"osta-hl osta-hl-inline\">verbatim</code>")))
-
   ;; plain-list, item
   (let ((ordered-list
          (org-test-with-temp-text "<point>1) first
@@ -141,6 +131,17 @@ Use for debugging/exploring purpose."
     (should (string= (osta-ox-plain-list unordered-list "contents" nil) "<ul>contents</ul>"))
     (should-error (osta-ox-plain-list other-list "contents" nil)))
   (should (string= (osta-ox-item nil "item" nil) "<li>item</li>")))
+
+(ert-deftest osta-ox-code-and-verbatim-test ()
+  ;; code and verbatim nodes
+  (let ((code (org-test-with-temp-text "before the ~inline code<point>~"
+                (org-element-context)))
+        (verbatim (org-test-with-temp-text "before the ~verbatim<point>~"
+                    (org-element-context))))
+    (should (string= (osta-ox-code code nil nil)
+                     "<code class=\"osta-hl osta-hl-inline\">inline code</code>"))
+    (should (string= (osta-ox-verbatim verbatim nil nil)
+                     "<code class=\"osta-hl osta-hl-inline\">verbatim</code>"))))
 
 ;;;;; macro from org-mode repository
 
