@@ -36,11 +36,11 @@ h6 {
 a {
   color: #00d1b2;
   cursor: pointer;
-  /* text-decoration: none; */
+  text-decoration: none;
 }
 
 a:hover {
-  color: #3bd4d6;
+  text-decoration: underline;
 }
 
 code {
