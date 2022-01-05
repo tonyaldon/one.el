@@ -2,6 +2,20 @@
 ;;
 ;; Copyright (C) 2021 Tony Aldon
 
+;;; commentary:
+;;
+;; the following org-element nodes are not supported:
+;;     center-block, clock, drawer, dynamic-block, entity, export-block,
+;;     export-snippet, footnote-reference, horizontal-rule, inline-src-block,
+;;     inlinetask, keyword, latex-environment, latex-fragment, line-break,
+;;     node-property, planning, property-drawer, radio-target, special-block,
+;;     statistics-cookie, subscript, superscript, table, table-cell, table-row,
+;;     target, timestamp, verse-block,
+;;
+;; As I don't export org files directly but via `osta' HTML template system,
+;; I don't implement function for inner-template and template symbol use
+;; by org export when exporting files.
+
 ;;; osta org backend
 
 
@@ -344,7 +358,6 @@ variable, and communication channel under `info'."
 
 ;;;; transcode functions
 
-
 (defun osta-escape (s)
   "Return the string S with some caracters escaped.
 `<', `>' and `&' are escaped."
@@ -357,7 +370,6 @@ variable, and communication channel under `info'."
                  ("\"" "&quot;")
                  ("'"  "&apos;")))
    s))
-
 
 (defun osta-ox-headline (headline contents info)
   (let ((level (org-export-get-relative-level headline info))
@@ -444,53 +456,6 @@ Use `org-html-fontify-code'."
 (defun osta-ox-quote-block (_quote-block contents _info)
   (format "<blockquote class=\"osta-blockquote\">%s</blockquote>" contents))
 
-
-;;; org-element nodes not supported
-;;;; template
-
-;; (inner-template . org-html-inner-template)
-;; (template . org-html-template)
-
-;;;; because I almost never used them in org file
-
-;; (center-block . org-html-center-block)
-;; (clock . org-html-clock)
-;; (drawer . org-html-drawer)
-;; (dynamic-block . org-html-dynamic-block)
-;; (entity . org-html-entity)
-;; (export-block . org-html-export-block)
-;; (export-snippet . org-html-export-snippet)
-;; (footnote-reference . org-html-footnote-reference)
-;; (horizontal-rule . org-html-horizontal-rule)
-;; (inline-src-block . org-html-inline-src-block)
-;; (inlinetask . org-html-inlinetask)
-;; (keyword . org-html-keyword)
-;; (latex-environment . org-html-latex-environment)
-;; (latex-fragment . org-html-latex-fragment)
-;; (line-break . org-html-line-break)
-;; (node-property . org-html-node-property)
-;; (planning . org-html-planning)
-;; (property-drawer . org-html-property-drawer)
-;; (radio-target . org-html-radio-target)
-;; (special-block . org-html-special-block)
-;; (statistics-cookie . org-html-statistics-cookie)
-;; (subscript . org-html-subscript)
-;; (superscript . org-html-superscript)
-;; (target . org-html-target)
-;; (timestamp . org-html-timestamp)
-;; (verse-block . org-html-verse-block)
-
-;;;; because I almost never use org tables
-
-;; (table . org-html-table)
-;; (table-cell . org-html-table-cell)
-;; (table-row . org-html-table-row)
-
-;; (:html-table-align-individual-fields nil nil org-html-table-align-individual-fields)
-;; (:html-table-caption-above nil nil org-html-table-caption-above)
-;; (:html-table-data-tags nil nil org-html-table-data-tags)
-;; (:html-table-header-tags nil nil org-html-table-header-tags)
-;; (:html-table-use-header-tags-for-first-column nil nil org-html-table-use-header-tags-for-first-column)
 
 
 ;;; osta provide
