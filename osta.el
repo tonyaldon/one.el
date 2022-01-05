@@ -25,9 +25,9 @@
     (item . osta-ox-item)
 
     (src-block . osta-ox-src-block)
-    ;; (quote-block . org-html-quote-block)
     (example-block . osta-ox-example-block)
     (fixed-width . osta-ox-fixed-width)
+    (quote-block . osta-ox-quote-block)
 
     ;; (link . org-html-link)
     )
@@ -293,7 +293,11 @@ A simple example
     (should (string= (osta-ox-fixed-width fixed-width-results-2 nil nil)
                      (concat "<pre><code class=\"osta-hl osta-hl-results\">"
                              "I'm a multiline fixed width\nyes I am!"
-                             "</code></pre>")))))
+                             "</code></pre>"))))
+
+  ;; `osta-ox-quote-block'
+  (should (string= (osta-ox-quote-block nil "I'm a quote. —Tony Aldon" nil)
+                   "<blockquote class=\"osta-blockquote\">I'm a quote. —Tony Aldon</blockquote>")))
 
 ;;;;; macro from org-mode repository
 
@@ -436,6 +440,9 @@ Use `org-html-fontify-code'."
          (lang "text")
          (is-results-p (osta-ox-is-results-p fixed-width)))
     (osta-ox-htmlize code lang is-results-p)))
+
+(defun osta-ox-quote-block (_quote-block contents _info)
+  (format "<blockquote class=\"osta-blockquote\">%s</blockquote>" contents))
 
 
 ;;; org-element nodes not supported
