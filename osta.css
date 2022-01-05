@@ -43,26 +43,47 @@ a:hover {
   text-decoration: underline;
 }
 
-code {
-	font-family: 'Fira Code', monospace;
-  background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
-  border-radius:0.5em;
-	border: 1px solid #141b2a;
-  color: #dedede;
-  font-size: 0.9em;
-  font-weight: normal;
-  padding: 0.2em 0.35em;
+.osta-blockquote {
+  background: linear-gradient(to right bottom, #313b52, #2f394f, #2d364b, #2b3448, #293245);
+  border-left: 0.3em solid #d3b2a1;
+  color: #d3b2a1;
+  margin: auto;
+  padding: 0.1em 1.5em;
+  width: 50%;
 }
 
 .osta-hl {
+  border-radius:0.5em;
+  color: #dedede;
+	font-family: 'Fira Code', monospace;
+  font-size: 0.9em;
+  font-weight: normal;
+}
+
+.osta-hl-inline {
+  background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
+	border: 1px solid #141b2a;
+  padding: 0.2em 0.35em;
+}
+
+.osta-hl-block {
+	background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
+	border-radius: 0.5em;
+  border: 1px solid #141b2a;
   display: block;
   overflow-x: auto;
-  font-size: 0.9em;
   padding: 0.5em;
-  color: #dedede;
-	background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
-	border: 1px solid #141b2a;
-	border-radius: 0.5em;
+}
+
+.osta-hl-results {
+  background: linear-gradient(to right bottom, #313b52, #2f394f, #2d364b, #2b3448, #293245);
+  border-left: 3px solid #dedede;
+	border-radius: 0.2em;
+  display: block;
+  margin: auto;
+  padding: 0.5em 1em;
+  overflow-x: auto;
+  width: 92%;
 }
 
 .osta-hl-negation-char { color: #ff6c60}              /* font-lock-negation-char-face */
