@@ -118,6 +118,7 @@ Use for debugging/exploring purpose."
 
   ;; section, paragraph, plain-text, bold, italic, strike-through, underline
   (should (string= (osta-ox-section nil "section" nil) "<div>section</div>"))
+  (should (string= (osta-ox-section nil nil nil) ""))
   (should (string= (osta-ox-paragraph nil "paragraph" nil) "<p>paragraph</p>"))
   (should (string= (osta-ox-plain-text "<...>...&" nil) "&lt;...&gt;...&amp;"))
   (should (string= (osta-ox-bold nil "bold" nil) "<b>bold</b>"))
@@ -375,8 +376,9 @@ variable, and communication channel under `info'."
   (let ((level (org-export-get-relative-level headline info))
         (text (org-export-data (org-element-property :title headline) info)))
     (format "<div><h%s>%s</h%s>%s</div>" level text level contents)))
+(defun osta-ox-section (_section contents _info)
+  (if (null contents) "" (format "<div>%s</div>" contents)))
 
-(defun osta-ox-section (_section contents _info) (format "<div>%s</div>" contents))
 (defun osta-ox-paragraph (_paragraph contents _info) (format "<p>%s</p>" contents))
 (defun osta-ox-plain-text (text _info) (osta-escape text))
 (defun osta-ox-bold (_bold contents _info) (format "<b>%s</b>" contents))
