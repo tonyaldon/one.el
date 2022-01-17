@@ -104,17 +104,52 @@ Use for debugging/exploring purpose."
 
 (ert-deftest osta-ox-test ()
   ;; osta-ox-headline
-  (let (headline _info)
-    (org-test-with-parsed-data "* headline 1<point>"
-      (setq headline (org-element-at-point))
-      (setq _info info))
-    (should (string= (osta-ox-headline headline "<div>contents<div>" _info)
-                     "<div><h1>headline 1</h1><div>contents<div></div>"))
-    (org-test-with-parsed-data "* headline 1\n** headline 2<point>"
-      (setq headline (org-element-at-point))
-      (setq _info info))
-    (should (string= (osta-ox-headline headline "<div>contents<div>" _info)
-                     "<div><h2>headline 2</h2><div>contents<div></div>")))
+  (let ((get-headline
+         (lambda (rv tree)
+           (car (org-element-map tree 'headline
+                  (lambda (e)
+                    (when (string= (org-element-property :raw-value e) rv)
+                      e)))))))
+    ;; headline level 1 with contents
+    (should
+     (string=
+      (org-test-with-parsed-data "* headline 1"
+        (osta-ox-headline (funcall get-headline "headline 1" tree)
+                          "<div>contents<div>" info))
+      "<div><h1>headline 1</h1><div>contents<div></div>"))
+    ;; headline level 1 with contents nil
+    (should
+     (string=
+      (org-test-with-parsed-data "* headline 1"
+        (osta-ox-headline (funcall get-headline "headline 1" tree)
+                          nil info))
+      "<div><h1>headline 1</h1></div>"))
+    ;; headline level 2 with contents
+    (should
+     (string=
+      (org-test-with-parsed-data "* headline 1\n** headline 2"
+        (osta-ox-headline (funcall get-headline "headline 2" tree)
+                          "<div>contents<div>" info))
+      "<div><h2>headline 2</h2><div>contents<div></div>"))
+    ;; headline with CUSTOM_ID without id part
+    (should
+     (string=
+      (org-test-with-parsed-data "* headline 1
+:PROPERTIES:
+:CUSTOM_ID: /path/to/page/
+:END:"
+        (osta-ox-headline (funcall get-headline "headline 1" tree)
+                          "<div>contents<div>" info))
+      "<div><h1>headline 1</h1><div>contents<div></div>"))
+    ;; headline with CUSTOM_ID and id part
+    (should
+     (string=
+      (org-test-with-parsed-data "* headline 1\n** headline 2
+:PROPERTIES:
+:CUSTOM_ID: /path/to/page/#id-test
+:END:"
+        (osta-ox-headline (funcall get-headline "headline 2" tree) nil info))
+      "<div><h2 id=\"id-test\">headline 2</h2></div>")))
 
   ;; section, paragraph, plain-text, bold, italic, strike-through, underline
   (should (string= (osta-ox-section nil "section" nil) "<div>section</div>"))
@@ -373,9 +408,16 @@ variable, and communication channel under `info'."
    s))
 
 (defun osta-ox-headline (headline contents info)
-  (let ((level (org-export-get-relative-level headline info))
-        (text (org-export-data (org-element-property :title headline) info)))
-    (format "<div><h%s>%s</h%s>%s</div>" level text level contents)))
+  (let* ((level (org-export-get-relative-level headline info))
+         (title (org-export-data (org-element-property :title headline) info))
+         (ct (if (null contents) "" contents))
+         (custom-id (org-element-property :CUSTOM_ID headline))
+         (id (and custom-id
+                  ;; we match "baz" in "/foo/bar/#baz"
+                  (string-match "\\`\\(?:[^#]+\\S-\\)#\\(.*\\)" custom-id)
+                  (format " id=\"%s\"" (match-string-no-properties 1 custom-id)))))
+    (format "<div><h%s%s>%s</h%s>%s</div>" level (or id "") title level ct)))
+
 (defun osta-ox-section (_section contents _info)
   (if (null contents) "" (format "<div>%s</div>" contents)))
 
