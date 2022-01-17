@@ -107,6 +107,7 @@ a:hover {
 
 
 .osta-hl-clojure-keyword { color: #457f8b}            /* clojure-keyword-face */
+.osta-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
 
 ::-webkit-scrollbar {
   width: 0.6em;
