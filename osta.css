@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Signika:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Signika:wght@300;400;500;600;700&display=swap');
 
 body {
   background-image: radial-gradient(47.66% 38.4% at 52.19% 28.51%, rgb(18, 25, 40) 0%, rgb(8, 11, 18) 100%);
@@ -55,7 +55,7 @@ a:hover {
 .osta-hl {
   border-radius:0.5em;
   color: #dedede;
-	font-family: 'Fira Code', monospace;
+	font-family: 'Fira Mono', monospace;
   font-size: 0.9em;
   font-weight: normal;
 }
