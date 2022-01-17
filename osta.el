@@ -9,8 +9,7 @@
 ;;     export-snippet, footnote-reference, horizontal-rule, inline-src-block,
 ;;     inlinetask, keyword, latex-environment, latex-fragment, line-break,
 ;;     node-property, planning, property-drawer, radio-target, special-block,
-;;     statistics-cookie, subscript, superscript, table, table-cell, table-row,
-;;     target, timestamp, verse-block,
+;;     statistics-cookie, table, table-cell, table-row,target, timestamp, verse-block
 ;;
 ;; As I don't export org files directly but via `osta' HTML template system,
 ;; I don't implement function for inner-template and template symbol use
@@ -34,6 +33,9 @@
     (underline . osta-ox-underline)
     (code . osta-ox-code)
     (verbatim . osta-ox-verbatim)
+
+    (subscript . osta-ox-subscript)
+    (superscript . osta-ox-superscript)
 
     (plain-list . osta-ox-plain-list)
     (item . osta-ox-item)
@@ -101,6 +103,50 @@ Use for debugging/exploring purpose."
   (should (string= (osta-escape "'") "&apos;"))
   (should (string= (osta-escape "regular text") "regular text"))
   (should (string= (osta-escape "<...>...&...\"...'") "&lt;...&gt;...&amp;...&quot;...&apos;")))
+
+(defun osta-ox-subscript (_subscript contents _info) (format "<sub>%s</sub>" contents))
+(defun osta-ox-superscript (_superscript contents _info) (format "<sup>%s</sup>" contents))
+
+(ert-deftest osta-ox--subscript-and-superscript ()
+  ;; osta-ox-subscript, osta-ox-superscript
+  (should (string= (osta-ox-subscript nil "subscript" nil)
+                   "<sub>subscript</sub>"))
+  (should (string= (osta-ox-superscript nil "superscript" nil)
+                   "<sup>superscript</sup>"))
+
+  ;; by default ox.el exports with specific transcode functions
+  ;; for the org elements `subscript' and `superscript'.
+  ;; This is controlled by the variable `org-export-with-sub-superscripts'.
+  ;; See `org-export-options-alist'.
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (subscript . osta-ox-subscript)
+            (superscript . osta-ox-superscript)))))
+    (let ((org-export-with-sub-superscripts t))
+      (should
+       (string=
+        (org-test-with-temp-text "foo_bar"
+          (org-export-as backend))
+        "foo<sub>bar</sub>\n"))
+      (should
+       (string=
+        (org-test-with-temp-text "foo^bar"
+          (org-export-as backend))
+        "foo<sup>bar</sup>\n")))
+    (let ((org-export-with-sub-superscripts nil))
+      (should
+       (string=
+        (org-test-with-temp-text "foo_bar"
+          (org-export-as backend))
+        "foo_bar\n"))
+      (should
+       (string=
+        (org-test-with-temp-text "foo^bar"
+          (org-export-as backend))
+        "foo^bar\n")))))
 
 (ert-deftest osta-ox-test ()
   ;; osta-ox-headline
