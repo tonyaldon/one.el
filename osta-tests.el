@@ -59,6 +59,8 @@ variable, and communication channel under `info'."
 
 ;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-ox-test")))
 
+;;;; headline, section, paragraph, etc.
+
 (ert-deftest osta-ox-test ()
   ;; osta-ox-headline
   (let ((get-headline
@@ -190,6 +192,8 @@ variable, and communication channel under `info'."
         (org-test-with-temp-text "foo^bar"
           (org-export-as backend))
         "foo^bar\n")))))
+
+;;;; blocks
 
 (ert-deftest osta-ox-blocks-test ()
   ;; `osta-ox-is-results-p'
@@ -344,3 +348,228 @@ A simple example
   ;; `osta-ox-quote-block'
   (should (string= (osta-ox-quote-block nil "I'm a quote. —Tony Aldon" nil)
                    "<blockquote class=\"osta-blockquote\">I'm a quote. —Tony Aldon</blockquote>")))
+
+;;;; links
+
+(ert-deftest osta-map-links-test ()
+  (should
+   (equal
+    (org-test-with-temp-text "#+LINK: abbrev-link /path/to/project/
+#+OSTA_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
+#+OSTA_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56"
+      (org-set-regexps-and-options)
+      (osta-map-links))
+    '(("/path/to/project/file-1.clj::(defn func-1" . "https://github.com/user/project/blob/master/file-1.clj#L12")
+      ("/path/to/project/file-2.clj::(defn func-2" . "https://github.com/user/project/blob/master/file-2.clj#L56"))))
+  (should
+   (equal
+    (org-test-with-temp-text "#+LINK: abbrev-link /path/to/project/
+#+OSTA_LINK: abbrev-link:                           --> foo
+#+OSTA_LINK: /path/to/project/                      --> foo
+#+OSTA_LINK: abbrev-link:file.clj::(defn func-1      --> bar
+#+OSTA_LINK: /path/to/project/file.clj::(defn func-1 --> bar
+#+OSTA_LINK: not a valid OSTA_LINK declaration"
+      (org-set-regexps-and-options)
+      (osta-map-links))
+    '(("/path/to/project/" . "foo")
+      ("/path/to/project/" . "foo")
+      ("/path/to/project/file.clj::(defn func-1" . "bar")
+      ("/path/to/project/file.clj::(defn func-1" . "bar")))))
+
+(ert-deftest osta-ox-link--custom-id-https-mailto-test ()
+  "link type: custom-id, https, mailto"
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . osta-ox-link)))))
+    (should
+     (string=
+      (org-test-with-temp-text "[[#foo][bar]]"
+        (org-export-as backend))
+      "<a href=\"foo\">bar</a>\n"))
+    (should
+     (string=
+      (org-test-with-temp-text "[[#foo]]"
+        (org-export-as backend))
+      "<a href=\"foo\">foo</a>\n"))
+    (should
+     (string=
+      (org-test-with-temp-text "https://tonyaldon.com"
+        (org-export-as backend))
+      "<a href=\"https://tonyaldon.com\">https://tonyaldon.com</a>\n"))
+    (should
+     (string=
+      (org-test-with-temp-text "[[https://tonyaldon.com][Tony Aldon]]"
+        (org-export-as backend))
+      "<a href=\"https://tonyaldon.com\">Tony Aldon</a>\n"))
+    (should
+     (string=
+      (org-test-with-temp-text "mailto:aldon.tony.adm@gmail.com"
+        (org-export-as backend))
+      "<a href=\"mailto:aldon.tony.adm@gmail.com\">mailto:aldon.tony.adm@gmail.com</a>\n"))
+    (should
+     (string=
+      (org-test-with-temp-text "[[mailto:aldon.tony.adm@gmail.com][my email]]"
+        (org-export-as backend))
+      "<a href=\"mailto:aldon.tony.adm@gmail.com\">my email</a>\n"))))
+
+(ert-deftest osta-ox-link--fuzzy-test ()
+  "link type: fuzzy"
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . osta-ox-link)))))
+    (should-error
+     (org-test-with-temp-text "[[fuzzy search]]"
+       (org-export-as backend)))
+    (should-error
+     (org-test-with-temp-text "[[*fuzzy search]]"
+       (org-export-as backend)))))
+
+(ert-deftest osta-ox-link--file-mapped-links-test ()
+  "link type: file (`:osta-links')"
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . osta-ox-link))
+          :options
+          '((:osta-root nil nil "public")
+            (:osta-assets nil nil "assets")
+            (:osta-links nil nil
+             '(("/tmp/clojurescript/" . "https://github.com/clojure/clojurescript")
+               ("./clojure/src/clj/clojure/core.clj::(defn str" .
+                "https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546")))))))
+    ;; link to directory mapped to github repository in `:osta-links'
+    (should
+     (string=
+      (org-test-with-temp-text "[[/tmp/clojurescript/][ClojureScript]]"
+        (org-export-as backend))
+      "<a href=\"https://github.com/clojure/clojurescript\">ClojureScript</a>\n"))
+    ;; link to the function `str' in the file `core.clj'
+    ;; mapped to the id `L546' on a specific webpages on github
+    (should
+     (string=
+      (org-test-with-temp-text "[[./clojure/src/clj/clojure/core.clj::(defn str][clojure.core/str]]"
+        (org-export-as backend))
+      (concat "<a href=\"https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546\">"
+              "clojure.core/str"
+              "</a>\n")))
+    ;; link to a file that:
+    ;;   1) has no mapping in `:osta-links',
+    ;;   2) is not in the directory `:osta-root',
+    ;;   3) is not in the directory `:osta-assets',
+    ;; should return an error.
+    (should-error
+     (org-test-with-temp-text "[[/path/to/example.txt]]"
+       (org-export-as backend))))
+
+  ;; `:osta-links' set using org keywords and the function `osta-map-links'
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . osta-ox-link))
+          :options
+          '((:osta-root nil nil "public")
+            (:osta-assets nil nil "assets")))))
+    (should
+     (string=
+      (org-test-with-temp-text "#+LINK: clj ./clojure/
+#+OSTA_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
+
+[[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]]"
+        (org-set-regexps-and-options)
+        (org-export-as backend nil nil nil
+                       `(:osta-links ,(osta-map-links))))
+      (concat "<a href=\"https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546\">"
+              "clojure.core/str"
+              "</a>\n")))))
+
+(ert-deftest osta-ox-link--file-root-and-assets-test ()
+  "link type: file (`:osta-root', `:osta-assets')"
+
+  ;; `:osta-root'
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . osta-ox-link))
+          :options
+          '((:osta-assets "OSTA_ASSETS" nil "assets")))))
+    (should
+     (string=
+      (org-test-with-temp-text "[[./public/blog/page-1.md][Page 1 in markdown]]"
+        (org-export-as backend nil nil nil '(:osta-root "public")))
+      "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
+    (should-error
+     (org-test-with-temp-text "[[./build/blog/page-1.md][Page 1 in markdown]]"
+       (org-export-as backend nil nil nil '(:osta-root "public"))))
+    (should
+     (string=
+      (org-test-with-temp-text "[[./build/blog/page-1.md][Page 1 in markdown]]"
+        (org-export-as backend nil nil nil '(:osta-root "build")))
+      "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
+    ;; :osta-root not defined
+    (should-error
+     (org-test-with-temp-text "[[./public/blog/page-1.md][Page 1 in markdown]]"
+       (org-export-as backend))))
+
+  ;; `:osta-assets'
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . osta-ox-link))
+          :options
+          '((:osta-root "OSTA_ROOT" nil "public")))))
+    (should
+     (string=
+      (org-test-with-temp-text "[[./assets/images/osta.png][osta image]]"
+        (org-export-as backend nil nil nil '(:osta-assets "assets")))
+      "<a href=\"/images/osta.png\">osta image</a>\n"))
+    (should
+     (string=
+      (org-test-with-temp-text "[[./resources/images/osta.png][osta image]]"
+        (org-export-as backend nil nil nil '(:osta-assets "resources")))
+      "<a href=\"/images/osta.png\">osta image</a>\n"))
+    (should-error
+     (org-test-with-temp-text "[[./resources/images/osta.png][osta image]]"
+       (org-export-as backend nil nil nil '(:osta-assets "assets"))))
+    ;; :osta-assets not defined
+    (should-error
+     (org-test-with-temp-text "[[./assets/images/osta.png][osta image]]"
+       (org-export-as backend))))
+
+  ;; `:osta-root' and `:osta-assets' set via org keyword
+  (let ((backend
+         (org-export-create-backend
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . osta-ox-link))
+          :options
+          '((:osta-root "OSTA_ROOT" nil "public")
+            (:osta-assets "OSTA_ASSETS" nil "assets")))))
+    (should
+     (string=
+      (org-test-with-temp-text "#+OSTA_ROOT: build
+    [[./build/blog/page-1.md][Page 1 in markdown]]"
+        (org-set-regexps-and-options)
+        (org-export-as backend))
+      "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
+    (should
+     (string=
+      (org-test-with-temp-text "#+OSTA_ASSETS: resources
+[[./resources/images/osta.png][osta image]]"
+        (org-set-regexps-and-options)
+        (org-export-as backend))
+      "<a href=\"/images/osta.png\">osta image</a>\n"))))

@@ -61,9 +61,10 @@
     (fixed-width . osta-ox-fixed-width)
     (quote-block . osta-ox-quote-block)
 
-    ;; (link . org-html-link)
-    )
-  )
+    (link . osta-ox-link))
+  :options-alist
+  '((:osta-root "OSTA_ROOT" nil "public")
+    (:osta-assets "OSTA_ASSETS" nil "assets")))
 
 ;;;; export/rendering
 
@@ -85,7 +86,7 @@ Use for debugging/exploring purpose."
                          ;; they all are exported as is.
                          (org-export-use-babel nil)
                          (exported (with-current-buffer "content.org"
-                                     (org-export-as 'osta))))
+                                     (org-export-as 'osta nil nil nil `(:osta-links ,(osta-map-links))))))
                     (with-current-buffer (get-buffer-create "*osta*")
                       (erase-buffer)
                       (insert "<!DOCTYPE html>")
@@ -221,6 +222,95 @@ Use `org-html-fontify-code'."
 (defun osta-ox-quote-block (_quote-block contents _info)
   (format "<blockquote class=\"osta-blockquote\">%s</blockquote>" contents))
 
+;;;; links
+
+(defun osta-map-links ()
+  "Return an alist of (LINK-EXPANDED . TARGET) in current buffer.
+
+Those links are defined by the org keyword `OSTA_LINK', like this:
+
+  #+OSTA_LINK: link --> target
+
+This osta link is a mapping between a LINK (first part in \"link --> target\")
+that org commands (related to visiting links, etc) understand,
+and a TARGET that is either:
+- the path to an available file in the website (exported by `osta'),
+- or a valid URL that point to an existing target on the web.
+
+If LINK in \"#+OSTA_LINK: link --> target\" contains an org
+abbreviated link, in the mapping, LINK is replaced by its expanded
+version computed by `org-link-expand-abbrev'.  Note: this expansion
+works only when the variable `org-link-abbrev-alist-local' is set.
+This can be done by the function `org-export-get-environment'.
+`osta-map-links' assumes that `org-link-abbrev-alist-local' is
+already set.
+
+Here is an example.
+
+In a org-mode buffer with the following content:
+
+#+LINK: abbrev-link /path/to/project/
+#+OSTA_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
+#+OSTA_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56
+
+`osta-map-links' returns:
+
+ ((\"/path/to/project/file-1.clj::(defn func-1\" . \"https://github.com/user/project/blob/master/file-1.clj#L12\")
+  (\"/path/to/project/file-2.clj::(defn func-2\" . \"https://github.com/user/project/blob/master/file-2.clj#L56\"))
+"
+  (when-let* ((osta-links (cdar (org-collect-keywords '("OSTA_LINK"))))
+              (map-link (lambda (osta-link)
+                          (and (string-match "\\`\\(.+\\S-\\)[ \t]+-->[ \t]*\\(.+\\)" osta-link)
+                               (cons (match-string-no-properties 1 osta-link)
+                                     (match-string-no-properties 2 osta-link)))))
+              (osta-links-alist (delq nil (mapcar map-link osta-links))))
+    (mapcar (lambda (l) (cons (org-link-expand-abbrev (car l)) (cdr l)))
+            osta-links-alist)))
+
+(define-error 'osta-link-broken "Unable to resolve link")
+
+(define-error 'osta-options "Option not defined")
+
+(defun osta-ox-link (link desc info)
+  "Transcode a LINK object from Org to HTML.
+DESC is the description part of the link, or the empty string.
+INFO is a plist holding contextual information."
+  (let* ((osta-links (plist-get info :osta-links))
+         (osta-root (plist-get info :osta-root))
+         (osta-assets (plist-get info :osta-assets))
+         ;; (root-assets-re (concat "\\`\\./" "\\(" osta-root "\\|" osta-assets "\\)"))
+         (type (org-element-property :type link))
+         (path (org-element-property :path link))
+         (raw-link (org-element-property :raw-link link))
+         (href (cond
+                ((string= type "custom-id") path)
+                ((string= type "fuzzy")
+                 (let ((beg (org-element-property :begin link)))
+                   (signal 'osta-link-broken
+                           `(,raw-link
+                             "fuzzy links not supported"
+                             ,(format "goto-char: %s" beg)))))
+                ((string= type "file")
+                 (or
+                  ;; mapped links in `:osta-links' have priority
+                  (cdr (assoc raw-link osta-links))
+                  ;; for instance, when `:osta-root' is equal to "public",
+                  ;; ./public/blog/page-1.md --> /blog/page-1.md
+                  (and (or osta-root (signal 'osta-options '(":osta-root")))
+                       (string-match (concat "\\`\\./" osta-root) path)
+                       (replace-match "" nil nil path))
+                  ;; for instance, when `:osta-assets' is equal to "assets",
+                  ;; ./assets/images/image-1.png --> /images/image-1.png
+                  (and (or osta-assets (signal 'osta-options '(":osta-assets")))
+                       (string-match (concat "\\`\\./" osta-assets) path)
+                       (replace-match "" nil nil path))
+                  ;; any other file link raises an error
+                  (let ((beg (org-element-property :begin link)))
+                    (signal 'osta-link-broken
+                            `(,raw-link ,(format "goto-char: %s" beg))))))
+
+                (t raw-link))))
+    (format "<a href=\"%s\">%s</a>" href (or (org-string-nw-p desc) href))))
 
 
 ;;; osta provide
