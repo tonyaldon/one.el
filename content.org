@@ -1,57 +1,194 @@
 #+TITLE: OSTA - Org Static
-#+DATE: <2021-12-27 Mon>
+#+DATE: <2022-01-13 Thu>
 
-# some comments
+* Home page
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /
+:END:
 
-Something before the first headline and with caracters that must be
-escaped when rendered into HTML: <, > and &.
+I'm the home page.
 
-* about page
+* About page
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /about/
+:END:
 
 I'm the about page.
 
 * 404
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /404/
+:END:
 
 I'm the 404 page.
 
-* index
-
-I'm the index page.
-
-* article 1 - plain-list and item
+* Why osta?
 :PROPERTIES:
-:CUSTOM_ID: 2022-01-01-article-1
+:OSTA_PAGE: t
+:CUSTOM_ID: /why-osta/
 :END:
 
-We want /unordered/ list:
+I wrote ~osta~ to do *tech* blogging.
 
-- first stuff
-- second stuff
-- third stuff
+More precisely to talk about *programs* (not programming).
 
-and also /ordered/ list:
+To me, it involves only three components:
+1) chunks of code,
+2) links to those chunks of code and,
+3) the people (big thank you!!!) who wrote those chunks of code.
 
-1) first
-2) second
-3) third
+So, when I wrote it, I focused on those aspects.
 
-* article 2 - src-block
+As a result, I left out many org elements:
+- I don't do math.  No support for Latex,
+- I don't use images.  No support for images.
+- etc.
 
-Here some code in a block with its evaluation rendered with a
-different design:
+You can find the complete list of the org elements that are not
+supported in the commentary section of the file ~osta.el~
 
-#+BEGIN_SRC bash :results output
-ls
+* Documentation
+** org elements not supported
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /doc/org-elements-not-supported/
+:END:
+
+I left out many org elements:
+- I don't do math.  No support for Latex,
+- I don't use images.  No support for images.
+- etc.
+
+You can find the complete list of the org elements that are not
+supported in the commentary section of the file ~osta.el~
+
+Read more: [[#/why-osta/][Why osta?]].
+
+** src-block
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /doc/src-block/
+:END:
+*** code highlighting with ~htmlize.el~
+**** description
+
+~osta~ highlights code via the function ~osta-ox-htmlize~ that uses
+~htmlize.el~ to do the work.
+
+For a given piece of code ~X~ in a certain language ~Y~, ~X~ will be
+highlighted as it would be in the emacs mode ~Z~ used to edit ~Y~ code.
+
+For instance, ~clojure-mode~ is used to highlight Clojure code and
+~sh-mode~ is used to highlight Bash code.
+
+Attributes of a face (like ~background-color~ or ~foreground-color~)
+are not taken directly.  A generated name for the face is produced and
+used as the CSS class for the parts of the code ~X~ that are highlighted
+with that face.
+
+For instance, in ~sh-mode~, the word ~echo~ is highlighted with the face
+~font-lock-builtin-face~.  So, the word ~echo~ in a piece of Shell (or
+Bash) code will be transformed into:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<span class="osta-hl-builtin">echo</span>
 #+END_SRC
 
-#+RESULTS:
-: content.org
-: osta.css
-: osta.el
-: README.org
+The whole piece of code ~X~, once the previously described operations
+have been done, is wrapped:
 
-I use ~htmlize.el~ (at build time) to highlight code like this Clojure
-code:
+1) for a /normal/ block by the component:
+
+   #+ATTR_OSTA_RESULTS:
+   #+BEGIN_SRC html
+   <pre><code class="osta-hl osta-hl-block">...</code></pre>
+   #+END_SRC
+
+2) for a /result/ block by the component:
+
+   #+ATTR_OSTA_RESULTS:
+   #+BEGIN_SRC html
+   <pre><code class="osta-hl osta-hl-results">...</code></pre>
+   #+END_SRC
+
+See section [[#/doc/src-block/#org-keywords-results-and-attr_osta_results][org keywords RESULTS and ATTR_OSTA_RESULTS]].
+
+**** example with Bash code
+
+For instance, the following org src-block, containing some ~bash~ code:
+
+#+BEGIN_SRC text
+,#+BEGIN_SRC bash
+echo "list file's extensions in current dir:"
+for f in `ls`; do
+    echo ${f##*.}
+done
+,#+END_SRC
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<pre><code class="osta-hl osta-hl-block"><span class="osta-hl-builtin">echo</span> <span class="osta-hl-string">"list file's extensions in current dir:"</span>
+<span class="osta-hl-keyword">for</span> f<span class="osta-hl-keyword"> in</span> <span class="osta-hl-sh-quoted-exec">`ls`</span>; <span class="osta-hl-keyword">do</span>
+    <span class="osta-hl-builtin">echo</span> ${<span class="osta-hl-variable-name">f</span>##*.}
+<span class="osta-hl-keyword">done</span></code></pre>
+</div>
+#+END_SRC
+
+and rendered like this:
+
+#+BEGIN_SRC bash
+echo "list file's extensions in current dir:"
+for f in `ls`; do
+    echo ${f##*.}
+done
+#+END_SRC
+
+Note that ~osta-ox-htmlize~ has produced and used the following CSS
+classes (listed with their corresponding emacs faces):
+
+#+BEGIN_SRC text
+# from font-lock
+osta-hl-builtin        --> font-lock-builtin-face
+osta-hl-keyword        --> font-lock-keyword-face
+osta-hl-string         --> font-lock-string-face
+osta-hl-variable-name  --> font-lock-variable-name-face
+
+# specific to sh-mode
+osta-hl-sh-quoted-exec --> sh-quoted-exec
+#+END_SRC
+
+You might have notice the pattern used for ~font-lock~ faces and the one
+used for mode specific faces.
+
+~osta~ provides a style sheet that has the CSS classes defined for all
+the ~font-lock~ faces (faces starting by ~font-lock-~) but not the
+specific faces used by each prog mode (except the ones I use often).
+
+You can add the CSS classes specific to the prog modes you use as you
+go and need them.
+
+**** Bash, Clojure and Elisp chunks of code
+
+Bash, Clojure and Elisp languages are the ones I want to talk about.
+And I'm sure they will appear in my tech writing.  So here they are:
+
+Bash code:
+
+#+BEGIN_SRC bash
+echo "list file's extensions in current dir:"
+for f in `ls`; do
+    echo ${f##*.}
+done
+#+END_SRC
+
+Clojure code:
 
 #+BEGIN_SRC clojure
 (defn str
@@ -72,7 +209,7 @@ code:
       (new StringBuilder (str x)) ys)))
 #+END_SRC
 
-and also some Elisp code like this:
+Elisp code:
 
 #+BEGIN_SRC emacs-lisp
 (defconst clojure-font-lock-keywords
@@ -93,26 +230,95 @@ and also some Elisp code like this:
       )))
 #+END_SRC
 
-and some HTML code where charaters like ~<~ and ~>~  must be escaped
-correctly (in the org file this code snippet contains also extra
-indentation that we doesn't want to appear in the exported HTML):
+*** org keywords ~RESULTS~ and ~ATTR_OSTA_RESULTS~
+:PROPERTIES:
+:CUSTOM_ID: /doc/src-block/#org-keywords-results-and-attr_osta_results
+:END:
 
-#+BEGIN_SRC html
-    <!DOCTYPE html>
-    <html>
-      <body>
+A *block* is considered to be a /result/ block:
+1) if it is preceded by a line starting by ~#+RESULTS:~ or,
+2) if it is preceded by a line starting by ~#+ATTR_OSTA_RESULTS:~.
 
-        <h1>My First Heading</h1>
-        <p>My first paragraph.</p>
+Blocks that are not /result/ blocks are /normal/ blocks.
 
-      </body>
-    </html>
+When exported, /normal/ blocks and /result/ blocks differ only by their
+CSS classes:
+- ~osta-hl osta-hl-block~ for /normal/ blocks,
+- ~osta-hl osta-hl-results~ for /result/ blocks.
+
+This way /result/ blocks can be rendered with a different style
+than /normal/ blocks as we can see in the following 2 examples.
+
+**** example using org keyword ~RESULTS~
+
+The following org snippet:
+
+#+BEGIN_SRC text
+,#+BEGIN_SRC bash :results output
+ls
+,#+END_SRC
+
+,#+RESULTS:
+: content.org
+: osta.css
+: osta.el
+: README.org
 #+END_SRC
 
-Sometime I want to say things like the following (and I want the
-second code snippet (the result of the evaluation) to have a different
-"design". To do so, we add the org attribute ~#+ATTR_OSTA_RESULTS:~ on
-the line before the second source block):
+is exported by ~osta~ as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<pre><code class="osta-hl osta-hl-block">ls</code></pre>
+<pre><code class="osta-hl osta-hl-results">content.org
+osta.css
+osta.el
+README.org</code></pre>
+#+END_SRC
+
+and is rendered by ~osta~ with the first block (/normal/ block) having a
+different style from second block (/result/ block):
+
+#+BEGIN_SRC bash :results output
+ls
+#+END_SRC
+
+#+RESULTS:
+: content.org
+: osta.css
+: osta.el
+: README.org
+
+**** example using org keyword ~ATTR_OSTA_RESULTS~
+
+The following org snippet:
+
+#+BEGIN_SRC text
+After evaluating this code block:
+
+,#+BEGIN_SRC emacs-lisp
+(plist-get '(:a "aaa" :b (:c "ccc" :d "ddd")) :b)
+,#+END_SRC
+
+we get:
+
+,#+ATTR_OSTA_RESULTS:
+,#+BEGIN_SRC emacs-lisp
+(:c "ccc" :d "ddd")
+,#+END_SRC
+#+END_SRC
+
+is exported by ~osta~ as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<p>After evaluating this code block:</p>
+<pre><code class="osta-hl osta-hl-block">(plist-get '(<span class="osta-hl-builtin">:a</span> <span class="osta-hl-string">"aaa"</span> <span class="osta-hl-builtin">:b</span> (<span class="osta-hl-builtin">:c</span> <span class="osta-hl-string">"ccc"</span> <span class="osta-hl-builtin">:d</span> <span class="osta-hl-string">"ddd"</span>)) <span class="osta-hl-builtin">:b</span>)</code></pre>
+<p>we get:</p>
+<pre><code class="osta-hl osta-hl-results">(<span class="osta-hl-builtin">:c</span> <span class="osta-hl-string">"ccc"</span> <span class="osta-hl-builtin">:d</span> <span class="osta-hl-string">"ddd"</span>)</code></pre>
+#+END_SRC
+
+and is rendered by ~osta~ like this:
 
 After evaluating this code block:
 
@@ -127,70 +333,747 @@ we get:
 (:c "ccc" :d "ddd")
 #+END_SRC
 
-And code inside list:
+*** code blocks inside list
+
+Lists can contain src-block as we can see in the following org
+snippet:
+
+#+BEGIN_SRC text
+1. item 1
+
+   ,#+BEGIN_SRC emacs-lisp
+   (message "src-block in item 1")
+   ,#+END_SRC
+
+2. item 2
+3. item 3
+#+END_SRC
+
+that is exported by ~osta~ as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<ol>
+  <li>
+    <p>item 1</p>
+    <pre><code class="osta-hl osta-hl-block">(message <span class="osta-hl-string">"src-block in item 1"</span>)</code></pre>
+  </li>
+  <li><p>item 2</p></li>
+  <li><p>item 3</p></li>
+</ol>
+#+END_SRC
+
+and is rendered by ~osta~ like this:
+
 1. item 1
 
    #+BEGIN_SRC emacs-lisp
-   (message "code in item 1")
+   (message "src-block in item 1")
    #+END_SRC
 
 2. item 2
 3. item 3
 
-* article 3 - fixed-width
-** section 2.1
+** quote-block
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /doc/quote-block/
+:END:
 
-I don't support latex.
+Blocks defined with ~#+BEGIN_QUOTE ... #+END_QUOTE~ pattern are
+quote-block.
 
-But I support ~fixed-width~ element:
+They are exported by ~osta~ in a ~<blockquote>...</blockquote>~ component
+with the CSS class ~osta-blockquote~.
 
-: I'm a fixed element
+The following org snippet:
 
-and also inside list:
-- item 1
-  : fixed element
-- item 2
-  : fixed element line 1
-  : fixed element line 2
+#+BEGIN_SRC text
+,#+BEGIN_QUOTE
+A quitter never wins and a winner never quits. —Napoleon Hill
+,#+END_QUOTE
+#+END_SRC
 
-** section 2.2
+defines a quote and is exported by ~osta~ as follow:
 
-Something here!
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<blockquote class="osta-blockquote">A quitter never wins and a winner never quits. —Napoleon Hill</blockquote>
+#+END_SRC
 
-*** section 2.2.1
-
-Another thing here!
-
-*** section 2.2.2
-
-Another thing here!
-
-* article 4 - example-block and quote-block
-
-Although I don't often use example blocks, here is one:
-
-#+BEGIN_EXAMPLE
-This an example!
-#+END_EXAMPLE
-
-I really like quotes like this one:
+and look like this:
 
 #+BEGIN_QUOTE
 A quitter never wins and a winner never quits. —Napoleon Hill
 #+END_QUOTE
 
-* article 5 - links
+** fixed-width and example-block
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /doc/fixed-width-and-example-block/
+:END:
+*** description
 
-#+LINK: clj     /home/tony/work/tmp/clojure/
-# https://github.com/clojure/clojure
+A line starting with a colon ~:~ followed by a space defined a
+fixed-width element.  A fixed-width element can span several
+lines.
 
-- standard external link with description: [[https://tonyaldon.com][Tony Aldon]]
-- standard external link without description: https://tonyaldon.com
-- file: [[./osta.css][osta.css]]
-- abbreviated link to local file:
-- abbreviated link to local directory (that also can be mapped to an
-  external link)
- ~[[clj][clojure]]~ [[clj][clojure]] -> ~<a href="https://github.com/clojure/clojure">clojure</a>~
-- ~custom_id~ ???
-- ~custom_id~ [[
-- other page this blog [[
+fixed-width elements are blocks.
+
+Blocks defined with ~#+BEGIN_EXAMPLE ... #+END_EXAMPLE~ pattern are
+example-block elements.
+
+Both fixed-width and example-block blocks are treated as [[#/doc/src-block/][src-block]] in
+~text-mode~.  So:
+
+1) they are highlighted as ~text-mode~ would do,
+2) they are rendered in a ~<pre><code>...</code></pre>~ component
+   (indentation and newlines are respected),
+3) they are /normal/ blocks (with CSS classes ~osta-hl osta-hl-block~) *OR*
+   /result/ blocks (with CSS classes ~osta-hl osta-hl-results~).
+
+*** example
+
+The following org snippet:
+
+#+BEGIN_SRC text
+Here is a fixed-width element (one line):
+
+: I'm a fixed-width element
+
+fixed-width elements can also be used within lists:
+
+- item 1
+  : fixed-width element
+- item 2
+  ,#+ATTR_OSTA_RESULTS:
+  : multiline fixed-width element
+  : that is also a result block,
+  : so has a different style.
+
+Although I don't often use example blocks, here is one:
+
+,#+BEGIN_EXAMPLE
+This    is
+        an    example!
+,#+END_EXAMPLE
+#+END_SRC
+
+is exported by ~osta~ as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<p>Here is a fixed-width element (one line):</p>
+
+<pre><code class="osta-hl osta-hl-block">I'm a fixed-width element</code></pre>
+
+<p>fixed-width elements can also be used within lists:</p>
+
+<ul>
+  <li>
+    <p>item 1</p>
+    <pre><code class="osta-hl osta-hl-block">fixed-width element</code></pre>
+  </li>
+  <li>
+    <p>item 2</p>
+    <pre><code class="osta-hl osta-hl-results">multiline fixed-width element
+that is also a result block,
+so has a different style.</code></pre>
+  </li>
+</ul>
+
+<p>Although I don&apos;t often use example blocks, here is one:</p>
+
+<pre><code class="osta-hl osta-hl-block">This    is
+        an    example!</code></pre>
+#+END_SRC
+
+and look like this:
+
+Here is a fixed-width element (one line):
+
+: I'm a fixed-width element
+
+fixed-width elements can also be used within lists:
+
+- item 1
+  : fixed-width element
+- item 2
+  #+ATTR_OSTA_RESULTS:
+  : multiline fixed-width element
+  : that is also a result block,
+  : so has a different style.
+
+Although I don't often use example blocks, here is one:
+
+#+BEGIN_EXAMPLE
+This    is
+        an    example!
+#+END_EXAMPLE
+
+** links
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /doc/links
+:END:
+*** http, https, mailto links
+
+- http://tonyaldon.com,
+- [[https://tonyaldon.com][Tony Aldon (https)]],
+- [[mailto:aldon.tony.adm@gmail.com][send me an email]].
+
+Web links (starting by ~http~ or ~https~) and links to message
+composition (starting by ~mailto~) are exported as you expect.
+
+For instance the following link:
+
+#+BEGIN_SRC text
+http://tonyaldon.com
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="http://tonyaldon.com">http://tonyaldon.com</a>
+#+END_SRC
+
+and this following link with a description:
+
+#+BEGIN_SRC text
+[[https://tonyaldon.com][Tony Aldon (https)]]
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="https://tonyaldon.com">Tony Aldon (https)</a>
+#+END_SRC
+
+and this ~mailto~ link:
+
+#+BEGIN_SRC text
+[[mailto:aldon.tony.adm@gmail.com][send me an email]]
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="mailto:aldon.tony.adm@gmail.com">send me an email</a>
+#+END_SRC
+
+*** custom-id links
+
+- [[#/doc/plain-list-and-item/][page about plain-list]],
+- [[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]].
+
+**** description
+
+In ~osta~, ~CUSTOM_ID~ properties are:
+
+- paths to pages (if the corresponding headline has also the property
+  ~OSTA_PAGE~ set to ~t~):
+
+  #+BEGIN_SRC text
+  ,* Page 1
+  :PROPERTIES:
+  :OSTA_PAGE: t
+  :CUSTOM_ID: /blog/page-1/
+  :END:
+  #+END_SRC
+
+- or paths to a specific heading (headline in org parlance) inside
+  pages:
+
+  #+BEGIN_SRC text
+  ,* Page 1
+  :PROPERTIES:
+  :OSTA_PAGE: t
+  :CUSTOM_ID: /blog/page-1/
+  :END:
+  ,** headline 1 in page Page 1
+  :PROPERTIES:
+  :CUSTOM_ID: /blog/page-1/#headline-1
+  :END:
+  #+END_SRC
+
+Those paths define valid web urls starting at the root of the website
+if you respect (you must):
+
+1) url-encoded characters,
+2) start them with a ~/~,
+3) use ~#~ character to start the last part of the path when you're
+   targeting a heading tag with its ~id~ being the last part after the ~#~
+   character.
+
+The benefits of these "rules/conventions" are:
+
+1) ~osta~ not need to compute anything regarding of the paths of the
+   pages,
+2) ~osta~ can leave ~custom-id~ links as they are,
+3) navigation between ~osta~ pages (specific headlines) inside emacs
+   using ~custom-id~ links is *not broken*!  (This is a big win for the
+   writer of the blog who can enjoy his own blog inside emacs!!!).
+
+Precisely, the following link to the ~custom-id~ equal to ~/blog/page-1/~:
+
+#+BEGIN_SRC text
+[[#/blog/page-1/][Page 1]]
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="/blog/page-1/">Page 1</a>
+#+END_SRC
+
+**** example (link to a page)
+
+The following link to the headline with ~CUSTOM_ID~ equal to
+~/doc/plain-list-and-item/~ (that is also an ~osta~ page):
+
+#+BEGIN_SRC text
+[[#/doc/plain-list-and-item/][page about plain-list]]
+#+END_SRC
+
+is exported to this anchor tag that links to the page ~/doc/plain-list-and-item/~:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="/doc/plain-list-and-item/">page about plain-list</a>
+#+END_SRC
+
+and is rendered like this: [[#/doc/plain-list-and-item/][page about plain-list]].
+
+**** example (link to a headline in a page)
+
+The following link to the headline with ~CUSTOM_ID~ equal to
+~/doc/plain-list-and-item/#unordered-lists~ (that must be a subsection of the
+~osta~ page ~/doc/plain-list-and-item/~):
+
+#+BEGIN_SRC text
+[[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]]
+#+END_SRC
+
+is exported to this anchor tag that links to the heading with the ~id~
+set to ~unordered-lists~ on the page ~/doc/plain-list-and-item/~:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="/doc/plain-list-and-item/#unordered-lists">unordered lists heading in the page about plain-list</a>
+#+END_SRC
+
+and is rendered like this: [[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about
+plain-list]].
+
+*** fuzzy links
+
+# uncomment the last line of this comment (fuzzy search link),
+# narrow the buffer to this subsection, and export the narrowed
+# buffer with osta.
+# --> This must raise an error.
+# --> [[fuzzy search]]
+
+I don't use ~fuzzy~ links.  So, if there is a ~fuzzy~ link
+in the document, that means I wrote the link wrong.
+
+Broken links are bad user experience.  I don't like them.
+
+So I decided that ~osta~ raises an error (hard-coded) when we try to
+export a fuzzy link to HTML.
+
+For instance, the following ~fuzzy~ link:
+
+#+BEGIN_SRC text
+[[fuzzy search]]
+#+END_SRC
+
+raise an error like the following:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC text
+(osta-link-broken "fuzzy search" "fuzzy links not supported" "goto-char: 5523")
+#+END_SRC
+
+*** file links
+**** links to local files mapped to web urls (~OSTA_LINK~)
+:PROPERTIES:
+:CUSTOM_ID: /doc/links/#local-files-mapped-to-web-urls
+:END:
+
+# we've put the #+LINK: statments here to have
+# this section about links self-contained, thought
+# it is better practice to put it at the beginning
+# of the org file.
+
+#+LINK: clj ./clojure/
+
+# mapped links between local files and web urls are
+# declared with the osta org keyword OSTA_LINK.
+
+#+OSTA_LINK: /tmp/clojurescript/ --> https://github.com/clojure/clojurescript
+#+OSTA_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
+
+# to make those following links works correctly inside emacs,
+# you must have:
+# 1) ClojureScript repository cloned under the directory /tmp/clojurescript/:
+   # git clone https://github.com/clojure/clojurescript.git /tmp/clojurescript
+# 2) Clojure repository cloned under this current directory:
+#    git clone https://github.com/clojure/clojure.git
+
+- [[/tmp/clojurescript/][ClojureScript]],
+- [[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]].
+
+***** org keyword ~OSTA_LINK~
+****** description
+
+In my org files, I often use links to directories which are clones of
+repositories.  If those repositories are hosted on Github for
+instance, they can be reached with web urls.
+
+With ~osta~ you can declare such mappings between directories and
+web urls with the org keyword ~OSTA_LINK~ respecting the following
+syntax:
+
+: #+OSTA_LINK: /path/to/example/ --> https://example.com
+
+Once you've declared those mappings, ~osta~, when exporting, will
+replace the links to the directories by their mapped web urls.
+
+Note that mapped links declared with org keyword ~OSTA_LINK~ have
+prevalence over any other file links.
+
+****** example
+
+Assuming, you have a cloned of ClojureScript repository
+(https://github.com/clojure/clojurescript) under the directory
+~/tmp/clojurescript/~.
+
+You can declare a mapping between the repository on your machine
+(~/tmp/clojurescript/~) and the repository on Github by adding
+(anywhere) the following line to this org file:
+
+: #+OSTA_LINK: /tmp/clojurescript/ --> https://github.com/clojure/clojurescript
+
+With this mapping declared, the following link:
+
+#+BEGIN_SRC text
+[[/tmp/clojurescript/][ClojureScript]]
+#+END_SRC
+
+that links on your machine to the directory ~/tmp/clojurescript/~ will
+be exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="https://github.com/clojure/clojurescript">ClojureScript</a>
+#+END_SRC
+
+and is rendered like this: [[/tmp/clojurescript/][ClojureScript]].
+
+***** org keyword ~OSTA_LINK~ combined with org keyword ~LINK~
+****** description
+
+In the left part of ~#+OSTA_LINK:~ statments you can use org abbreviated
+links that have been defined in ~#+LINK:~ statments.
+
+****** example
+
+For instance, in the following org snippets:
+1) we defined the abbreviated link ~clj~ that resolves to ~./clojure/~,
+2) we use it in the left part of the ~#+OSTA_LINK:~ statements and,
+3) we use it in a link.
+
+#+BEGIN_SRC text
+,#+LINK: clj ./clojure/
+,#+OSTA_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
+
+[[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]]
+#+END_SRC
+
+When you use the command ~org-open-at-point~ (bound to ~C-c C-o~) on the
+previous link, you "jump" (inside emacs) to the definition of the
+function ~str~ defined in the file ~./clojure/src/clj/clojure/core.clj~
+(assuming, you have a cloned of Clojure repository
+https://github.com/clojure/clojure under the directory ~./clojure/~).
+
+When you export the previous link with ~osta~, you get the following
+anchor tag:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546">clojure.core/str</a>
+#+END_SRC
+
+that points:
+
+1) to the definition of the function ~str~,
+2) on line ~546~ for the commit ~abe19832c0294fec4c9c55430c9262c4b6d2f8b1~,
+3) in the file ~src/clj/clojure/core.clj~,
+4) on Github,
+5) in the repository: ~https://github.com/clojure/clojure~,
+
+and is rendered like this: [[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]].
+
+**** links to local files in the ~public~ directory
+:PROPERTIES:
+:CUSTOM_ID: /doc/links/#local-files-in-public-dir
+:END:
+
+- [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]]
+
+***** description
+
+One might want to generate at build time files that are going to be
+available in the ~public~ (root of the website by default) directory.
+Those files not need to be ~osta~ pages (that means not need to have
+dedicated entries in this org file).
+
+Those files, that are not ~osta~ pages, can't be linked in this
+org file with ~custom-id~ links (because those links would be broken
+inside emacs, and we don't want that).
+
+For those files, that will end up in the ~public~ directory after the
+build, we can use local file links.  They will be exported removing
+the ~./public~ part of the path making them accessible via web url.
+
+It's convenient, because this way, after the build of the website,
+those links stop being broken in this org file.
+
+***** example
+
+For instance, assuming the build of the website produces the markdown
+file ~./public/doc/plain-list-and-item.md~ that is a markdown
+version of the page ~/doc/plain-list-and-item/~, we can link
+to that markdown file in this org file as follow:
+
+#+BEGIN_SRC text
+[[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]]
+#+END_SRC
+
+This previous link is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="/doc/plain-list-and-item.md">page about plain-list in markdown format</a>
+#+END_SRC
+
+and is rendered like this: [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]].
+
+***** root directory ~public~ can be modify with org keyword ~OSTA_ROOT~
+
+The root directory of the website is defined in the ~:option-alist~ of
+~osta~ org export backend with the keyword ~:osta-root~.
+
+By default, it is set to ~public~, but you can change it using the org
+keyword ~OSTA_ROOT~ in this org file.
+
+For instance, you can set the default root directory of the website to
+the directory ~build~ adding this line ~#+OSTA_ROOT: build~ at the top of
+this org file.
+
+If you do so, the following link:
+
+#+BEGIN_SRC text
+#+OSTA_ROOT: build
+# ...
+[[./build/doc/plain-list-and-item.md][page about plain-list in markdown format]]
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="/doc/plain-list-and-item.md">page about plain-list in markdown format</a>
+#+END_SRC
+
+and is rendered like this: [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]].
+
+**** links to local files in the ~assets~ directory
+:PROPERTIES:
+:CUSTOM_ID: /doc/links/#local-files-in-assets-dir
+:END:
+
+- [[./assets/images/osta.png][osta image]]
+
+***** description
+
+Files in the directory ~assets~ (by default) are copied into the
+directory ~public~ (root of the website by default) when the website is
+built.
+
+All file links pointing to files in the ~assets~ directory, once the
+website has been built, will point to files in the directory ~public~.
+The links will be exported removing the ~./assets~ part of the path
+making them accessible via web url.
+
+It's convenient, because this way:
+1) we can "clean" the ~public~ directory whenever we need it and,
+2) local file links in this org file are never broken.
+
+***** example
+
+For instance the following link:
+
+#+BEGIN_SRC text
+[[./assets/images/osta.png][osta image]]
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="/images/osta.png">osta image</a>
+#+END_SRC
+
+and is rendered like this: [[./assets/images/osta.png][osta image]].
+
+***** assets directory ~assets~ can be modify with org keyword ~OSTA_ASSETS~
+
+The directory where the assets go (~css~, ~js~, ~images~) is define in the
+~:option-alist~ of ~osta~ org export backend with the keyword
+~:osta-assets~.
+
+By default, it is set to ~assets~, but you can change it using the org
+keyword ~OSTA_ASSETS~ in this org file.
+
+For instance, you can set the assets directory to the directory
+~resources~ adding this line ~#+OSTA_ASSETS: resources~ at the top of this
+org file.
+
+If you do so, the following link:
+
+#+BEGIN_SRC text
+#+OSTA_ASSETS: resources
+# ...
+[[./resources/images/osta.png][osta image]]
+#+END_SRC
+
+is exported as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<a href="/images/osta.png">osta image</a>
+#+END_SRC
+
+and is rendered like this: [[./assets/images/osta.png][osta image]].
+
+**** local file links that raise an error (~osta-link-broken~)
+***** description
+
+# uncomment the last line of this comment (unresolved file link),
+# narrow the buffer to this subsection, and export the narrowed
+# buffer with osta.
+# --> This must raise an error because:
+#     1) the directory /tmp/ has no mapping to an web url
+#        declared with org keyword OSTA_LINK,
+#     2) neither is a local relative file in the root
+#        directory ./public/,
+#     3) neither is a local relative file in the assets
+#        directory ./assets/.
+# --> [[/tmp/]]
+
+Any file link that is not one of the following links:
+
+1) [[#/doc/links/#local-files-mapped-to-web-urls][link to a local file mapped to web url]],
+2) [[#/doc/links/#local-files-in-public-dir][link to a local file in the public directory]],
+3) [[#/doc/links/#local-files-in-assets-dir][link to a local file in the assets directory]],
+
+raises an ~osta-link-broken~ error when ~osta~ try to export it.
+
+***** example
+
+Assuming we haven't declared an ~OSTA_LINK~ mapping between the
+directory ~/tmp/~ and any web url, the org file link:
+
+#+BEGIN_SRC text
+[[/tmp/]]
+#+END_SRC
+
+that is not in the ~public~ nor in the ~assets~ directory will raise (when
+we try to export the link with ~osta~) an error like the following:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC text
+(osta-link-broken "/tmp/" "goto-char: 26308")
+#+END_SRC
+
+** plain-list and item
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /doc/plain-list-and-item/
+:END:
+
+Only /unordered/ and /ordered/ lists are supported.
+
+*** unordered lists
+:PROPERTIES:
+:CUSTOM_ID: /doc/plain-list-and-item/#unordered-lists
+:END:
+
+The following org snippet (unordered list):
+
+#+BEGIN_SRC text
+- a thing,
+- another thing,
+- and the last one.
+#+END_SRC
+
+is exported by ~osta~ as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<ul>
+  <li>
+    <p>a thing,</p>
+  </li>
+  <li>
+    <p>another thing,</p>
+  </li>
+  <li>
+    <p>and the last one.</p>
+  </li>
+</ul>
+#+END_SRC
+
+and is rendered like this:
+
+- a thing,
+- another thing,
+- and the last one.
+
+*** ordered list
+
+The following org snippet (unordered list):
+
+#+BEGIN_SRC text
+1) first,
+2) second,
+3) third.
+#+END_SRC
+
+is exported by ~osta~ as follow:
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC html
+<ol>
+  <li>
+    <p>a thing,</p>
+  </li>
+  <li>
+    <p>another thing,</p>
+  </li>
+  <li>
+    <p>and the last one.</p>
+  </li>
+</ol>
+#+END_SRC
+
+and is rendered like this:
+
+1) first,
+2) second,
+3) third.
