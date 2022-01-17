@@ -68,8 +68,10 @@ Use for debugging/exploring purpose."
 (global-set-key (kbd "C-<f2>")
                 (lambda () (interactive)
                   (let* (
+                         ;; _ and ^ characters are exported as is.
+                         (org-export-with-sub-superscripts nil)
                          ;; no evaluation of any source block,
-                         ;; they all are exported anyway.
+                         ;; they all are exported as is.
                          (org-export-use-babel nil)
                          (exported (with-current-buffer "content.org"
                                      (org-export-as 'osta))))
