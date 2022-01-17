@@ -312,6 +312,63 @@ INFO is a plist holding contextual information."
                 (t raw-link))))
     (format "<a href=\"%s\">%s</a>" href (or (org-string-nw-p desc) href))))
 
+;;; pages
+
+(defun osta-page-p (element)
+  "Return ELEMENT if ELEMENT is an `osta' page.
+
+If ELEMENT isn't an `osta' page, return nil.
+
+A root element (a `headline') is an `osta' page if:
+1) it has the org property `OSTA_PAGE' set to `t' and
+2) the org property `CUSTOM_ID' set.
+The value of `CUSTOM_ID' of an `osta' page is the relative path of
+the page from the root of the `osta' website.
+
+An `osta' page with `CUSTOM_ID' set to `/' is the homepage of the
+`osta' website.
+
+Assuming that we locally serve our website at `http://localhost:3000',
+the following org snippet defines an `osta' page which url is
+`http://localhost:3000/2022-01-09/my-page/':
+
+--------------------
+
+* my super cool page
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /2022-01-09/my-page/
+:END:
+
+This page contains a list:
+- item 1
+- item 2
+- item 3
+
+--------------------"
+  (and (org-element-property :OSTA_PAGE element)
+       (org-string-nw-p (org-element-property :CUSTOM_ID element))
+       element))
+
+(defun osta-page (element)
+  "Return root element (a `headline') that is an `osta' page containing ELEMENT.
+
+If ELEMENT doesn't belong to any page, return nil.
+
+See `osta-page-p'."
+  (pcase (org-element-type element)
+    (`nil nil)
+    (`org-data nil)
+    (`headline (or (osta-page-p element)
+                   (osta-page (org-element-property :parent element))))
+    (_ (osta-page (org-element-property :parent element)))))
+
+(defun osta-page-path (element)
+  "Return path of `osta' page if ELEMENT is part of an `osta' page.
+
+Return nil if not.
+See `osta-page'."
+  (org-element-property :CUSTOM_ID (osta-page element)))
 
 ;;; osta provide
 

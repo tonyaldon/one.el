@@ -573,3 +573,140 @@ A simple example
         (org-set-regexps-and-options)
         (org-export-as backend))
       "<a href=\"/images/osta.png\">osta image</a>\n"))))
+
+;;; pages
+
+(ert-deftest osta-page-p-test ()
+  (should-not
+   (org-test-with-temp-text "<point>* page 1
+:PROPERTIES:
+:CUSTOM_ID: /date-1/page-1/
+:END:"
+     (osta-page-p (org-element-context))))
+  (should-not
+   (org-test-with-temp-text "<point>* page 1
+:PROPERTIES:
+:OSTA_PAGE: t
+:END:"
+     (osta-page-p (org-element-context))))
+  (should-not
+   (org-test-with-parsed-data "* page 1
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /date-1/page-1/
+:END:
+** headline 1
+** headline 2
+
+some text
+"
+     (let ((headline-1
+            (car (org-element-map tree 'headline
+                   (lambda (e)
+                     (when (string= (org-element-property :raw-value e) "headline 1")
+                       e))))))
+       (osta-page-p headline-1))))
+  (should
+   (equal
+    (org-test-with-temp-text "<point>* page 1
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /date-1/page-1/
+:END:"
+      (let ((page (osta-page-p (org-element-context))))
+        `(:raw-value ,(org-element-property :raw-value page)
+          :OSTA_PAGE ,(org-element-property :OSTA_PAGE page)
+          :CUSTOM_ID ,(org-element-property :CUSTOM_ID page))))
+    '(:raw-value "page 1"
+      :OSTA_PAGE "t"
+      :CUSTOM_ID "/date-1/page-1/"))))
+
+(ert-deftest osta-page-test ()
+  (should-not
+   (org-test-with-parsed-data "* page 1
+:PROPERTIES:
+:CUSTOM_ID: /date-1/page-1/
+:END:
+  "
+     (let ((headline (car (org-element-map tree 'headline #'identity))))
+       (osta-page headline))))
+  (should-not
+   (org-test-with-parsed-data "* page 1
+:PROPERTIES:
+:OSTA_PAGE: t
+:END:
+  "
+     (let ((headline (car (org-element-map tree 'headline #'identity))))
+       (osta-page headline))))
+  (should
+   (equal
+    (org-test-with-parsed-data "* page 1
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /date-1/page-1/
+:END:
+** headline 1
+** headline 2
+
+some text
+  "
+      (let* ((get-headline
+              (lambda (rv)
+                (car (org-element-map tree 'headline
+                       (lambda (e)
+                         (when (string= (org-element-property :raw-value e) rv)
+                           e))))))
+             (headline-page-1 (funcall get-headline "page 1"))
+             (page-headline-page-1 (osta-page headline-page-1))
+             (headline-2 (funcall get-headline "headline 2"))
+             (page-headline-2 (osta-page headline-2))
+             (paragraph (car (org-element-map tree 'paragraph #'identity)))
+             (page-paragraph (osta-page paragraph))
+             (content-paragraph (substring-no-properties (nth 2 paragraph))))
+        `(:headline-page-1
+          (:raw-value ,(org-element-property :raw-value headline-page-1)
+           :OSTA_PAGE ,(org-element-property :OSTA_PAGE page-headline-page-1)
+           :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-headline-page-1))
+          :headline-2
+          (:raw-value ,(org-element-property :raw-value headline-2)
+           :OSTA_PAGE ,(org-element-property :OSTA_PAGE page-headline-2)
+           :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-headline-2))
+          :paragraph
+          (:content ,content-paragraph
+           :OSTA_PAGE ,(org-element-property :OSTA_PAGE page-paragraph)
+           :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-paragraph)))))
+    '(:headline-page-1
+      (:raw-value "page 1"
+       :OSTA_PAGE "t"
+       :CUSTOM_ID "/date-1/page-1/")
+      :headline-2
+      (:raw-value "headline 2"
+       :OSTA_PAGE "t"
+       :CUSTOM_ID "/date-1/page-1/")
+      :paragraph
+      (:content "some text\n"
+       :OSTA_PAGE "t"
+       :CUSTOM_ID "/date-1/page-1/")))))
+
+(ert-deftest osta-page-path-test ()
+  (should
+   (string=
+    (org-test-with-temp-text "<point>* page 1
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /date-1/page-1/
+:END:"
+      (osta-page-path (org-element-context)))
+    "/date-1/page-1/"))
+  (should-not
+   (org-test-with-temp-text "<point>* page 1
+:PROPERTIES:
+:CUSTOM_ID: /date-1/page-1/
+:END:"
+     (osta-page-path (org-element-context))))
+  (should-not
+   (org-test-with-temp-text "<point>* page 1
+:PROPERTIES:
+:OSTA_PAGE: t
+:END:"
+     (osta-page-path (org-element-context)))))
