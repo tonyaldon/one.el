@@ -1,4 +1,4 @@
-;;; osta.el --- few functions to build static website -*- lexical-binding: t; -*-
+;;; osta.el --- few functions to build static websites -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2021 Tony Aldon
 
@@ -15,10 +15,26 @@
 ;; I don't implement function for inner-template and template symbol use
 ;; by org export when exporting files.
 
-;;; osta org backend
+;;; utils
 
+(defun osta-escape (s)
+  "Return the string S with some caracters escaped.
+`<', `>' and `&' are escaped."
+  (replace-regexp-in-string
+   "\\(<\\)\\|\\(>\\)\\|\\(&\\)\\|\\(\"\\)\\|\\('\\)"
+   (lambda (m) (pcase m
+                 ("<"  "&lt;")
+                 (">"  "&gt;")
+                 ("&"  "&amp;")
+                 ("\"" "&quot;")
+                 ("'"  "&apos;")))
+   s))
+
+;;; osta-ox
 
 (require 'ox)
+
+;;;; osta backend
 
 (org-export-define-backend 'osta
   '((headline . osta-ox-headline)
@@ -49,7 +65,7 @@
     )
   )
 
-;;;; tests osta backend
+;;;; export/rendering
 
 (defun osta-prettify-html (html)
   "Return the HTML string prettified.
@@ -89,24 +105,7 @@ Use for debugging/exploring purpose."
                       (write-region (point-min) (point-max) "index.html"))
                     (switch-to-buffer "*osta*"))))
 
-
-(defun osta-ox-subscript (_subscript contents _info) (format "<sub>%s</sub>" contents))
-(defun osta-ox-superscript (_superscript contents _info) (format "<sup>%s</sup>" contents))
-
-;;;; transcode functions
-
-(defun osta-escape (s)
-  "Return the string S with some caracters escaped.
-`<', `>' and `&' are escaped."
-  (replace-regexp-in-string
-   "\\(<\\)\\|\\(>\\)\\|\\(&\\)\\|\\(\"\\)\\|\\('\\)"
-   (lambda (m) (pcase m
-                 ("<"  "&lt;")
-                 (">"  "&gt;")
-                 ("&"  "&amp;")
-                 ("\"" "&quot;")
-                 ("'"  "&apos;")))
-   s))
+;;;; headline, section, paragraph, etc.
 
 (defun osta-ox-headline (headline contents info)
   (let* ((level (org-export-get-relative-level headline info))
@@ -122,16 +121,31 @@ Use for debugging/exploring purpose."
 (defun osta-ox-section (_section contents _info)
   (if (null contents) "" (format "<div>%s</div>" contents)))
 
-(defun osta-ox-paragraph (_paragraph contents _info) (format "<p>%s</p>" contents))
-(defun osta-ox-plain-text (text _info) (osta-escape text))
-(defun osta-ox-bold (_bold contents _info) (format "<b>%s</b>" contents))
-(defun osta-ox-italic (_italic contents _info) (format "<i>%s</i>" contents))
-(defun osta-ox-strike-through (_strike-through contents _info) (format "<del>%s</del>" contents))
-(defun osta-ox-underline (_underline contents _info) (format "<u>%s</u>" contents))
+(defun osta-ox-paragraph (_paragraph contents _info)
+  (format "<p>%s</p>" contents))
+
+(defun osta-ox-plain-text (text _info)
+  (osta-escape text))
+
+(defun osta-ox-bold (_bold contents _info)
+  (format "<b>%s</b>" contents))
+
+(defun osta-ox-italic (_italic contents _info)
+  (format "<i>%s</i>" contents))
+
+(defun osta-ox-strike-through (_strike-through contents _info)
+  (format "<del>%s</del>" contents))
+
+(defun osta-ox-underline (_underline contents _info)
+  (format "<u>%s</u>" contents))
+
 (defun osta-ox-code (code _contents _info)
-  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>" (osta-escape (org-element-property :value code))))
+  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>"
+          (osta-escape (org-element-property :value code))))
+
 (defun osta-ox-verbatim (verbatim _contents _info)
-  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>" (osta-escape (org-element-property :value verbatim))))
+  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>"
+          (osta-escape (org-element-property :value verbatim))))
 
 (defun osta-ox-plain-list (plain-list contents _info)
   (let* ((type (pcase (org-element-property :type plain-list)
@@ -143,7 +157,13 @@ Use for debugging/exploring purpose."
 (defun osta-ox-item (_item contents _info)
   (format "<li>%s</li>" contents))
 
-;;;;; blocks
+(defun osta-ox-subscript (_subscript contents _info)
+  (format "<sub>%s</sub>" contents))
+
+(defun osta-ox-superscript (_superscript contents _info)
+  (format "<sup>%s</sup>" contents))
+
+;;;; blocks
 
 (defun osta-ox-is-results-p (element)
   "Return t if ELEMENT is considered to be a result block.
