@@ -312,6 +312,229 @@ INFO is a plist holding contextual information."
                 (t raw-link))))
     (format "<a href=\"%s\">%s</a>" href (or (org-string-nw-p desc) href))))
 
+;;; html templating
+
+(defun osta-parse-tag-kw (tag-kw)
+  "Return a list of (\"tag\" \"id\" \"class\") from a TAG-KW.
+If TAG-KW is not a valid tag keyword, return nil.
+
+For instance, `osta-parse-tag-kw' behaves like this:
+    :div                    -> (\"div\" nil nil)
+    :div@id                 -> (\"div\" \"id\" nil)
+    :div.class              -> (\"div\" nil \"class\")
+    :div@id.class           -> (\"div\" \"id\" \"class\")
+    :div@id.class-1.class-2 -> (\"div\" \"id\" \"class-1 class-2\")"
+  (if-let* (((keywordp tag-kw))
+            (tag-s (symbol-name tag-kw))
+            ((string-match (concat "\\(?::\\)\\([^ @.]+\\)"
+                                   "\\(?:@\\([^ @.]+\\)\\)?"
+                                   "\\(?:[.]\\([^ @]+\\)\\)?")
+                           tag-s)))
+      (let* ((tag (match-string 1 tag-s))
+             (id (match-string 2 tag-s))
+             (class (match-string 3 tag-s))
+             (classes (and class (string-replace "." " " class))))
+        (if (or tag id classes)
+            (list tag id classes)
+          (error "Wrong tag keyword: %S" tag-kw)))
+    (error "Wrong tag keyword: %S" tag-kw)))
+
+;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-parse-tag-kw-test")))
+
+(ert-deftest osta-parse-tag-kw-test ()
+  (should-error (osta-parse-tag-kw "string-is-not-a-valid-tag-keyword"))
+  (should-error (osta-parse-tag-kw 'symbol-is-not-a-valid-tag-keyword))
+  (should (equal (osta-parse-tag-kw :div) '("div" nil nil)))
+  (should (equal (osta-parse-tag-kw :div@id) '("div" "id" nil)))
+  (should (equal (osta-parse-tag-kw :div.class) '("div" nil "class")))
+  (should (equal (osta-parse-tag-kw :div@id.class) '("div" "id" "class")))
+  (should (equal (osta-parse-tag-kw :div@id.class-1.class-2) '("div" "id" "class-1 class-2"))))
+
+(defun osta-format (tag-kw &optional attributes)
+  "..."
+  (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
+                     "keygen" "link" "meta" "param" "source" "track" "wbr")))
+    (seq-let (tag id classes) (osta-parse-tag-kw tag-kw)
+      (let* ((fmt (if (member tag void-tags) "<%s%s />" "<%s%s>%%s</%s>"))
+             (kw->a (lambda (kw) (substring (symbol-name kw) 1))) ; :id -> "id"
+             (p->a-v                                              ; (:id "foo") -> "id=\"foo\""
+              (lambda (p)
+                (let ((attr (funcall kw->a (car p))))
+                  (pcase (eval (cadr p))
+                    ('t (format "%s=\"%s\"" attr attr))
+                    ('nil nil)
+                    ((and _ value) (format "%s=\"%s\"" attr (osta-escape value)))))))
+             (pairs (seq-partition attributes 2))
+             ;; we merge classes from `tag-kw' and `attribute' and add it to the pairs
+             (-pairs (if classes
+                         (if-let* ((c (assoc :class pairs)))
+                             (let* ((pairs-without-class
+                                     (seq-remove
+                                      (lambda (p) (eq (car p) :class)) pairs))
+                                    (class-value-in-pairs (cadr c))
+                                    (class `(:class ,(concat classes " " class-value-in-pairs))))
+                               (cons class pairs-without-class))
+                           (cons `(:class ,classes) pairs))
+                       pairs))
+             ;; `id' in `attributes' has priority over `id' in `tag-kw'
+             (--pairs (if (and id (not (assoc :id -pairs)))
+                          (cons `(:id ,id) -pairs)
+                        -pairs))
+             (attrs (string-join (delq nil (mapcar p->a-v --pairs)) " "))
+             (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
+        (format fmt tag -attrs tag)))))
+
+;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-format-test")))
+
+(ert-deftest osta-format-test ()
+
+  ;; id and classes in the tag-kw
+  (should (string= (osta-format :div) "<div>%s</div>"))
+  (should (string= (osta-format :div@id)
+                   "<div id=\"id\">%s</div>"))
+  (should (string= (osta-format :div.class)
+                   "<div class=\"class\">%s</div>"))
+  (should (string= (osta-format :div@id.class)
+                   "<div id=\"id\" class=\"class\">%s</div>"))
+  (should (string= (osta-format :div@id.class-1.class-2)
+                   "<div id=\"id\" class=\"class-1 class-2\">%s</div>"))
+
+  ;; void tags
+  (should (string= (osta-format :hr) "<hr />"))
+
+  ;; tag-kw must be keywords
+  (should-error (osta-format 'div))
+  (should-error (osta-format "div"))
+  (should-error (osta-format 'div '(:id "id")))
+  (should-error (osta-format "div" '(:id "id")))
+
+  ;; attributes plist
+  (should (string= (osta-format :div '(:id "id")) "<div id=\"id\">%s</div>"))
+  (should (string= (osta-format :div '(:id "id" :class "class"))
+                   "<div id=\"id\" class=\"class\">%s</div>"))
+
+  ;; values in key/value pairs of attributes plist are evaluated
+  (should (string= (osta-format :div '(:id (concat "id-" "123"))) "<div id=\"id-123\">%s</div>"))
+
+  ;; attribute values are escaped
+  (should (string= (osta-format :div '(:id "\"")) "<div id=\"&quot;\">%s</div>"))
+
+  ;; `id' in `attributes' has priority over `id' in `tag-kw'
+  (should (string= (osta-format :div@id-in-tag '(:id "id-in-plist"))
+                   "<div id=\"id-in-plist\">%s</div>"))
+
+  ;; classes in `tag-kw' and `attributes' plist
+  (should (string= (osta-format :div.class-in-tag '(:class "class-a class-b"))
+                   "<div class=\"class-in-tag class-a class-b\">%s</div>"))
+
+  ;; boolean attributes
+  (should (string= (osta-format :input '(:type "checkbox" :checked t))
+                   "<input type=\"checkbox\" checked=\"checked\" />"))
+  (should (string= (osta-format :input '(:type "checkbox" :checked nil))
+                   "<input type=\"checkbox\" />")))
+
+(defun osta-html (&rest components)
+  ""
+  (let (children)
+    (pcase (car components)
+      ('nil "")
+      ((and (or (pred stringp) (pred numberp)) component)
+       (push (format "%s" component) children)
+       (push (apply #'osta-html (cdr components)) children))
+      ((and (pred listp) l)
+       (if (and (symbolp (car l)) (fboundp (car l)))
+           (push (apply #'osta-html (eval l)) children)
+         (push (apply #'osta-html l) children))
+       (push (apply #'osta-html (cdr components)) children))
+      ((and (pred arrayp) component)
+       (when(> (length component) 0)
+         (seq-let (tag-kw attr-or-comp comp) component
+           (pcase attr-or-comp
+             ;; empty component
+             ('nil
+               (push (format (osta-format tag-kw) (apply #'osta-html nil)) children))
+             ;; attr-or-comp is attributes plist
+             ((and (pred listp)
+                   (pred (lambda (l) (keywordp (car l)))))
+              (let ((-components (mapcar #'identity (seq-drop component 2)))
+                    (fmt (osta-format tag-kw attr-or-comp)))
+                (push (format fmt (apply #'osta-html -components)) children)))
+             ;; attr-or-comp is a list of components and must not be evaluated
+             ((and (pred listp)
+                   (pred (lambda (l) (not (and (symbolp (car l)) (fboundp (car l)))))))
+              (let ((-components (append attr-or-comp
+                                         (mapcar #'identity (seq-drop component 2))))
+                    (fmt (osta-format tag-kw)))
+                (push (format fmt (apply #'osta-html -components)) children)))
+             ;; attr-or-comp is any other sexp that we want to evaluate,
+             ;; mostly to catch the case where attr-or-comp is a function call
+             ;; (ie. a list where the first element is a function to be called)
+             (_ (let ((-components (cons (eval attr-or-comp)
+                                         (mapcar #'identity (seq-drop component 2))))
+                      (fmt (osta-format tag-kw)))
+                  (push (format fmt (apply #'osta-html -components)) children))))))
+       (push (apply #'osta-html (cdr components)) children)))
+    (apply #'concat (nreverse children))))
+
+;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-html-test")))
+
+(ert-deftest osta-html-test ()
+  (should (string= (osta-html nil) ""))
+  (should (string= (osta-html []) ""))
+  (should (string= (osta-html ()) ""))
+
+  (should (string= (osta-html "foo") "foo"))
+
+  ;; numbers are coerced to string
+  (should (string= (osta-html 16) "16"))
+
+  (should (string= (osta-html "foo" "bar") "foobar"))
+  (should (string= (osta-html [:p "foo"] "bar") "<p>foo</p>bar"))
+  (should (string= (osta-html [:p "foo"] [:p "bar"]) "<p>foo</p><p>bar</p>"))
+  (should (string= (osta-html [:div]) "<div></div>"))
+  (should (string= (osta-html [:div "foo"]) "<div>foo</div>"))
+  (should (string= (osta-html [:div [:p "foo"]]) "<div><p>foo</p></div>"))
+  (should (string= (osta-html [:section [:div [:p "foo"]]])
+                   "<section><div><p>foo</p></div></section>"))
+  (should (string= (osta-html [:div [:p "foo"] [:p "bar"]])
+                   "<div><p>foo</p><p>bar</p></div>"))
+
+  ;; voids tags
+  (should (string= (osta-html [:hr]) "<hr />"))
+
+  ;; attributes
+  (should (string= (osta-html [:div (:id "id" :class "class") "foo"])
+                   "<div id=\"id\" class=\"class\">foo</div>"))
+  (should (string= (osta-html [:p@id-in-tag (:id "id-in-plist") [:span "foo"]])
+                   "<p id=\"id-in-plist\"><span>foo</span></p>"))
+
+  ;; FIXME: error WHY
+  (should (string= (osta-html [:p.class-in-tag (:class "class-in-plist") "foo"])
+                   "<p class=\"class-in-tag class-in-plist\">foo</p>"))
+
+  ;; accept list of components
+  (should (string= (osta-html '([:li "a"] [:li "b"]))
+                   "<li>a</li><li>b</li>"))
+  (should (string= (osta-html [:li "a"] '([:li "b"] [:li "c"]) [:li "d"])
+                   "<li>a</li><li>b</li><li>c</li><li>d</li>"))
+  (should-error (osta-html ([:li "1"] [:li "2"])))
+  (should (string= (osta-html [:ul ([:li "1"] [:li "2"])])
+                   "<ul><li>1</li><li>2</li></ul>"))
+  (should (string= (osta-html [:ul (:id "id") ([:li "1"] [:li "2"])])
+                   "<ul id=\"id\"><li>1</li><li>2</li></ul>"))
+
+  ;; evaluate sexp
+  (should (string= (osta-html (vector :p "foo")) "<p>foo</p>"))
+  (should (string= (osta-html (vector :p "foo") [:p "bar"] '([:p 1] [:p 2]))
+                   "<p>foo</p><p>bar</p><p>1</p><p>2</p>"))
+  (should (string= (osta-html [:ul (vector :li 1)]) "<ul><li>1</li></ul>"))
+  (should (string= (osta-html [:ul (mapcar (lambda (n) (vector :li n))
+                                           (number-sequence 1 2))])
+                   "<ul><li>1</li><li>2</li></ul>"))
+  (should (string= (osta-html [:ul (:id "id") (mapcar (lambda (n) (vector :li n))
+                                                      (number-sequence 1 2))])
+                   "<ul id=\"id\"><li>1</li><li>2</li></ul>")))
+
 ;;; pages
 
 (defun osta-page-p (element)
