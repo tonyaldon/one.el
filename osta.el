@@ -314,6 +314,27 @@ INFO is a plist holding contextual information."
 
 ;;; html templating
 
+(defvar osta-html-raise-error-p nil
+  "When `t', `osta-html' raises an error when we pass it a non component object.
+
+For instance, a vector like `[a b c]' can't be a component passed to `osta-html'.
+If `nil', which is the default value, `osta-html' process non component object
+as the empty string.
+
+For instance,
+
+  (let ((osta-html-raise-error-p nil))
+    (osta-html \"foo\" [a b c] \"bar\")) ; \"foobar\"
+
+and,
+
+  (let ((osta-html-raise-error-p t))
+    (osta-html \"foo\" [a b c] \"bar\"))
+
+raises the error:
+
+  \"Object '[a b c]' of type 'vector' can't be a component in 'osta-html'\"")
+
 (defun osta-parse-tag-kw (tag-kw)
   "Return a list of (\"tag\" \"id\" \"class\") from a TAG-KW.
 If TAG-KW is not a valid tag keyword, return nil.
@@ -338,17 +359,6 @@ For instance, `osta-parse-tag-kw' behaves like this:
             (list tag id classes)
           (error "Wrong tag keyword: %S" tag-kw)))
     (error "Wrong tag keyword: %S" tag-kw)))
-
-;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-parse-tag-kw-test")))
-
-(ert-deftest osta-parse-tag-kw-test ()
-  (should-error (osta-parse-tag-kw "string-is-not-a-valid-tag-keyword"))
-  (should-error (osta-parse-tag-kw 'symbol-is-not-a-valid-tag-keyword))
-  (should (equal (osta-parse-tag-kw :div) '("div" nil nil)))
-  (should (equal (osta-parse-tag-kw :div:id) '("div" "id" nil)))
-  (should (equal (osta-parse-tag-kw :div.class) '("div" nil "class")))
-  (should (equal (osta-parse-tag-kw :div:id.class) '("div" "id" "class")))
-  (should (equal (osta-parse-tag-kw :div:id.class-1.class-2) '("div" "id" "class-1 class-2"))))
 
 (defun osta-format (tag-kw &optional attributes)
   "..."
@@ -384,76 +394,6 @@ For instance, `osta-parse-tag-kw' behaves like this:
              (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
         (format fmt tag -attrs tag)))))
 
-;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-format-test")))
-
-(ert-deftest osta-format-test ()
-
-  ;; id and classes in the tag-kw
-  (should (string= (osta-format :div) "<div>%s</div>"))
-  (should (string= (osta-format :div:id)
-                   "<div id=\"id\">%s</div>"))
-  (should (string= (osta-format :div.class)
-                   "<div class=\"class\">%s</div>"))
-  (should (string= (osta-format :div:id.class)
-                   "<div id=\"id\" class=\"class\">%s</div>"))
-  (should (string= (osta-format :div:id.class-1.class-2)
-                   "<div id=\"id\" class=\"class-1 class-2\">%s</div>"))
-
-  ;; void tags
-  (should (string= (osta-format :hr) "<hr />"))
-
-  ;; tag-kw must be keywords
-  (should-error (osta-format 'div))
-  (should-error (osta-format "div"))
-  (should-error (osta-format 'div '(:id "id")))
-  (should-error (osta-format "div" '(:id "id")))
-
-  ;; attributes plist
-  (should (string= (osta-format :div '(:id "id")) "<div id=\"id\">%s</div>"))
-  (should (string= (osta-format :div '(:id "id" :class "class"))
-                   "<div id=\"id\" class=\"class\">%s</div>"))
-
-  ;; values in key/value pairs of attributes plist are evaluated
-  (should (string= (osta-format :div '(:id (concat "id-" "123"))) "<div id=\"id-123\">%s</div>"))
-
-  ;; attribute values are escaped
-  (should (string= (osta-format :div '(:id "\"")) "<div id=\"&quot;\">%s</div>"))
-
-  ;; `id' in `attributes' has priority over `id' in `tag-kw'
-  (should (string= (osta-format :div:id-in-tag '(:id "id-in-plist"))
-                   "<div id=\"id-in-plist\">%s</div>"))
-
-  ;; classes in `tag-kw' and `attributes' plist
-  (should (string= (osta-format :div.class-in-tag '(:class "class-a class-b"))
-                   "<div class=\"class-in-tag class-a class-b\">%s</div>"))
-
-  ;; boolean attributes
-  (should (string= (osta-format :input '(:type "checkbox" :checked t))
-                   "<input type=\"checkbox\" checked=\"checked\" />"))
-  (should (string= (osta-format :input '(:type "checkbox" :checked nil))
-                   "<input type=\"checkbox\" />")))
-
-(defvar osta-html-raise-error-p nil
-  "When `t', `osta-html' raises an error when we pass it a non component object.
-
-For instance, a vector like `[a b c]' can't be a component passed to `osta-html'.
-If `nil', which is the default value, `osta-html' process non component object
-as the empty string.
-
-For instance,
-
-  (let ((osta-html-raise-error-p nil))
-    (osta-html \"foo\" [a b c] \"bar\")) ; \"foobar\"
-
-and,
-
-  (let ((osta-html-raise-error-p t))
-    (osta-html \"foo\" [a b c] \"bar\"))
-
-raises the error:
-
-  \"Object '[a b c]' of type 'vector' can't be a component in 'osta-html'\"")
-
 (defun osta-html (&rest components)
   ""
   (let (children)
@@ -487,90 +427,6 @@ raises the error:
                 obj (type-of obj)))
        (push (apply #'osta-html (cdr components)) children)))
     (apply #'concat (nreverse children))))
-
-;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-html-test")))
-
-(ert-deftest osta-html-test ()
-  ;; `osta-html-raise-error-p' is set to nil by default
-  ;; and affects only object that can't be components
-  ;; in `osta-html' function
-  (let ((osta-html-raise-error-p nil))
-    (should (string= (osta-html nil) ""))
-    (should (string= (osta-html '()) ""))
-    (should (string= (osta-html "foo") "foo"))
-
-    ;; numbers are coerced to string
-    (should (string= (osta-html 16) "16"))
-
-    (should (string= (osta-html "foo" "bar") "foobar"))
-    (should (string= (osta-html '(:p "foo") "bar") "<p>foo</p>bar"))
-    (should (string= (osta-html '(:p "foo") '(:p "bar")) "<p>foo</p><p>bar</p>"))
-    (should (string= (osta-html '(:div)) "<div></div>"))
-    (should (string= (osta-html '(:div "foo")) "<div>foo</div>"))
-    (should (string= (osta-html '(:div (:p "foo"))) "<div><p>foo</p></div>"))
-    (should (string= (osta-html '(:section (:div (:p "foo"))))
-                     "<section><div><p>foo</p></div></section>"))
-    (should (string= (osta-html '(:div (:p "foo") (:p "bar")))
-                     "<div><p>foo</p><p>bar</p></div>"))
-
-    ;; voids tags
-    (should (string= (osta-html '(:hr)) "<hr />"))
-
-    ;; attributes
-    (should (string= (osta-html '(:div (@ :id "id" :class "class") "foo"))
-                     "<div id=\"id\" class=\"class\">foo</div>"))
-    (should (string= (osta-html '(:p:id-in-tag (@ :id "id-in-plist") (:span "foo")))
-                     "<p id=\"id-in-plist\"><span>foo</span></p>"))
-
-    (should (string= (osta-html '(:p.class-in-tag (@ :class "class-in-plist") "foo"))
-                     "<p class=\"class-in-tag class-in-plist\">foo</p>"))
-
-    ;; accept list of components
-    (should (string= (osta-html '((:li "a") (:li "b")))
-                     "<li>a</li><li>b</li>"))
-    (should (string= (osta-html '(:li "a") '((:li "b") (:li "c")) '(:li "d"))
-                     "<li>a</li><li>b</li><li>c</li><li>d</li>"))
-
-    ;; tag content can be lists of components
-    (should (string= (osta-html '(:ul ((:li "1") (:li "2"))))
-                     "<ul><li>1</li><li>2</li></ul>"))
-    (should (string= (osta-html '(:ul (@ :id "id") ((:li "1") (:li "2"))))
-                     "<ul id=\"id\"><li>1</li><li>2</li></ul>"))
-
-    ;; tag content can be forms
-    (should (string=
-             (osta-html `(:ul ,(mapcar (lambda (n) `(:li ,n)) '(1 2))))
-             "<ul><li>1</li><li>2</li></ul>"))
-    (should (string=
-             (osta-html `(:ul (@ :id "id") ,(mapcar (lambda (n) `(:li ,n)) '(1 2))))
-             "<ul id=\"id\"><li>1</li><li>2</li></ul>"))
-
-    ;; components can be generated by a form
-    (should (string= (osta-html (mapcar (lambda (n) `(:p ,n)) '(1 2 3)))
-                     "<p>1</p><p>2</p><p>3</p>"))
-
-    ;; tag content and attributes can be vars
-    (should (string= (let ((x "foo") (y "bar"))
-                       (osta-html `(:p (@ :id ,x) ,y)))
-                     "<p id=\"foo\">bar</p>"))
-    (should (string= (osta-html
-                      (let ((x "foo") (y "bar"))
-                        `(:p (@ :id ,x) ,y)))
-                     "<p id=\"foo\">bar</p>")))
-
-  ;; objects that can't be components exported as empty string
-  ;; when `osta-html-raise-error-p' is `nil' (which is the default)
-  (let ((osta-html-raise-error-p nil))
-    (should (string= (osta-html []) ""))
-    (should (string= (osta-html t) ""))
-    (should (string= (osta-html [] "foo" t "bar") "foobar")))
-
-  ;; objects that can't be components raise an error when
-  ;; when `osta-html-raise-error-p' is `t'
-  (let ((osta-html-raise-error-p t))
-    (should-error (string= (osta-html []) ""))
-    (should-error (string= (osta-html t) ""))
-    (should-error (string= (osta-html [] "foo" t "bar") "foobar"))))
 
 ;;; pages
 
