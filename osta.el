@@ -341,15 +341,15 @@ If TAG-KW is not a valid tag keyword, return nil.
 
 For instance, `osta-parse-tag-kw' behaves like this:
     :div                    -> (\"div\" nil nil)
-    :div:id                 -> (\"div\" \"id\" nil)
+    :div/id                 -> (\"div\" \"id\" nil)
     :div.class              -> (\"div\" nil \"class\")
-    :div:id.class           -> (\"div\" \"id\" \"class\")
-    :div:id.class-1.class-2 -> (\"div\" \"id\" \"class-1 class-2\")"
+    :div/id.class           -> (\"div\" \"id\" \"class\")
+    :div/id.class-1.class-2 -> (\"div\" \"id\" \"class-1 class-2\")"
   (if-let* (((keywordp tag-kw))
             (tag-s (symbol-name tag-kw))
-            ((string-match (concat "\\(?::\\)\\([^ :.]+\\)"
-                                   "\\(?::\\([^ :.]+\\)\\)?"
-                                   "\\(?:[.]\\([^ :]+\\)\\)?")
+            ((string-match (concat "\\(?::\\)\\([^ /.]+\\)"
+                                   "\\(?:/\\([^ /.]+\\)\\)?"
+                                   "\\(?:[.]\\([^ /]+\\)\\)?")
                            tag-s)))
       (let* ((tag (match-string 1 tag-s))
              (id (match-string 2 tag-s))

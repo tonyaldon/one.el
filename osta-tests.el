@@ -580,22 +580,22 @@ A simple example
   (should-error (osta-parse-tag-kw "string-is-not-a-valid-tag-keyword"))
   (should-error (osta-parse-tag-kw 'symbol-is-not-a-valid-tag-keyword))
   (should (equal (osta-parse-tag-kw :div) '("div" nil nil)))
-  (should (equal (osta-parse-tag-kw :div:id) '("div" "id" nil)))
+  (should (equal (osta-parse-tag-kw :div/id) '("div" "id" nil)))
   (should (equal (osta-parse-tag-kw :div.class) '("div" nil "class")))
-  (should (equal (osta-parse-tag-kw :div:id.class) '("div" "id" "class")))
-  (should (equal (osta-parse-tag-kw :div:id.class-1.class-2) '("div" "id" "class-1 class-2"))))
+  (should (equal (osta-parse-tag-kw :div/id.class) '("div" "id" "class")))
+  (should (equal (osta-parse-tag-kw :div/id.class-1.class-2) '("div" "id" "class-1 class-2"))))
 
 (ert-deftest osta-format-test ()
 
   ;; id and classes in the tag-kw
   (should (string= (osta-format :div) "<div>%s</div>"))
-  (should (string= (osta-format :div:id)
+  (should (string= (osta-format :div/id)
                    "<div id=\"id\">%s</div>"))
   (should (string= (osta-format :div.class)
                    "<div class=\"class\">%s</div>"))
-  (should (string= (osta-format :div:id.class)
+  (should (string= (osta-format :div/id.class)
                    "<div id=\"id\" class=\"class\">%s</div>"))
-  (should (string= (osta-format :div:id.class-1.class-2)
+  (should (string= (osta-format :div/id.class-1.class-2)
                    "<div id=\"id\" class=\"class-1 class-2\">%s</div>"))
 
   ;; void tags
@@ -619,7 +619,7 @@ A simple example
   (should (string= (osta-format :div '(:id "\"")) "<div id=\"&quot;\">%s</div>"))
 
   ;; `id' in `attributes' has priority over `id' in `tag-kw'
-  (should (string= (osta-format :div:id-in-tag '(:id "id-in-plist"))
+  (should (string= (osta-format :div/id-in-tag '(:id "id-in-plist"))
                    "<div id=\"id-in-plist\">%s</div>"))
 
   ;; classes in `tag-kw' and `attributes' plist
@@ -661,7 +661,7 @@ A simple example
     ;; attributes
     (should (string= (osta-html '(:div (@ :id "id" :class "class") "foo"))
                      "<div id=\"id\" class=\"class\">foo</div>"))
-    (should (string= (osta-html '(:p:id-in-tag (@ :id "id-in-plist") (:span "foo")))
+    (should (string= (osta-html '(:p/id-in-tag (@ :id "id-in-plist") (:span "foo")))
                      "<p id=\"id-in-plist\"><span>foo</span></p>"))
 
     (should (string= (osta-html '(:p.class-in-tag (@ :class "class-in-plist") "foo"))
