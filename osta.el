@@ -406,20 +406,19 @@ For instance, `osta-parse-tag-kw' behaves like this:
        (let ((-components (append l (cdr components))))
          (push (apply #'osta-html -components) children)))
       ((and (pred listp) component)
-       (when(> (length component) 0) ; maybe not needed, because empty lists are catched before
-         (seq-let (tag-kw attr-or-comp comp) component
-           (pcase attr-or-comp
-             ;; empty component like '(:p)
-             ('nil
-              (push (format (osta-format tag-kw) (apply #'osta-html nil)) children))
-             ;; attr-or-comp is attributes plist like '(@ :id "id" :class "class")
-             ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
-              (let ((-components (cddr component))
-                    (fmt (osta-format tag-kw (cdr attr-or-comp))))
-                (push (format fmt (apply #'osta-html -components)) children)))
-             (_ (let ((-components (cdr component))
-                      (fmt (osta-format tag-kw)))
-                  (push (format fmt (apply #'osta-html -components)) children))))))
+       (seq-let (tag-kw attr-or-comp comp) component
+         (pcase attr-or-comp
+           ;; empty component like '(:p)
+           ('nil
+            (push (format (osta-format tag-kw) (apply #'osta-html nil)) children))
+           ;; attr-or-comp is attributes plist like '(@ :id "id" :class "class")
+           ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
+            (let ((-components (cddr component))
+                  (fmt (osta-format tag-kw (cdr attr-or-comp))))
+              (push (format fmt (apply #'osta-html -components)) children)))
+           (_ (let ((-components (cdr component))
+                    (fmt (osta-format tag-kw)))
+                (push (format fmt (apply #'osta-html -components)) children)))))
        (push (apply #'osta-html (cdr components)) children))
       ((and _ obj)
        (when osta-html-raise-error-p
