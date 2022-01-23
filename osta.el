@@ -399,10 +399,13 @@ For instance, `osta-parse-tag-kw' behaves like this:
   (let (children)
     (pcase (car components)
       ((and 'nil (guard (null (cdr components)))) "")
+      ;; (car components) is a string component or an integer component
       ((and (or (pred stringp) (pred numberp)) component)
        (push (format "%s" component) children)
        (push (apply #'osta-html (cdr components)) children))
-      ((and (pred listp) (pred (lambda (l) (listp (car l)))) l)
+      ;; (car components) is not a tag component but a list of components
+      ;; like this '((:p "foo") "bar" 1)
+      ((and (pred listp) l (guard (not (keywordp (car l)))))
        (let ((-components (append l (cdr components))))
          (push (apply #'osta-html -components) children)))
       ((and (pred listp) component)

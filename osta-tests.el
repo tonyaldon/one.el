@@ -668,6 +668,7 @@ A simple example
                      "<p class=\"class-in-tag class-in-plist\">foo</p>"))
 
     ;; accept list of components
+    (should (string= (osta-html '("foo" 1 "bar")) "foo1bar"))
     (should (string= (osta-html '((:li "a") (:li "b")))
                      "<li>a</li><li>b</li>"))
     (should (string= (osta-html '(:li "a") '((:li "b") (:li "c")) '(:li "d"))
