@@ -365,7 +365,7 @@ For instance, `osta-parse-tag-kw' behaves like this:
   (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
                      "keygen" "link" "meta" "param" "source" "track" "wbr")))
     (seq-let (tag id classes) (osta-parse-tag-kw tag-kw)
-      (let* ((fmt (if (member tag void-tags) "<%s%s />" "<%s%s>%%s</%s>"))
+      (let* ((fmt (if (member tag void-tags) "<%s%s />%%s" "<%s%s>%%s</%s>"))
              (kw->a (lambda (kw) (substring (symbol-name kw) 1))) ; :id -> "id"
              (p->a-v                                              ; (:id "foo") -> "id=\"foo\""
               (lambda (p)

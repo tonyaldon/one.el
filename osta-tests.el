@@ -599,7 +599,7 @@ A simple example
                    "<div id=\"id\" class=\"class-1 class-2\">%s</div>"))
 
   ;; void tags
-  (should (string= (osta-format :hr) "<hr />"))
+  (should (string= (osta-format :hr) "<hr />%s"))
 
   ;; tag-kw must be keywords
   (should-error (osta-format 'div))
@@ -628,9 +628,9 @@ A simple example
 
   ;; boolean attributes
   (should (string= (osta-format :input '(:type "checkbox" :checked t))
-                   "<input type=\"checkbox\" checked=\"checked\" />"))
+                   "<input type=\"checkbox\" checked=\"checked\" />%s"))
   (should (string= (osta-format :input '(:type "checkbox" :checked nil))
-                   "<input type=\"checkbox\" />")))
+                   "<input type=\"checkbox\" />%s")))
 
 (ert-deftest osta-component-test ()
   ;; `osta-html-raise-error-p' is set to nil by default
@@ -649,6 +649,8 @@ A simple example
 
     ;; voids tags
     (should (string= (osta-component '(:hr)) "<hr />"))
+    (should (string= (osta-component '(:div (:hr))) "<div><hr /></div>"))
+    (should (string= (osta-component '(:div "foo" (:hr) "bar")) "<div>foo<hr />bar</div>"))
 
     ;; nesting tags
     (should (string= (osta-component '(:p "foo")) "<p>foo</p>"))
