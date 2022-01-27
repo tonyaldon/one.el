@@ -403,9 +403,13 @@ For instance, `osta-parse-tag-kw' behaves like this:
       (pcase comp
         ;; string component or an integer component
         ((and (or (pred stringp) (pred numberp)))
-         (let ((rest-slots (make-list (length rest) "%s"))
-               (comp-str+%s (concat (format "%s" comp) "%s")))
-           (setq fmt (apply #'format fmt comp-str+%s rest-slots))
+         (let* ((rest-slots (make-list (length rest) "%s"))
+                (comp-str (if (stringp comp) comp (number-to-string comp)))
+                ;; due to the use of the function `format' we must
+                ;; protect percent sign % in string component
+                (comp-%->%%  (replace-regexp-in-string "%" "%%" comp-str))
+                (comp+%s (concat comp-%->%% "%s")))
+           (setq fmt (apply #'format fmt comp+%s rest-slots))
            (setq comps (cdr comps))))
         ;; not a tag component but a list of components like '("foo" "bar")
         ((and (pred listp) l (guard (not (keywordp (car l)))))

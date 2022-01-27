@@ -652,6 +652,13 @@ A simple example
     (should (string= (osta-component '(:div (:hr))) "<div><hr /></div>"))
     (should (string= (osta-component '(:div "foo" (:hr) "bar")) "<div>foo<hr />bar</div>"))
 
+    ;; percent sign % in string tag
+    (should (string= (osta-component "%") "%"))
+    (should (string= (osta-component "%s") "%s"))
+    (should (string= (osta-component "%s %s %s") "%s %s %s"))
+    (should (string= (osta-component '(:p "%s")) "<p>%s</p>"))
+    (should (string= (osta-component '(:p "% %% %%%")) "<p>% %% %%%</p>"))
+
     ;; nesting tags
     (should (string= (osta-component '(:p "foo")) "<p>foo</p>"))
     (should (string= (osta-component '(:p "foo" "bar")) "<p>foobar</p>"))
