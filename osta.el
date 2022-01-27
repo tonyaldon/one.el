@@ -394,41 +394,59 @@ For instance, `osta-parse-tag-kw' behaves like this:
              (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
         (format fmt tag -attrs tag)))))
 
+(defun osta-component (component)
+  (let ((comp (if (listp component) "" component))
+        (comps (and (listp component) (list nil component)))
+        (fmt "%s")
+        rest)
+    (while comp
+      (pcase comp
+        ;; string component or an integer component
+        ((and (or (pred stringp) (pred numberp)))
+         (let ((rest-slots (make-list (length rest) "%s"))
+               (comp-str+%s (concat (format "%s" comp) "%s")))
+           (setq fmt (apply #'format fmt comp-str+%s rest-slots))
+           (setq comps (cdr comps))))
+        ;; not a tag component but a list of components like '("foo" "bar")
+        ((and (pred listp) l (guard (not (keywordp (car l)))))
+         (setq comps (append comp (cdr comps))))
+        ;; tag component like '(:p "foo") or '(:p/id.class (@ :attr "attr") "foo")
+        ((pred listp)
+         (let ((rest-slots (make-list (length rest) "%s"))
+               (new-rest (cdr comps))
+               tag-fmt tag-fmt+new-rest comp-children)
+           (seq-let (tag-kw attr) comp
+             (pcase attr
+               ;; `attr' is attributes plist like '(@ :id "id" :class "class")
+               ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
+                (setq tag-fmt (osta-format tag-kw (cdr attr)))
+                (setq comp-children (cddr comp)))
+               (_ (setq tag-fmt (osta-format tag-kw))
+                  (setq comp-children (cdr comp)))))
+           ;; update value of `fmt', `comps', `comp', `rest' before looping
+           (setq tag-fmt+new-rest (if new-rest (concat tag-fmt "%s") tag-fmt))
+           (setq fmt (apply #'format fmt tag-fmt+new-rest rest-slots))
+           (setq comps (append comp-children (and new-rest '(:rest))))
+           (when new-rest (push new-rest rest))))
+        ;; make the latest list of components added to `rest'
+        ;; the part of the tree (`component') to be treated in
+        ;; the next iteration
+        (:rest
+         (let ((rest-slots (make-list (length rest) "%s")))
+           (setq fmt (apply #'format fmt "" rest-slots))
+           (setq comps (pop rest))))
+        ;; non component object
+        ((and _ obj)
+         (when osta-html-raise-error-p
+           (error "Object '%S' of type '%s' can't be a component in 'osta-html'"
+                  obj (type-of obj)))
+         (setq comps (cdr comps))))
+      (setq comp (car comps)))
+    (format fmt "")))
+
 (defun osta-html (&rest components)
   ""
-  (let (children)
-    (pcase (car components)
-      ((and 'nil (guard (null (cdr components)))) "")
-      ;; (car components) is a string component or an integer component
-      ((and (or (pred stringp) (pred numberp)) component)
-       (push (format "%s" component) children)
-       (push (apply #'osta-html (cdr components)) children))
-      ;; (car components) is not a tag component but a list of components
-      ;; like this '((:p "foo") "bar" 1)
-      ((and (pred listp) l (guard (not (keywordp (car l)))))
-       (let ((-components (append l (cdr components))))
-         (push (apply #'osta-html -components) children)))
-      ((and (pred listp) component)
-       (seq-let (tag-kw attr-or-comp comp) component
-         (pcase attr-or-comp
-           ;; empty component like '(:p)
-           ('nil
-            (push (format (osta-format tag-kw) (apply #'osta-html nil)) children))
-           ;; attr-or-comp is attributes plist like '(@ :id "id" :class "class")
-           ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
-            (let ((-components (cddr component))
-                  (fmt (osta-format tag-kw (cdr attr-or-comp))))
-              (push (format fmt (apply #'osta-html -components)) children)))
-           (_ (let ((-components (cdr component))
-                    (fmt (osta-format tag-kw)))
-                (push (format fmt (apply #'osta-html -components)) children)))))
-       (push (apply #'osta-html (cdr components)) children))
-      ((and _ obj)
-       (when osta-html-raise-error-p
-         (error "Object '%S' of type '%s' can't be a component in 'osta-html'"
-                obj (type-of obj)))
-       (push (apply #'osta-html (cdr components)) children)))
-    (apply #'concat (nreverse children))))
+  (mapconcat #'osta-component components ""))
 
 ;;; pages
 
