@@ -360,7 +360,7 @@ For instance, `osta-parse-tag-kw' behaves like this:
           (error "Wrong tag keyword: %S" tag-kw)))
     (error "Wrong tag keyword: %S" tag-kw)))
 
-(defun osta-format (tag-kw &optional attributes)
+(defun osta-tag (tag-kw &optional attributes)
   "..."
   (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
                      "keygen" "link" "meta" "param" "source" "track" "wbr")))
@@ -426,10 +426,10 @@ For instance, `osta-parse-tag-kw' behaves like this:
              (pcase attr
                ;; `attr' is attributes plist like '(@ :id "id" :class "class")
                ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
-                (setq tag-fmt (osta-format tag-kw (cdr attr)))
+                (setq tag-fmt (osta-tag tag-kw (cdr attr)))
                 (setq comp-children (cddr comp)))
                ;; `attr' is not an attributes
-               (_ (setq tag-fmt (osta-format tag-kw))
+               (_ (setq tag-fmt (osta-tag tag-kw))
                   (setq comp-children (cdr comp)))))
            (let* ((tag-fmt-left (plist-get tag-fmt :left))
                   (left (concat (plist-get fmt :left) tag-fmt-left))

@@ -585,57 +585,57 @@ A simple example
   (should (equal (osta-parse-tag-kw :div/id.class) '("div" "id" "class")))
   (should (equal (osta-parse-tag-kw :div/id.class-1.class-2) '("div" "id" "class-1 class-2"))))
 
-(ert-deftest osta-format-test ()
+(ert-deftest osta-tag-test ()
 
   ;; id and classes in the tag-kw
-  (should (equal (osta-format :div)
+  (should (equal (osta-tag :div)
                  '(:void  nil
                    :left  "<div>"
                    :right "</div>")))
-  (should (equal (osta-format :div/id)
+  (should (equal (osta-tag :div/id)
                  '(:void  nil
                    :left  "<div id=\"id\">"
                    :right "</div>")))
-  (should (equal (osta-format :div.class)
+  (should (equal (osta-tag :div.class)
                  '(:void  nil
                    :left  "<div class=\"class\">"
                    :right "</div>")))
-  (should (equal (osta-format :div/id.class)
+  (should (equal (osta-tag :div/id.class)
                  '(:void  nil
                    :left  "<div id=\"id\" class=\"class\">"
                    :right "</div>")))
-  (should (equal (osta-format :div/id.class-1.class-2)
+  (should (equal (osta-tag :div/id.class-1.class-2)
                  '(:void  nil
                    :left  "<div id=\"id\" class=\"class-1 class-2\">"
                    :right "</div>")))
 
   ;; void tags
-  (should (equal (osta-format :hr) '(:void t :left "<hr />")))
+  (should (equal (osta-tag :hr) '(:void t :left "<hr />")))
 
   ;; tag-kw must be keywords
-  (should-error (osta-format 'div))
-  (should-error (osta-format "div"))
-  (should-error (osta-format 'div '(:id "id")))
-  (should-error (osta-format "div" '(:id "id")))
+  (should-error (osta-tag 'div))
+  (should-error (osta-tag "div"))
+  (should-error (osta-tag 'div '(:id "id")))
+  (should-error (osta-tag "div" '(:id "id")))
 
   ;; attributes plist
-  (should (equal (osta-format :div '(:id "id"))
+  (should (equal (osta-tag :div '(:id "id"))
                  '(:void  nil
                    :left  "<div id=\"id\">"
                    :right "</div>")))
-  (should (equal (osta-format :div '(:id "id" :class "class"))
+  (should (equal (osta-tag :div '(:id "id" :class "class"))
                  '(:void  nil
                    :left  "<div id=\"id\" class=\"class\">"
                    :right "</div>")))
 
   ;; values in key/value pairs of attributes plist are evaluated
-  (should (equal (osta-format :div '(:id (concat "id-" "123")))
+  (should (equal (osta-tag :div '(:id (concat "id-" "123")))
                  '(:void  nil
                    :left  "<div id=\"id-123\">"
                    :right "</div>")))
 
   ;; attribute values are escaped
-  (should (equal (osta-format :div '(:id "\""))
+  (should (equal (osta-tag :div '(:id "\""))
                  '(:void  nil
                    :left  "<div id=\"&quot;\">"
                    :right "</div>")))
@@ -644,28 +644,28 @@ A simple example
   ;; So you can build html template feeding attributes
   ;; values with %s string, that you can use after with
   ;; the function `format'
-  (should (equal (osta-format :div '(:id "%s"))
+  (should (equal (osta-tag :div '(:id "%s"))
                  '(:void  nil
                    :left  "<div id=\"%s\">"
                    :right "</div>")))
 
   ;; `id' in `attributes' has priority over `id' in `tag-kw'
-  (should (equal (osta-format :div/id-in-tag '(:id "id-in-plist"))
+  (should (equal (osta-tag :div/id-in-tag '(:id "id-in-plist"))
                  '(:void  nil
                    :left  "<div id=\"id-in-plist\">"
                    :right "</div>")))
 
   ;; classes in `tag-kw' and `attributes' plist
-  (should (equal (osta-format :div.class-in-tag '(:class "class-a class-b"))
+  (should (equal (osta-tag :div.class-in-tag '(:class "class-a class-b"))
                  '(:void  nil
                    :left  "<div class=\"class-in-tag class-a class-b\">"
                    :right "</div>")))
 
   ;; boolean attributes
-  (should (equal (osta-format :input '(:type "checkbox" :checked t))
+  (should (equal (osta-tag :input '(:type "checkbox" :checked t))
                  '(:void t
                    :left "<input type=\"checkbox\" checked=\"checked\" />")))
-  (should (equal (osta-format :input '(:type "checkbox" :checked nil))
+  (should (equal (osta-tag :input '(:type "checkbox" :checked nil))
                  '(:void t
                    :left "<input type=\"checkbox\" />"))))
 
