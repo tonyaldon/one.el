@@ -426,7 +426,7 @@ returns
   ""
   (let ((comps (list nil components))
         (comp "")
-        (fmt '(:left "" :right ""))
+        (tree '(:left "" :right ""))
         rest)
     (while (or comp (cdr comps))
       (pcase comp
@@ -435,50 +435,50 @@ returns
         ;; string component or an integer component
         ((and (or (pred stringp) (pred numberp)))
          (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
-                (left (concat (plist-get fmt :left) comp-str))
-                (right (plist-get fmt :right)))
-           (setq fmt `(:left ,left :right ,right))
+                (left (concat (plist-get tree :left) comp-str))
+                (right (plist-get tree :right)))
+           (setq tree `(:left ,left :right ,right))
            (setq comps (cdr comps))))
         ;; not a tag component but a list of components like '("foo" "bar")
         ((and (pred listp) l (guard (not (keywordp (car l)))))
          (setq comps (append comp (cdr comps))))
         ;; tag component like '(:p "foo") or '(:p/id.class (@ :attr "attr") "foo")
         ((pred listp)
-         (let ((new-rest (cdr comps)) tag-fmt  comp-children)
+         (let ((new-rest (cdr comps)) tag  comp-children)
            (seq-let (tag-kw attr) comp
              (pcase attr
                ;; `attr' is attributes plist like '(@ :id "id" :class "class")
                ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
-                (setq tag-fmt (osta-tag tag-kw (cdr attr)))
+                (setq tag (osta-tag tag-kw (cdr attr)))
                 (setq comp-children (cddr comp)))
                ;; `attr' is not an attributes
-               (_ (setq tag-fmt (osta-tag tag-kw))
+               (_ (setq tag (osta-tag tag-kw))
                   (setq comp-children (cdr comp)))))
-           (let* ((tag-fmt-left (plist-get tag-fmt :left))
-                  (left (concat (plist-get fmt :left) tag-fmt-left))
-                  (tag-fmt-right (plist-get tag-fmt :right))
-                  (fmt-right (plist-get fmt :right))
-                  (tag-is-void-p (plist-get tag-fmt :void))
+           (let* ((tag-left (plist-get tag :left))
+                  (left (concat (plist-get tree :left) tag-left))
+                  (tag-right (plist-get tag :right))
+                  (fmt-right (plist-get tree :right))
+                  (tag-is-void-p (plist-get tag :void))
                   (right (cond ((and new-rest tag-is-void-p)
                                 `(:left ""
                                   :right ,fmt-right))
                                (new-rest
-                                `(:left ,tag-fmt-right
+                                `(:left ,tag-right
                                   :right ,fmt-right))
                                (tag-is-void-p fmt-right)
-                               (t (concat tag-fmt-right fmt-right)))))
-             (setq fmt `(:left ,left :right ,right)))
+                               (t (concat tag-right fmt-right)))))
+             (setq tree `(:left ,left :right ,right)))
            (setq comps (append comp-children (and new-rest '(:rest))))
            (when new-rest (push new-rest rest))))
         ;; make the latest list of components added to `rest'
         ;; the part of the tree (`component') to be treated in
         ;; the next iteration
         (:rest
-         (let* ((fmt-left (plist-get fmt :left))
-                (fmt-right-left (plist-get (plist-get fmt :right) :left))
-                (fmt-right-right (plist-get (plist-get fmt :right) :right))
+         (let* ((fmt-left (plist-get tree :left))
+                (fmt-right-left (plist-get (plist-get tree :right) :left))
+                (fmt-right-right (plist-get (plist-get tree :right) :right))
                 (left (concat fmt-left fmt-right-left)))
-           (setq fmt `(:left ,left :right ,fmt-right-right))
+           (setq tree `(:left ,left :right ,fmt-right-right))
            (setq comps (pop rest))))
         ;; non component object
         ((and _ obj)
@@ -487,7 +487,7 @@ returns
                   obj (type-of obj)))
          (setq comps (cdr comps))))
       (setq comp (car comps)))
-    (concat (plist-get fmt :left) (plist-get fmt :right))))
+    (concat (plist-get tree :left) (plist-get tree :right))))
 
 ;;; pages
 
