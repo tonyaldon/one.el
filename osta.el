@@ -361,7 +361,30 @@ For instance, `osta-parse-tag-kw' behaves like this:
     (error "Wrong tag keyword: %S" tag-kw)))
 
 (defun osta-tag (tag-kw &optional attributes)
-  "..."
+  "Return a plist describing the type of TAG-KW and its ATTRIBUTES.
+
+Classes in TAG-KW (`.class') and ATTRIBUTES (`:class') are merged.
+`:id' in ATTRIBUTES has priority over `/id' in TAG-KW.
+
+For instance:
+
+  (osta-tag :hr)
+
+returns
+
+  (:void t
+   :left \"<hr />\")
+
+and:
+
+  (osta-tag :div '(:id \"id\" :class \"class\"))
+
+returns
+
+  (:void  nil
+   :left  \"<div id=\"id\" class=\"class\">\"
+   :right \"</div>\")
+"
   (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
                      "keygen" "link" "meta" "param" "source" "track" "wbr")))
     (seq-let (tag id classes) (osta-parse-tag-kw tag-kw)
@@ -375,7 +398,7 @@ For instance, `osta-parse-tag-kw' behaves like this:
                     ((and _ value)
                      (concat attr "=\"" (osta-escape value) "\""))))))
              (pairs (seq-partition attributes 2))
-             ;; we merge classes from `tag-kw' and `attribute' and add it to the pairs
+             ;; we merge classes from `tag-kw' and `attributes' and add it to the pairs
              (-pairs (if classes
                          (if-let* ((c (assoc :class pairs)))
                              (let* ((pairs-without-class
