@@ -365,15 +365,15 @@ For instance, `osta-parse-tag-kw' behaves like this:
   (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
                      "keygen" "link" "meta" "param" "source" "track" "wbr")))
     (seq-let (tag id classes) (osta-parse-tag-kw tag-kw)
-      (let* ((fmt (if (member tag void-tags) "<%s%s />%%s" "<%s%s>%%s</%s>"))
-             (kw->a (lambda (kw) (substring (symbol-name kw) 1))) ; :id -> "id"
+      (let* ((kw->a (lambda (kw) (substring (symbol-name kw) 1))) ; :id -> "id"
              (p->a-v                                              ; (:id "foo") -> "id=\"foo\""
               (lambda (p)
                 (let ((attr (funcall kw->a (car p))))
                   (pcase (eval (cadr p))
-                    ('t (format "%s=\"%s\"" attr attr))
+                    ('t (concat attr "=\""  attr "\""))
                     ('nil nil)
-                    ((and _ value) (format "%s=\"%s\"" attr (osta-escape value)))))))
+                    ((and _ value)
+                     (concat attr "=\"" (osta-escape value) "\""))))))
              (pairs (seq-partition attributes 2))
              ;; we merge classes from `tag-kw' and `attribute' and add it to the pairs
              (-pairs (if classes
@@ -392,52 +392,67 @@ For instance, `osta-parse-tag-kw' behaves like this:
                         -pairs))
              (attrs (string-join (delq nil (mapcar p->a-v --pairs)) " "))
              (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
-        (format fmt tag -attrs tag)))))
+        (if (member tag void-tags)
+            `(:void t
+              :left ,(concat "<" tag -attrs " />"))
+          `(:void  nil
+            :left  ,(concat "<" tag -attrs ">")
+            :right ,(concat "</" tag ">")))))))
 
 (defun osta-component (component)
   (let ((comp (if (listp component) "" component))
         (comps (and (listp component) (list nil component)))
-        (fmt "%s")
+        (fmt '(:left "" :right ""))
         rest)
     (while comp
       (pcase comp
         ;; string component or an integer component
         ((and (or (pred stringp) (pred numberp)))
-         (let* ((rest-slots (make-list (length rest) "%s"))
-                (comp-str (if (stringp comp) comp (number-to-string comp)))
-                ;; due to the use of the function `format' we must
-                ;; protect percent sign % in string component
-                (comp-%->%%  (replace-regexp-in-string "%" "%%" comp-str))
-                (comp+%s (concat comp-%->%% "%s")))
-           (setq fmt (apply #'format fmt comp+%s rest-slots))
+         (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
+                (left (concat (plist-get fmt :left) comp-str))
+                (right (plist-get fmt :right)))
+           (setq fmt `(:left ,left :right ,right))
            (setq comps (cdr comps))))
         ;; not a tag component but a list of components like '("foo" "bar")
         ((and (pred listp) l (guard (not (keywordp (car l)))))
          (setq comps (append comp (cdr comps))))
         ;; tag component like '(:p "foo") or '(:p/id.class (@ :attr "attr") "foo")
         ((pred listp)
-         (let ((rest-slots (make-list (length rest) "%s"))
-               (new-rest (cdr comps))
-               tag-fmt tag-fmt+new-rest comp-children)
+         (let ((new-rest (cdr comps)) tag-fmt  comp-children)
            (seq-let (tag-kw attr) comp
              (pcase attr
                ;; `attr' is attributes plist like '(@ :id "id" :class "class")
                ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
                 (setq tag-fmt (osta-format tag-kw (cdr attr)))
                 (setq comp-children (cddr comp)))
+               ;; `attr' is not an attributes
                (_ (setq tag-fmt (osta-format tag-kw))
                   (setq comp-children (cdr comp)))))
-           ;; update value of `fmt', `comps', `comp', `rest' before looping
-           (setq tag-fmt+new-rest (if new-rest (concat tag-fmt "%s") tag-fmt))
-           (setq fmt (apply #'format fmt tag-fmt+new-rest rest-slots))
+           (let* ((tag-fmt-left (plist-get tag-fmt :left))
+                  (left (concat (plist-get fmt :left) tag-fmt-left))
+                  (tag-fmt-right (plist-get tag-fmt :right))
+                  (fmt-right (plist-get fmt :right))
+                  (tag-is-void-p (plist-get tag-fmt :void))
+                  (right (cond ((and new-rest tag-is-void-p)
+                                `(:left ""
+                                  :right ,fmt-right))
+                               (new-rest
+                                `(:left ,tag-fmt-right
+                                  :right ,fmt-right))
+                               (tag-is-void-p fmt-right)
+                               (t (concat tag-fmt-right fmt-right)))))
+             (setq fmt `(:left ,left :right ,right)))
            (setq comps (append comp-children (and new-rest '(:rest))))
            (when new-rest (push new-rest rest))))
         ;; make the latest list of components added to `rest'
         ;; the part of the tree (`component') to be treated in
         ;; the next iteration
         (:rest
-         (let ((rest-slots (make-list (length rest) "%s")))
-           (setq fmt (apply #'format fmt "" rest-slots))
+         (let* ((fmt-left (plist-get fmt :left))
+                (fmt-right-left (plist-get (plist-get fmt :right) :left))
+                (fmt-right-right (plist-get (plist-get fmt :right) :right))
+                (left (concat fmt-left fmt-right-left)))
+           (setq fmt `(:left ,left :right ,fmt-right-right))
            (setq comps (pop rest))))
         ;; non component object
         ((and _ obj)
@@ -446,7 +461,7 @@ For instance, `osta-parse-tag-kw' behaves like this:
                   obj (type-of obj)))
          (setq comps (cdr comps))))
       (setq comp (car comps)))
-    (format fmt "")))
+    (concat (plist-get fmt :left) (plist-get fmt :right))))
 
 (defun osta-html (&rest components)
   ""

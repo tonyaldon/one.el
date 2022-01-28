@@ -588,18 +588,29 @@ A simple example
 (ert-deftest osta-format-test ()
 
   ;; id and classes in the tag-kw
-  (should (string= (osta-format :div) "<div>%s</div>"))
-  (should (string= (osta-format :div/id)
-                   "<div id=\"id\">%s</div>"))
-  (should (string= (osta-format :div.class)
-                   "<div class=\"class\">%s</div>"))
-  (should (string= (osta-format :div/id.class)
-                   "<div id=\"id\" class=\"class\">%s</div>"))
-  (should (string= (osta-format :div/id.class-1.class-2)
-                   "<div id=\"id\" class=\"class-1 class-2\">%s</div>"))
+  (should (equal (osta-format :div)
+                 '(:void  nil
+                   :left  "<div>"
+                   :right "</div>")))
+  (should (equal (osta-format :div/id)
+                 '(:void  nil
+                   :left  "<div id=\"id\">"
+                   :right "</div>")))
+  (should (equal (osta-format :div.class)
+                 '(:void  nil
+                   :left  "<div class=\"class\">"
+                   :right "</div>")))
+  (should (equal (osta-format :div/id.class)
+                 '(:void  nil
+                   :left  "<div id=\"id\" class=\"class\">"
+                   :right "</div>")))
+  (should (equal (osta-format :div/id.class-1.class-2)
+                 '(:void  nil
+                   :left  "<div id=\"id\" class=\"class-1 class-2\">"
+                   :right "</div>")))
 
   ;; void tags
-  (should (string= (osta-format :hr) "<hr />%s"))
+  (should (equal (osta-format :hr) '(:void t :left "<hr />")))
 
   ;; tag-kw must be keywords
   (should-error (osta-format 'div))
@@ -608,29 +619,55 @@ A simple example
   (should-error (osta-format "div" '(:id "id")))
 
   ;; attributes plist
-  (should (string= (osta-format :div '(:id "id")) "<div id=\"id\">%s</div>"))
-  (should (string= (osta-format :div '(:id "id" :class "class"))
-                   "<div id=\"id\" class=\"class\">%s</div>"))
+  (should (equal (osta-format :div '(:id "id"))
+                 '(:void  nil
+                   :left  "<div id=\"id\">"
+                   :right "</div>")))
+  (should (equal (osta-format :div '(:id "id" :class "class"))
+                 '(:void  nil
+                   :left  "<div id=\"id\" class=\"class\">"
+                   :right "</div>")))
 
   ;; values in key/value pairs of attributes plist are evaluated
-  (should (string= (osta-format :div '(:id (concat "id-" "123"))) "<div id=\"id-123\">%s</div>"))
+  (should (equal (osta-format :div '(:id (concat "id-" "123")))
+                 '(:void  nil
+                   :left  "<div id=\"id-123\">"
+                   :right "</div>")))
 
   ;; attribute values are escaped
-  (should (string= (osta-format :div '(:id "\"")) "<div id=\"&quot;\">%s</div>"))
+  (should (equal (osta-format :div '(:id "\""))
+                 '(:void  nil
+                   :left  "<div id=\"&quot;\">"
+                   :right "</div>")))
+
+  ;; character percent % is left as it is in attribute values.
+  ;; So you can build html template feeding attributes
+  ;; values with %s string, that you can use after with
+  ;; the function `format'
+  (should (equal (osta-format :div '(:id "%s"))
+                 '(:void  nil
+                   :left  "<div id=\"%s\">"
+                   :right "</div>")))
 
   ;; `id' in `attributes' has priority over `id' in `tag-kw'
-  (should (string= (osta-format :div/id-in-tag '(:id "id-in-plist"))
-                   "<div id=\"id-in-plist\">%s</div>"))
+  (should (equal (osta-format :div/id-in-tag '(:id "id-in-plist"))
+                 '(:void  nil
+                   :left  "<div id=\"id-in-plist\">"
+                   :right "</div>")))
 
   ;; classes in `tag-kw' and `attributes' plist
-  (should (string= (osta-format :div.class-in-tag '(:class "class-a class-b"))
-                   "<div class=\"class-in-tag class-a class-b\">%s</div>"))
+  (should (equal (osta-format :div.class-in-tag '(:class "class-a class-b"))
+                 '(:void  nil
+                   :left  "<div class=\"class-in-tag class-a class-b\">"
+                   :right "</div>")))
 
   ;; boolean attributes
-  (should (string= (osta-format :input '(:type "checkbox" :checked t))
-                   "<input type=\"checkbox\" checked=\"checked\" />%s"))
-  (should (string= (osta-format :input '(:type "checkbox" :checked nil))
-                   "<input type=\"checkbox\" />%s")))
+  (should (equal (osta-format :input '(:type "checkbox" :checked t))
+                 '(:void t
+                   :left "<input type=\"checkbox\" checked=\"checked\" />")))
+  (should (equal (osta-format :input '(:type "checkbox" :checked nil))
+                 '(:void t
+                   :left "<input type=\"checkbox\" />"))))
 
 (ert-deftest osta-component-test ()
   ;; `osta-html-raise-error-p' is set to nil by default
@@ -651,6 +688,7 @@ A simple example
     (should (string= (osta-component '(:hr)) "<hr />"))
     (should (string= (osta-component '(:div (:hr))) "<div><hr /></div>"))
     (should (string= (osta-component '(:div "foo" (:hr) "bar")) "<div>foo<hr />bar</div>"))
+    (should (string= (osta-component '(:div "foo" (:hr) (:hr) "bar")) "<div>foo<hr /><hr />bar</div>"))
 
     ;; percent sign % in string tag
     (should (string= (osta-component "%") "%"))
@@ -658,6 +696,8 @@ A simple example
     (should (string= (osta-component "%s %s %s") "%s %s %s"))
     (should (string= (osta-component '(:p "%s")) "<p>%s</p>"))
     (should (string= (osta-component '(:p "% %% %%%")) "<p>% %% %%%</p>"))
+    (should (string= (osta-component '(:div (:p "%s") "foo" (:p "%s")))
+                     "<div><p>%s</p>foo<p>%s</p></div>"))
 
     ;; nesting tags
     (should (string= (osta-component '(:p "foo")) "<p>foo</p>"))
