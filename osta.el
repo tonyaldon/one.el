@@ -399,13 +399,16 @@ For instance, `osta-parse-tag-kw' behaves like this:
             :left  ,(concat "<" tag -attrs ">")
             :right ,(concat "</" tag ">")))))))
 
-(defun osta-component (component)
-  (let ((comp (if (listp component) "" component))
-        (comps (and (listp component) (list nil component)))
+(defun osta-html (&rest components)
+  ""
+  (let ((comps (list nil components))
+        (comp "")
         (fmt '(:left "" :right ""))
         rest)
-    (while comp
+    (while (or comp (cdr comps))
       (pcase comp
+        ;; nil component is just ignored
+        ('nil (setq comps (cdr comps)))
         ;; string component or an integer component
         ((and (or (pred stringp) (pred numberp)))
          (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
@@ -462,10 +465,6 @@ For instance, `osta-parse-tag-kw' behaves like this:
          (setq comps (cdr comps))))
       (setq comp (car comps)))
     (concat (plist-get fmt :left) (plist-get fmt :right))))
-
-(defun osta-html (&rest components)
-  ""
-  (mapconcat #'osta-component components ""))
 
 ;;; pages
 
