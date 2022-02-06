@@ -1,5 +1,5 @@
 #+TITLE: OSTA - Org Static
-#+DATE: <2022-01-13 Thu>
+#+DATE: <2022-02-06 Sun>
 
 * Home page
 :PROPERTIES:
@@ -49,6 +49,457 @@ As a result, I left out many org elements:
 
 You can find the complete list of the org elements that are not
 supported in the commentary section of the file ~osta.el~
+
+* Recursive vs. iterative implementation of osta-html in Elisp
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /recursive-vs-iterative-implementation-of-osta-html-in-elisp/
+:OSTA_DATE: [2022-02-06 Sun]
+:END:
+** Push the limits
+
+At commit ~554d733~ (2022-01-23), I finally got ~osta-html~ working and
+passing the tests I wanted it to pass.  So, I had now a way to convert
+components (Elisp data structure representing html) into html like
+this:
+
+#+BEGIN_SRC emacs-lisp
+(osta-html '(:div (@ :id "id" :class "class") "foo"))
+;; "<div id=\"id\" class=\"class\">foo</div>"
+
+(osta-html `(:ul ,(mapcar (lambda (n) `(:li ,n)) '(1 2))))
+;; "<ul><li>1</li><li>2</li></ul>"
+#+END_SRC
+
+I was happy but I also had the *feeling* that the implementation wasn't
+"robust".
+
+So I decided to push the limits of ~osta-html~ and gave it as input
+"deep" nested lists of ~:div~ that looks like ~'(:div (:div (:div "foo")))~.
+
+And for only ~46~ nested ~:div~, ~osta-html~ raised the following error:
+
+#+ATTR_OSTA_RESULTS:
+: (error "Lisp nesting exceeds ‘max-lisp-eval-depth’")
+
+(Note that I use the default value of ~800~ for the variable
+~max-lisp-eval-depth~.)
+
+The help buffer about ~max-lisp-eval-depth~ variable tells us the
+following:
+
+#+BEGIN_SRC text
+Limit on depth in ‘eval’, ‘apply’ and ‘funcall’ before error.
+
+This limit serves to catch infinite recursions for you before they cause
+actual stack overflow in C, which would be fatal for Emacs.
+You can safely make it considerably larger than its default value,
+if that proves inconveniently small.  However, if you increase it too far,
+Emacs could overflow the real C stack, and crash.
+#+END_SRC
+
+At that point, I was:
+
+1) *tired* (I didn't want to work more on ~osta-html~) but also,
+2) *super excited* (life was offering me the opportunity to learn more
+   about Elisp and programming).
+
+The first implementation (commit ~554d733~) uses recursive calls to
+traverse the tree (Elisp data structure representing the html).
+
+Too many calls to the function ~apply~ were causing the error.
+
+I thought about making the recursive calls in tail position (not the
+case in the implementation ~554d733~).  But, after some readings ([[https://stackoverflow.com/questions/38493904/why-is-there-no-tail-recursion-optimization-in-emacs-lisp-not-but-like-other-sc][Why is
+there no tail recursion optimization in Emacs lisp? (stackoverflow)]]),
+I learned that this wasn't the way to go, because:
+
+1) Elisp doesn't implement tail-recursion optimization and,
+2) the implementation of function calls is "relatively inefficient"
+   anyway.
+
+Considering these "new" elements (for me), instead of forcing Elisp to
+do something it didn't want to do, I decided to re-implement ~osta-html~
+in an iterative way (commit ~1029c90~ (2022-01-28)).
+
+Thus now, the new implementation:
+
+1) passes the same tests (as the recursive one) regarding of the
+   expected functionalities,
+2) works fine with more than ~10000~ nested ~:div~ (can do more) and,
+3) has "more or less" the same performances as the recursive one (If
+   you know how to do good performance tests, *please reach out*, I'm
+   eager to learn).
+
+If you are interested, you can find below the two implementations of
+~osta-html~:
+
+1) the recursive one named ~osta-html-REC~ and,
+2) the iterative one named ~osta-html-ITER~.
+
+There is also a section that tests the functionalities of both
+implementations.
+
+The last section tests its "robustness".
+
+Note that when I was re-implementing ~osta-html~ in an iterative way, I
+also changed the way ~osta-html~ builds the html strings removing the
+use of the function ~format~ that was causing wrong results with string
+components containing ~%s~ strings.
+
+** ~osta-html-REC~ (recursive implementation of ~osta-html~)
+
+#+BEGIN_SRC emacs-lisp
+;; commit 554d7337df242124822b6adcada50d1a99bac4a4
+;; Author: tony <tony.aldon.adm@gmail.com>
+;; Date:   Sun Jan 23 10:08:13 2022 +0100
+
+(defvar osta-html-raise-error-p-REC nil "")
+
+(defun osta-parse-tag-kw-REC (tag-kw)
+  "Return a list of (\"tag\" \"id\" \"class\") from a TAG-KW."
+  (if-let* (((keywordp tag-kw))
+            (tag-s (symbol-name tag-kw))
+            ((string-match (concat "\\(?::\\)\\([^ /.]+\\)"
+                                   "\\(?:/\\([^ /.]+\\)\\)?"
+                                   "\\(?:[.]\\([^ /]+\\)\\)?")
+                           tag-s)))
+      (let* ((tag (match-string 1 tag-s))
+             (id (match-string 2 tag-s))
+             (class (match-string 3 tag-s))
+             (classes (and class (string-replace "." " " class))))
+        (if (or tag id classes)
+            (list tag id classes)
+          (error "Wrong tag keyword: %S" tag-kw)))
+    (error "Wrong tag keyword: %S" tag-kw)))
+
+(defun osta-format-REC (tag-kw &optional attributes)
+  ""
+  (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
+                     "keygen" "link" "meta" "param" "source" "track" "wbr")))
+    (seq-let (tag id classes) (osta-parse-tag-kw-REC tag-kw)
+      (let* ((fmt (if (member tag void-tags) "<%s%s />" "<%s%s>%%s</%s>"))
+             (kw->a (lambda (kw) (substring (symbol-name kw) 1))) ; :id -> "id"
+             (p->a-v                                              ; (:id "foo") -> "id=\"foo\""
+              (lambda (p)
+                (let ((attr (funcall kw->a (car p))))
+                  (pcase (eval (cadr p))
+                    ('t (format "%s=\"%s\"" attr attr))
+                    ('nil nil)
+                    ((and _ value) (format "%s=\"%s\"" attr (osta-escape value)))))))
+             (pairs (seq-partition attributes 2))
+             ;; we merge classes from `tag-kw' and `attribute' and add it to the pairs
+             (-pairs (if classes
+                         (if-let* ((c (assoc :class pairs)))
+                             (let* ((pairs-without-class
+                                     (seq-remove
+                                      (lambda (p) (eq (car p) :class)) pairs))
+                                    (class-value-in-pairs (cadr c))
+                                    (class `(:class ,(concat classes " " class-value-in-pairs))))
+                               (cons class pairs-without-class))
+                           (cons `(:class ,classes) pairs))
+                       pairs))
+             ;; `id' in `attributes' has priority over `id' in `tag-kw'
+             (--pairs (if (and id (not (assoc :id -pairs)))
+                          (cons `(:id ,id) -pairs)
+                        -pairs))
+             (attrs (string-join (delq nil (mapcar p->a-v --pairs)) " "))
+             (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
+        (format fmt tag -attrs tag)))))
+
+(defun osta-html-REC (&rest components)
+  ""
+  (let (children)
+    (pcase (car components)
+      ((and 'nil (guard (null (cdr components)))) "")
+      ;; (car components) is a string component or an integer component
+      ((and (or (pred stringp) (pred numberp)) component)
+       (push (format "%s" component) children)
+       (push (apply #'osta-html-REC (cdr components)) children))
+      ;; (car components) is not a tag component but a list of components
+      ;; like this '((:p "foo") "bar" 1)
+      ((and (pred listp) l (guard (not (keywordp (car l)))))
+       (let ((-components (append l (cdr components))))
+         (push (apply #'osta-html-REC -components) children)))
+      ((and (pred listp) component)
+       (seq-let (tag-kw attr-or-comp comp) component
+         (pcase attr-or-comp
+           ;; empty component like '(:p)
+           ('nil
+             (push (format (osta-format-REC tag-kw) (apply #'osta-html-REC nil)) children))
+           ;; attr-or-comp is attributes plist like '(@ :id "id" :class "class")
+           ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
+            (let ((-components (cddr component))
+                  (fmt (osta-format-REC tag-kw (cdr attr-or-comp))))
+              (push (format fmt (apply #'osta-html-REC -components)) children)))
+           (_ (let ((-components (cdr component))
+                    (fmt (osta-format-REC tag-kw)))
+                (push (format fmt (apply #'osta-html-REC -components)) children)))))
+       (push (apply #'osta-html-REC (cdr components)) children))
+      ((and _ obj)
+       (when osta-html-raise-error-p-REC
+         (error "Object '%S' of type '%s' can't be a component in 'osta-html-REC'"
+                obj (type-of obj)))
+       (push (apply #'osta-html-REC (cdr components)) children)))
+    (apply #'concat (nreverse children))))
+#+END_SRC
+
+** ~osta-html-ITER~ (iterative implementation of ~osta-html~)
+
+#+BEGIN_SRC emacs-lisp
+;; commit 1029c90abdfd4f87f1d0317d89675c01c18a217e
+;; Author: tony <tony.aldon.adm@gmail.com>
+;; Date:   Fri Jan 28 11:10:19 2022 +0100
+
+(defvar osta-html-raise-error-p-ITER nil "")
+
+(defun osta-parse-tag-kw-ITER (tag-kw)
+  "Return a list of (\"tag\" \"id\" \"class\") from a TAG-KW."
+  (if-let* (((keywordp tag-kw))
+            (tag-s (symbol-name tag-kw))
+            ((string-match (concat "\\(?::\\)\\([^ /.]+\\)"
+                                   "\\(?:/\\([^ /.]+\\)\\)?"
+                                   "\\(?:[.]\\([^ /]+\\)\\)?")
+                           tag-s)))
+      (let* ((tag (match-string 1 tag-s))
+             (id (match-string 2 tag-s))
+             (class (match-string 3 tag-s))
+             (classes (and class (string-replace "." " " class))))
+        (if (or tag id classes)
+            (list tag id classes)
+          (error "Wrong tag keyword: %S" tag-kw)))
+    (error "Wrong tag keyword: %S" tag-kw)))
+
+(defun osta-tag-ITER (tag-kw &optional attributes)
+  "Return a plist describing the type of TAG-KW and its ATTRIBUTES."
+  (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
+                     "keygen" "link" "meta" "param" "source" "track" "wbr")))
+    (seq-let (tag id classes) (osta-parse-tag-kw-ITER tag-kw)
+      (let* ((kw->a (lambda (kw) (substring (symbol-name kw) 1))) ; :id -> "id"
+             (p->a-v                                              ; (:id "foo") -> "id=\"foo\""
+              (lambda (p)
+                (let ((attr (funcall kw->a (car p))))
+                  (pcase (eval (cadr p))
+                    ('t (concat attr "=\""  attr "\""))
+                    ('nil nil)
+                    ((and _ value)
+                     (concat attr "=\"" (osta-escape value) "\""))))))
+             (pairs (seq-partition attributes 2))
+             ;; we merge classes from `tag-kw' and `attributes' and add it to the pairs
+             (-pairs (if classes
+                         (if-let* ((c (assoc :class pairs)))
+                             (let* ((pairs-without-class
+                                     (seq-remove
+                                      (lambda (p) (eq (car p) :class)) pairs))
+                                    (class-value-in-pairs (cadr c))
+                                    (class `(:class ,(concat classes " " class-value-in-pairs))))
+                               (cons class pairs-without-class))
+                           (cons `(:class ,classes) pairs))
+                       pairs))
+             ;; `id' in `attributes' has priority over `id' in `tag-kw'
+             (--pairs (if (and id (not (assoc :id -pairs)))
+                          (cons `(:id ,id) -pairs)
+                        -pairs))
+             (attrs (string-join (delq nil (mapcar p->a-v --pairs)) " "))
+             (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
+        (if (member tag void-tags)
+            `(:void t
+              :left ,(concat "<" tag -attrs " />"))
+          `(:void  nil
+            :left  ,(concat "<" tag -attrs ">")
+            :right ,(concat "</" tag ">")))))))
+
+(defun osta-html-ITER (&rest components)
+  ""
+  (let ((comps (list nil components))
+        (comp "")
+        (tree '(:left "" :right ""))
+        rest)
+    (while (or comp (cdr comps))
+      (pcase comp
+        ;; nil component is just ignored
+        ('nil (setq comps (cdr comps)))
+        ;; string component or an integer component
+        ((and (or (pred stringp) (pred numberp)))
+         (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
+                (left (concat (plist-get tree :left) comp-str))
+                (right (plist-get tree :right)))
+           (setq tree `(:left ,left :right ,right))
+           (setq comps (cdr comps))))
+        ;; not a tag component but a list of components like '("foo" "bar")
+        ((and (pred listp) l (guard (not (keywordp (car l)))))
+         (setq comps (append comp (cdr comps))))
+        ;; tag component like '(:p "foo") or '(:p/id.class (@ :attr "attr") "foo")
+        ((pred listp)
+         (let ((new-rest (cdr comps)) tag  comp-children)
+           (seq-let (tag-kw attr) comp
+             (pcase attr
+               ;; `attr' is attributes plist like '(@ :id "id" :class "class")
+               ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
+                (setq tag (osta-tag-ITER tag-kw (cdr attr)))
+                (setq comp-children (cddr comp)))
+               ;; `attr' is not an attributes
+               (_ (setq tag (osta-tag-ITER tag-kw))
+                  (setq comp-children (cdr comp)))))
+           (let* ((tag-left (plist-get tag :left))
+                  (left (concat (plist-get tree :left) tag-left))
+                  (tag-right (plist-get tag :right))
+                  (fmt-right (plist-get tree :right))
+                  (tag-is-void-p (plist-get tag :void))
+                  (right (cond ((and new-rest tag-is-void-p)
+                                `(:left ""
+                                  :right ,fmt-right))
+                               (new-rest
+                                `(:left ,tag-right
+                                  :right ,fmt-right))
+                               (tag-is-void-p fmt-right)
+                               (t (concat tag-right fmt-right)))))
+             (setq tree `(:left ,left :right ,right)))
+           (setq comps (append comp-children (and new-rest '(:rest))))
+           (when new-rest (push new-rest rest))))
+        ;; make the latest list of components added to `rest'
+        ;; the part of the tree (`component') to be treated in
+        ;; the next iteration
+        (:rest
+         (let* ((fmt-left (plist-get tree :left))
+                (fmt-right-left (plist-get (plist-get tree :right) :left))
+                (fmt-right-right (plist-get (plist-get tree :right) :right))
+                (left (concat fmt-left fmt-right-left)))
+           (setq tree `(:left ,left :right ,fmt-right-right))
+           (setq comps (pop rest))))
+        ;; non component object
+        ((and _ obj)
+         (when osta-html-raise-error-p-ITER
+           (error "Object '%S' of type '%s' can't be a component in 'osta-html-ITER'"
+                  obj (type-of obj)))
+         (setq comps (cdr comps))))
+      (setq comp (car comps)))
+    (concat (plist-get tree :left) (plist-get tree :right))))
+#+END_SRC
+
+** Test the functionalities
+
+#+BEGIN_SRC emacs-lisp
+(ert-deftest osta-html-functionality ()
+  (let ((osta-html-raise-error-p nil))
+    ;; `osta-html-REC'
+    (should (string= (osta-html-REC nil) ""))
+    (should (string= (osta-html-REC "foo") "foo"))
+    (should (string= (osta-html-REC 16) "16"))
+    (should (string= (osta-html-REC '(:hr)) "<hr />"))
+    (should (string= (osta-html-REC '(:div (@ :id "id" :class "class") "foo"))
+                     "<div id=\"id\" class=\"class\">foo</div>"))
+    (should (string= (osta-html-REC '("foo" 1 "bar")) "foo1bar"))
+    (should (string= (osta-html-REC '(:ul ((:li "1") (:li "2"))))
+                     "<ul><li>1</li><li>2</li></ul>"))
+    (should (string=
+             (osta-html-REC `(:ul ,(mapcar (lambda (n) `(:li ,n)) '(1 2))))
+             "<ul><li>1</li><li>2</li></ul>"))
+    (should (string= (osta-html-REC (mapcar (lambda (n) `(:p ,n)) '(1 2 3)))
+                     "<p>1</p><p>2</p><p>3</p>"))
+    (should (string= (let ((x "foo") (y "bar"))
+                       (osta-html-REC `(:p (@ :id ,x) ,y)))
+                     "<p id=\"foo\">bar</p>"))
+    (should (string= (osta-html-REC
+                      (let ((x "foo") (y "bar"))
+                        `(:p (@ :id ,x) ,y)))
+                     "<p id=\"foo\">bar</p>"))
+
+    ;; `osta-html-ITER'
+    (should (string= (osta-html-ITER nil) ""))
+    (should (string= (osta-html-ITER "foo") "foo"))
+    (should (string= (osta-html-ITER 16) "16"))
+    (should (string= (osta-html-ITER '(:hr)) "<hr />"))
+    (should (string= (osta-html-ITER '(:div (@ :id "id" :class "class") "foo"))
+                     "<div id=\"id\" class=\"class\">foo</div>"))
+    (should (string= (osta-html-ITER '("foo" 1 "bar")) "foo1bar"))
+    (should (string= (osta-html-ITER '(:ul ((:li "1") (:li "2"))))
+                     "<ul><li>1</li><li>2</li></ul>"))
+    (should (string=
+             (osta-html-ITER `(:ul ,(mapcar (lambda (n) `(:li ,n)) '(1 2))))
+             "<ul><li>1</li><li>2</li></ul>"))
+    (should (string= (osta-html-ITER (mapcar (lambda (n) `(:p ,n)) '(1 2 3)))
+                     "<p>1</p><p>2</p><p>3</p>"))
+    (should (string= (let ((x "foo") (y "bar"))
+                       (osta-html-ITER `(:p (@ :id ,x) ,y)))
+                     "<p id=\"foo\">bar</p>"))
+    (should (string= (osta-html-ITER
+                      (let ((x "foo") (y "bar"))
+                        `(:p (@ :id ,x) ,y)))
+                     "<p id=\"foo\">bar</p>"))))
+#+END_SRC
+
+** Test the robustness
+*** 50 nested ~:div~ vs. 10000 nested ~:div~
+
+#+BEGIN_SRC emacs-lisp
+(defun nested-foo-comp (n)
+  "Construct nested list where car is the keyword :div.
+For instance: (nested-foo-comp 3) -> (:div (:div (:div \"foo\")))"
+  (let ((comp "foo"))
+    (dotimes (_ n) (setq comp (list :div comp)))
+    comp))
+
+(ert-deftest osta-html-lisp-nesting ()
+  (let ((max-lisp-eval-depth 800)) ; default value
+    ;; `osta-html-REC'
+    ;; (error "Lisp nesting exceeds ‘max-lisp-eval-depth’")
+    (let ((comp (nested-foo-comp 50)))
+      (should-error (osta-html-REC comp)))
+
+    ;; `osta-html-ITER'
+    (message "Might take a few seconds...")
+    (let ((comp (nested-foo-comp 10000)))
+      (should (osta-html-ITER comp)))))
+#+END_SRC
+
+*** Performance
+
+#+BEGIN_SRC emacs-lisp
+(let ((comp '(:p "foo")))
+  (dolist (osta-html '(osta-html-REC osta-html-ITER))
+    (message "------------------------------------")
+    (dotimes (_ 15)
+      (garbage-collect)
+      (apply #'message "%-15s %10.6f %3d %.3f" osta-html
+               (benchmark-run 10 (funcall osta-html comp))))))
+#+END_SRC
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC text
+------------------------------------
+osta-html-REC     0.000217   0 0.000
+osta-html-REC     0.000172   0 0.000
+osta-html-REC     0.000221   0 0.000
+osta-html-REC     0.000172   0 0.000
+osta-html-REC     0.000218   0 0.000
+osta-html-REC     0.000181   0 0.000
+osta-html-REC     0.000173   0 0.000
+osta-html-REC     0.000217   0 0.000
+osta-html-REC     0.000173   0 0.000
+osta-html-REC     0.000191   0 0.000
+osta-html-REC     0.000182   0 0.000
+osta-html-REC     0.000183   0 0.000
+osta-html-REC     0.000170   0 0.000
+osta-html-REC     0.000219   0 0.000
+osta-html-REC     0.000183   0 0.000
+------------------------------------
+osta-html-ITER    0.000222   0 0.000
+osta-html-ITER    0.000218   0 0.000
+osta-html-ITER    0.000205   0 0.000
+osta-html-ITER    0.000188   0 0.000
+osta-html-ITER    0.000205   0 0.000
+osta-html-ITER    0.000199   0 0.000
+osta-html-ITER    0.000198   0 0.000
+osta-html-ITER    0.000219   0 0.000
+osta-html-ITER    0.000191   0 0.000
+osta-html-ITER    0.000240   0 0.000
+osta-html-ITER    0.000243   0 0.000
+osta-html-ITER    0.000225   0 0.000
+osta-html-ITER    0.000189   0 0.000
+osta-html-ITER    0.000200   0 0.000
+osta-html-ITER    0.000209   0 0.000
+#+END_SRC
 
 * Documentation
 ** org elements not supported
