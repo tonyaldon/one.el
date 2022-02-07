@@ -424,8 +424,8 @@ returns
 
 (defun osta-html (&rest components)
   ""
-  (let ((comps (list nil components))
-        (comp "")
+  (let ((comps components)
+        (comp (car components))
         (tree '(:left "" :right ""))
         rest)
     (while (or comp (cdr comps))
