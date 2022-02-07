@@ -120,7 +120,7 @@ I learned that this wasn't the way to go, because:
 
 Considering these "new" elements (for me), instead of forcing Elisp to
 do something it didn't want to do, I decided to re-implement ~osta-html~
-in an iterative way (commit ~1029c90~ (2022-01-28)).
+in an iterative way (commit ~cd43e0b~ (2022-02-07)).
 
 Thus now, the new implementation:
 
@@ -247,9 +247,9 @@ components containing ~%s~ strings.
 ** ~osta-html-ITER~ (iterative implementation of ~osta-html~)
 
 #+BEGIN_SRC emacs-lisp
-;; commit 1029c90abdfd4f87f1d0317d89675c01c18a217e
+;; commit cd43e0bc6d2bf7affcc1fce0b071fa8f3f1978c0
 ;; Author: tony <tony.aldon.adm@gmail.com>
-;; Date:   Fri Jan 28 11:10:19 2022 +0100
+;; Date:   Mon Feb 7 10:51:35 2022 +0100
 
 (defvar osta-html-raise-error-p-ITER nil "")
 
@@ -303,77 +303,81 @@ components containing ~%s~ strings.
              (attrs (string-join (delq nil (mapcar p->a-v --pairs)) " "))
              (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
         (if (member tag void-tags)
-            `(:void t
-              :left ,(concat "<" tag -attrs " />"))
-          `(:void  nil
-            :left  ,(concat "<" tag -attrs ">")
+            `(:left ,(concat "<" tag -attrs " />"))
+          `(:left  ,(concat "<" tag -attrs ">")
             :right ,(concat "</" tag ">")))))))
 
 (defun osta-html-ITER (&rest components)
   ""
-  (let ((comps (list nil components))
-        (comp "")
-        (tree '(:left "" :right ""))
-        rest)
+  (let* ((update-tree-comp
+          (lambda (tree comp)
+            (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
+                   (left (concat (plist-get tree :left) comp-str))
+                   (right (plist-get tree :right)))
+              `(:left ,left :right ,right))))
+         (update-tree-tag
+          (lambda (tree tag new-rest)
+            (let* ((tag-left (plist-get tag :left))
+                   (left (concat (plist-get tree :left) tag-left))
+                   (tag-right (or (plist-get tag :right) ""))
+                   (tree-right (plist-get tree :right))
+                   (right (if new-rest
+                              `(:left ,tag-right :right ,tree-right)
+                            (concat tag-right tree-right))))
+              `(:left ,left :right ,right))))
+         (update-tree-rest
+          (lambda (tree)
+            (let* ((tree-left (plist-get tree :left))
+                   (tree-right-left (plist-get (plist-get tree :right) :left))
+                   (tree-right-right (plist-get (plist-get tree :right) :right))
+                   (left (concat tree-left tree-right-left)))
+              `(:left ,left :right ,tree-right-right))))
+         ;; initialize state
+         (tree '(:left "" :right ""))
+         rest
+         (comps components)
+         (comp (car comps)))
     (while (or comp (cdr comps))
       (pcase comp
         ;; nil component is just ignored
-        ('nil (setq comps (cdr comps)))
+        ('nil
+         (setq comps (cdr comps))
+         (setq comp (car comps)))
         ;; string component or an integer component
-        ((and (or (pred stringp) (pred numberp)))
-         (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
-                (left (concat (plist-get tree :left) comp-str))
-                (right (plist-get tree :right)))
-           (setq tree `(:left ,left :right ,right))
-           (setq comps (cdr comps))))
+        ((or (pred stringp) (pred numberp))
+         (setq tree (funcall update-tree-comp tree comp))
+         (setq comps (cdr comps))
+         (setq comp (car comps)))
         ;; not a tag component but a list of components like '("foo" "bar")
-        ((and (pred listp) l (guard (not (keywordp (car l)))))
-         (setq comps (append comp (cdr comps))))
+        ((and (pred listp) (guard (not (keywordp (car comp)))))
+         (setq comps (append comp (cdr comps)))
+         (setq comp (car comps)))
         ;; tag component like '(:p "foo") or '(:p/id.class (@ :attr "attr") "foo")
         ((pred listp)
-         (let ((new-rest (cdr comps)) tag  comp-children)
-           (seq-let (tag-kw attr) comp
-             (pcase attr
-               ;; `attr' is attributes plist like '(@ :id "id" :class "class")
-               ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
-                (setq tag (osta-tag-ITER tag-kw (cdr attr)))
-                (setq comp-children (cddr comp)))
-               ;; `attr' is not an attributes
-               (_ (setq tag (osta-tag-ITER tag-kw))
-                  (setq comp-children (cdr comp)))))
-           (let* ((tag-left (plist-get tag :left))
-                  (left (concat (plist-get tree :left) tag-left))
-                  (tag-right (plist-get tag :right))
-                  (fmt-right (plist-get tree :right))
-                  (tag-is-void-p (plist-get tag :void))
-                  (right (cond ((and new-rest tag-is-void-p)
-                                `(:left ""
-                                  :right ,fmt-right))
-                               (new-rest
-                                `(:left ,tag-right
-                                  :right ,fmt-right))
-                               (tag-is-void-p fmt-right)
-                               (t (concat tag-right fmt-right)))))
-             (setq tree `(:left ,left :right ,right)))
-           (setq comps (append comp-children (and new-rest '(:rest))))
-           (when new-rest (push new-rest rest))))
-        ;; make the latest list of components added to `rest'
-        ;; the part of the tree (`component') to be treated in
-        ;; the next iteration
+         (let ((new-rest (cdr comps)))
+           (seq-let (tag comp-children)
+               (seq-let (tag-kw attr) comp
+                 ;; check if `attr' is of the form '(@ :id "id" :class "class")
+                 (if (and (listp attr) (equal (car attr) '@))
+                     (list (osta-tag-ITER tag-kw (cdr attr)) (cddr comp))
+                   (list (osta-tag-ITER tag-kw) (cdr comp))))
+             (setq tree (funcall update-tree-tag tree tag new-rest))
+             (when new-rest (push new-rest rest))
+             (setq comps (append comp-children (and new-rest '(:rest))))
+             (setq comp (car comps)))))
+        ;; make the latest list of components added to `rest' the
+        ;; part of `components' to be treated in the next iteration
         (:rest
-         (let* ((fmt-left (plist-get tree :left))
-                (fmt-right-left (plist-get (plist-get tree :right) :left))
-                (fmt-right-right (plist-get (plist-get tree :right) :right))
-                (left (concat fmt-left fmt-right-left)))
-           (setq tree `(:left ,left :right ,fmt-right-right))
-           (setq comps (pop rest))))
+         (setq tree (funcall update-tree-rest tree))
+         (setq comps (pop rest))
+         (setq comp (car comps)))
         ;; non component object
         ((and _ obj)
          (when osta-html-raise-error-p-ITER
            (error "Object '%S' of type '%s' can't be a component in 'osta-html-ITER'"
                   obj (type-of obj)))
-         (setq comps (cdr comps))))
-      (setq comp (car comps)))
+         (setq comps (cdr comps))
+         (setq comp (car comps)))))
     (concat (plist-get tree :left) (plist-get tree :right))))
 #+END_SRC
 
@@ -468,37 +472,37 @@ For instance: (nested-foo-comp 3) -> (:div (:div (:div \"foo\")))"
 #+ATTR_OSTA_RESULTS:
 #+BEGIN_SRC text
 ------------------------------------
+osta-html-REC     0.000304   0 0.000
+osta-html-REC     0.000201   0 0.000
+osta-html-REC     0.000204   0 0.000
+osta-html-REC     0.000240   0 0.000
+osta-html-REC     0.000202   0 0.000
+osta-html-REC     0.000207   0 0.000
+osta-html-REC     0.000199   0 0.000
+osta-html-REC     0.000245   0 0.000
+osta-html-REC     0.000195   0 0.000
+osta-html-REC     0.000199   0 0.000
 osta-html-REC     0.000217   0 0.000
-osta-html-REC     0.000172   0 0.000
-osta-html-REC     0.000221   0 0.000
-osta-html-REC     0.000172   0 0.000
-osta-html-REC     0.000218   0 0.000
-osta-html-REC     0.000181   0 0.000
-osta-html-REC     0.000173   0 0.000
-osta-html-REC     0.000217   0 0.000
-osta-html-REC     0.000173   0 0.000
-osta-html-REC     0.000191   0 0.000
-osta-html-REC     0.000182   0 0.000
-osta-html-REC     0.000183   0 0.000
-osta-html-REC     0.000170   0 0.000
-osta-html-REC     0.000219   0 0.000
-osta-html-REC     0.000183   0 0.000
+osta-html-REC     0.000189   0 0.000
+osta-html-REC     0.000204   0 0.000
+osta-html-REC     0.000194   0 0.000
+osta-html-REC     0.000201   0 0.000
 ------------------------------------
-osta-html-ITER    0.000222   0 0.000
-osta-html-ITER    0.000218   0 0.000
-osta-html-ITER    0.000205   0 0.000
+osta-html-ITER    0.000171   0 0.000
+osta-html-ITER    0.000179   0 0.000
+osta-html-ITER    0.000180   0 0.000
 osta-html-ITER    0.000188   0 0.000
-osta-html-ITER    0.000205   0 0.000
-osta-html-ITER    0.000199   0 0.000
-osta-html-ITER    0.000198   0 0.000
-osta-html-ITER    0.000219   0 0.000
-osta-html-ITER    0.000191   0 0.000
-osta-html-ITER    0.000240   0 0.000
-osta-html-ITER    0.000243   0 0.000
-osta-html-ITER    0.000225   0 0.000
 osta-html-ITER    0.000189   0 0.000
-osta-html-ITER    0.000200   0 0.000
-osta-html-ITER    0.000209   0 0.000
+osta-html-ITER    0.000182   0 0.000
+osta-html-ITER    0.000185   0 0.000
+osta-html-ITER    0.000244   0 0.000
+osta-html-ITER    0.000184   0 0.000
+osta-html-ITER    0.000182   0 0.000
+osta-html-ITER    0.000181   0 0.000
+osta-html-ITER    0.000222   0 0.000
+osta-html-ITER    0.000220   0 0.000
+osta-html-ITER    0.000214   0 0.000
+osta-html-ITER    0.000182   0 0.000
 #+END_SRC
 
 * Documentation
