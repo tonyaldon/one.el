@@ -424,69 +424,75 @@ returns
 
 (defun osta-html (&rest components)
   ""
-  (let ((comps components)
-        (comp (car components))
-        (tree '(:left "" :right ""))
-        rest)
+  (let* ((update-tree-comp
+          (lambda (tree comp)
+            (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
+                   (left (concat (plist-get tree :left) comp-str))
+                   (right (plist-get tree :right)))
+              `(:left ,left :right ,right))))
+         (update-tree-tag
+          (lambda (tree tag new-rest)
+            (let* ((tag-left (plist-get tag :left))
+                   (left (concat (plist-get tree :left) tag-left))
+                   (tag-right (or (plist-get tag :right) ""))
+                   (tree-right (plist-get tree :right))
+                   (right (if new-rest
+                              `(:left ,tag-right :right ,tree-right)
+                            (concat tag-right tree-right))))
+              `(:left ,left :right ,right))))
+         (update-tree-rest
+          (lambda (tree)
+            (let* ((tree-left (plist-get tree :left))
+                   (tree-right-left (plist-get (plist-get tree :right) :left))
+                   (tree-right-right (plist-get (plist-get tree :right) :right))
+                   (left (concat tree-left tree-right-left)))
+              `(:left ,left :right ,tree-right-right))))
+         ;; initialize state
+         (tree '(:left "" :right ""))
+         rest
+         (comps components)
+         (comp (car comps)))
     (while (or comp (cdr comps))
       (pcase comp
         ;; nil component is just ignored
-        ('nil (setq comps (cdr comps)))
+        ('nil
+         (setq comps (cdr comps))
+         (setq comp (car comps)))
         ;; string component or an integer component
-        ((and (or (pred stringp) (pred numberp)))
-         (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
-                (left (concat (plist-get tree :left) comp-str))
-                (right (plist-get tree :right)))
-           (setq tree `(:left ,left :right ,right))
-           (setq comps (cdr comps))))
+        ((or (pred stringp) (pred numberp))
+         (setq tree (funcall update-tree-comp tree comp))
+         (setq comps (cdr comps))
+         (setq comp (car comps)))
         ;; not a tag component but a list of components like '("foo" "bar")
-        ((and (pred listp) l (guard (not (keywordp (car l)))))
-         (setq comps (append comp (cdr comps))))
+        ((and (pred listp) (guard (not (keywordp (car comp)))))
+         (setq comps (append comp (cdr comps)))
+         (setq comp (car comps)))
         ;; tag component like '(:p "foo") or '(:p/id.class (@ :attr "attr") "foo")
         ((pred listp)
-         (let ((new-rest (cdr comps)) tag  comp-children)
-           (seq-let (tag-kw attr) comp
-             (pcase attr
-               ;; `attr' is attributes plist like '(@ :id "id" :class "class")
-               ((and (pred listp) (pred (lambda (l) (equal (car l) '@))))
-                (setq tag (osta-tag tag-kw (cdr attr)))
-                (setq comp-children (cddr comp)))
-               ;; `attr' is not an attributes
-               (_ (setq tag (osta-tag tag-kw))
-                  (setq comp-children (cdr comp)))))
-           (let* ((tag-left (plist-get tag :left))
-                  (left (concat (plist-get tree :left) tag-left))
-                  (tag-right (plist-get tag :right))
-                  (fmt-right (plist-get tree :right))
-                  (tag-is-void-p (plist-get tag :void))
-                  (right (cond ((and new-rest tag-is-void-p)
-                                `(:left ""
-                                  :right ,fmt-right))
-                               (new-rest
-                                `(:left ,tag-right
-                                  :right ,fmt-right))
-                               (tag-is-void-p fmt-right)
-                               (t (concat tag-right fmt-right)))))
-             (setq tree `(:left ,left :right ,right)))
-           (setq comps (append comp-children (and new-rest '(:rest))))
-           (when new-rest (push new-rest rest))))
-        ;; make the latest list of components added to `rest'
-        ;; the part of the tree (`component') to be treated in
-        ;; the next iteration
+         (let ((new-rest (cdr comps)))
+           (seq-let (tag comp-children)
+               (seq-let (tag-kw attr) comp
+                 ;; check if `attr' is of the form '(@ :id "id" :class "class")
+                 (if (and (listp attr) (equal (car attr) '@))
+                     (list (osta-tag tag-kw (cdr attr)) (cddr comp))
+                   (list (osta-tag tag-kw) (cdr comp))))
+             (setq tree (funcall update-tree-tag tree tag new-rest))
+             (when new-rest (push new-rest rest))
+             (setq comps (append comp-children (and new-rest '(:rest))))
+             (setq comp (car comps)))))
+        ;; make the latest list of components added to `rest' the
+        ;; part of `components' to be treated in the next iteration
         (:rest
-         (let* ((fmt-left (plist-get tree :left))
-                (fmt-right-left (plist-get (plist-get tree :right) :left))
-                (fmt-right-right (plist-get (plist-get tree :right) :right))
-                (left (concat fmt-left fmt-right-left)))
-           (setq tree `(:left ,left :right ,fmt-right-right))
-           (setq comps (pop rest))))
+         (setq tree (funcall update-tree-rest tree))
+         (setq comps (pop rest))
+         (setq comp (car comps)))
         ;; non component object
         ((and _ obj)
          (when osta-html-raise-error-p
            (error "Object '%S' of type '%s' can't be a component in 'osta-html'"
                   obj (type-of obj)))
-         (setq comps (cdr comps))))
-      (setq comp (car comps)))
+         (setq comps (cdr comps))
+         (setq comp (car comps)))))
     (concat (plist-get tree :left) (plist-get tree :right))))
 
 ;;; pages
