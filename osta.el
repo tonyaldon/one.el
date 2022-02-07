@@ -372,8 +372,7 @@ For instance:
 
 returns
 
-  (:void t
-   :left \"<hr />\")
+  (:left \"<hr />\")
 
 and:
 
@@ -381,8 +380,7 @@ and:
 
 returns
 
-  (:void  nil
-   :left  \"<div id=\"id\" class=\"class\">\"
+  (:left  \"<div id=\"id\" class=\"class\">\"
    :right \"</div>\")
 "
   (let ((void-tags '("area" "base" "br" "col" "embed" "hr" "img" "input"   ; https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
@@ -416,10 +414,8 @@ returns
              (attrs (string-join (delq nil (mapcar p->a-v --pairs)) " "))
              (-attrs (if (string-empty-p attrs) "" (concat " " attrs))))
         (if (member tag void-tags)
-            `(:void t
-              :left ,(concat "<" tag -attrs " />"))
-          `(:void  nil
-            :left  ,(concat "<" tag -attrs ">")
+            `(:left ,(concat "<" tag -attrs " />"))
+          `(:left  ,(concat "<" tag -attrs ">")
             :right ,(concat "</" tag ">")))))))
 
 (defun osta-html (&rest components)

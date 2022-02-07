@@ -589,28 +589,23 @@ A simple example
 
   ;; id and classes in the tag-kw
   (should (equal (osta-tag :div)
-                 '(:void  nil
-                   :left  "<div>"
+                 '(:left  "<div>"
                    :right "</div>")))
   (should (equal (osta-tag :div/id)
-                 '(:void  nil
-                   :left  "<div id=\"id\">"
+                 '(:left  "<div id=\"id\">"
                    :right "</div>")))
   (should (equal (osta-tag :div.class)
-                 '(:void  nil
-                   :left  "<div class=\"class\">"
+                 '(:left  "<div class=\"class\">"
                    :right "</div>")))
   (should (equal (osta-tag :div/id.class)
-                 '(:void  nil
-                   :left  "<div id=\"id\" class=\"class\">"
+                 '(:left  "<div id=\"id\" class=\"class\">"
                    :right "</div>")))
   (should (equal (osta-tag :div/id.class-1.class-2)
-                 '(:void  nil
-                   :left  "<div id=\"id\" class=\"class-1 class-2\">"
+                 '(:left  "<div id=\"id\" class=\"class-1 class-2\">"
                    :right "</div>")))
 
   ;; void tags
-  (should (equal (osta-tag :hr) '(:void t :left "<hr />")))
+  (should (equal (osta-tag :hr) '(:left "<hr />")))
 
   ;; tag-kw must be keywords
   (should-error (osta-tag 'div))
@@ -620,24 +615,20 @@ A simple example
 
   ;; attributes plist
   (should (equal (osta-tag :div '(:id "id"))
-                 '(:void  nil
-                   :left  "<div id=\"id\">"
+                 '(:left  "<div id=\"id\">"
                    :right "</div>")))
   (should (equal (osta-tag :div '(:id "id" :class "class"))
-                 '(:void  nil
-                   :left  "<div id=\"id\" class=\"class\">"
+                 '(:left  "<div id=\"id\" class=\"class\">"
                    :right "</div>")))
 
   ;; values in key/value pairs of attributes plist are evaluated
   (should (equal (osta-tag :div '(:id (concat "id-" "123")))
-                 '(:void  nil
-                   :left  "<div id=\"id-123\">"
+                 '(:left  "<div id=\"id-123\">"
                    :right "</div>")))
 
   ;; attribute values are escaped
   (should (equal (osta-tag :div '(:id "\""))
-                 '(:void  nil
-                   :left  "<div id=\"&quot;\">"
+                 '(:left  "<div id=\"&quot;\">"
                    :right "</div>")))
 
   ;; character percent % is left as it is in attribute values.
@@ -645,29 +636,24 @@ A simple example
   ;; values with %s string, that you can use after with
   ;; the function `format'
   (should (equal (osta-tag :div '(:id "%s"))
-                 '(:void  nil
-                   :left  "<div id=\"%s\">"
+                 '(:left  "<div id=\"%s\">"
                    :right "</div>")))
 
   ;; `id' in `attributes' has priority over `id' in `tag-kw'
   (should (equal (osta-tag :div/id-in-tag '(:id "id-in-plist"))
-                 '(:void  nil
-                   :left  "<div id=\"id-in-plist\">"
+                 '(:left  "<div id=\"id-in-plist\">"
                    :right "</div>")))
 
   ;; classes in `tag-kw' and `attributes' plist
   (should (equal (osta-tag :div.class-in-tag '(:class "class-a class-b"))
-                 '(:void  nil
-                   :left  "<div class=\"class-in-tag class-a class-b\">"
+                 '(:left  "<div class=\"class-in-tag class-a class-b\">"
                    :right "</div>")))
 
   ;; boolean attributes
   (should (equal (osta-tag :input '(:type "checkbox" :checked t))
-                 '(:void t
-                   :left "<input type=\"checkbox\" checked=\"checked\" />")))
+                 '(:left "<input type=\"checkbox\" checked=\"checked\" />")))
   (should (equal (osta-tag :input '(:type "checkbox" :checked nil))
-                 '(:void t
-                   :left "<input type=\"checkbox\" />"))))
+                 '(:left "<input type=\"checkbox\" />"))))
 
 ;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-html-test")))
 
