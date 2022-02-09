@@ -50,11 +50,575 @@ As a result, I left out many org elements:
 You can find the complete list of the org elements that are not
 supported in the commentary section of the file ~osta.el~
 
+* osta-html implementation details
+:PROPERTIES:
+:OSTA_PAGE: t
+:CUSTOM_ID: /osta-html-implementation-details/
+:OSTA_DATE: [2022-02-08 Tue]
+:END:
+** Summary
+
+In this post, we show how ~osta-html~ processes the following *component*
+
+#+BEGIN_SRC emacs-lisp
+'(:div/foo.bar
+  "A"
+  (:p (@ :class "baz") "B" (:hr) "C")
+  ("D" "E" "F"))
+#+END_SRC
+
+in order to return the following string
+
+#+ATTR_OSTA_RESULTS:
+#+BEGIN_SRC emacs-lisp
+"<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C</p>DEF</div>"
+#+END_SRC
+
+that we can use to produce this following html snippet:
+
+#+BEGIN_SRC html
+<div id="foo" class="bar">
+  A
+  <p class="baz">B<hr />C</p>
+  DEF
+</div>
+#+END_SRC
+
+** Description of the program
+
+In this section we call ~input-tree~ the data structure ~osta-html~
+receives as input.
+
+For instance, in the form
+
+: (osta-html '(:div.foo (:p "bar-1" (:span "baz") "bar-2")))
+
+the data structure
+
+: '(:div.foo (:p "bar-1" (:span "baz") "bar-2"))
+
+is the ~input-tree~.
+
+With that said, let's describe our program.
+
+While traversing ~input-tree~ ([[https://en.wikipedia.org/wiki/Depth-first_search][DFS]] algorithm), we builds a tree
+containing a left part and a right part that represents the html
+string to be returned at the end of the traversal.
+
+While the left part of this tree is always a string, the right part can
+grow recursively by dividing it into two parts (left and right).
+
+In the following example, we can see the successive states of the
+this tree when ~input-tree~ is ~'(:div.foo (:p "bar-1" (:span "baz")
+"bar-2"))~:
+
+#+BEGIN_SRC emacs-lisp
+(:left ""
+ :right "")
+
+(:left "<div class=\"foo\">"
+ :right "</div>")
+
+(:left "<div class=\"foo\"><p>"
+ :right "</p></div>")
+
+(:left "<div class=\"foo\"><p>bar-1"
+ :right "</p></div>")
+
+(:left "<div class=\"foo\"><p>bar-1<span>"
+ :right (:left "</span>"
+         :right "</p></div>"))
+
+(:left "<div class=\"foo\"><p>bar-1<span>baz"
+ :right (:left "</span>"
+         :right "</p></div>"))
+
+(:left "<div class=\"foo\"><p>bar-1<span>baz</span>"
+ :right "</p></div>")
+
+(:left "<div class=\"foo\"><p>bar-1<span>baz</span>bar-2"
+ :right "</p></div>")
+#+END_SRC
+
+When we have completly traversed ~input-tree~, we return the
+concatenation of the left part and the right part of ~tree~.
+
+Specifically, at the beginning of the programs we set the variables
+~tree~, ~rest~, ~comps~ and ~comp~ that define the state of the program.
+
+~tree~ is the tree we build a each iteration that contains the elements
+needed to construct the final returned value.
+
+~rest~ is the stack that contains the parts of ~input-tree~ left out to be
+processed later.
+
+~comps~ is the current list of components being treated.  Components in
+~comps~ are at the same level in ~input-tree~.
+
+~comp~ is the current component (always equal to the first element of
+~comps~) that determines how we must update the state (~tree~, ~rest~ and
+~comps~) of the program at each iteration:
+
+1) when ~comp~ is ~nil~, we ignore this component and follow the
+   traversal with the ~cdr~ of ~comps~,
+2) when ~comp~ is a string or a number, we update ~tree~ by appending
+   ~comp~ (as a string) to the left part of ~tree~, the right part staying
+   the same,
+3) when ~comp~ is a list of components we put them at the same level of
+   the ~cdr~ of ~comps~, specifically we set ~comps~ to be ~(append comp
+   (cdr comps))~,
+4) when ~comp~ is a tag component, two cases must be distinguished
+   according to the value of ~(cdr comps)~:
+   1) if ~(cdr comps)~ is non-nil:
+      - we update ~tree~ according to the value returned by ~osta-tag~ and
+        by dividing the right part of ~tree~ into two parts,
+      - we push the components ~(cdr comps)~ on the stack ~rest~ and,
+      - the components to be treated in the next iteration are the
+        children of the tag component ~comp~ (which can be either ~(cdr
+        comp)~ or ~(cddr comp)~), so ~comps~ should be set to contains
+        those children only, but as we need to remember that once
+        those children has been treated we have to treat the element
+        added to the stack ~rest~, we also append to ~comps~ the keyword
+        ~:rest~,
+   2) if ~(cdr comps)~ is nil:
+      - it means that there is no part of ~input-tree~ to be added to
+        the stack ~rest~ at this iteration, so ~rest~ stays unchanged,
+      - we just update ~tree~ according to the value returned by
+        ~osta-tag~ (without dividing the right part of ~tree~) and,
+      - the components to be treated in the next iteration are the
+        children of the tag component ~comp~ (which can be either ~(cdr
+        comp)~ or ~(cddr comp)~), so ~comps~ is set to be those children,
+5) when ~comp~ is the keyword ~:rest~, that means we have completed the
+   traversal of a part of ~input-tree~, so:
+   1) we update ~tree~ accordingly by appending the left part of the
+      right part of ~tree~ to its left part, and we set its right part
+      to be the right part of the right part of ~tree~,
+   2) now we have to treat the most recently added list of components
+      in the stack ~rest~.  To do so, we set ~comps~ to be the first
+      element of ~rest~ and remove that first element from ~rest~ (this
+      can be done like this ~(setq comps (pop rest))~),
+6) when ~comp~ is any other object, we skip it or we raise an error
+   depending on the variable ~osta-html-raise-error-p~.
+
+Finally, when ~comp~ is ~nil~ and ~(cdr comps)~ too, it means that we have
+completly traversed ~input-tree~, no more iterations are needed and we
+return the concatenation of the left part and the right part of ~tree~.
+
+** Running the program step by step
+
+Let's go through each iteration that the following evaluation implies
+by printing out and commenting the successive states of our program:
+
+#+BEGIN_SRC emacs-lisp
+(osta-html
+ '(:div/foo.bar
+   "A"
+   (:p (@ :class "baz") "B" (:hr) "C")
+   ("D" "E" "F")))
+#+END_SRC
+
+~input-tree~, ~tree~, ~rest~, ~comps~ and ~comp~ have the same meaning as in the
+previous section.
+
+And, each state of the program is representing as a plist where:
+
+- ~:tree~ hold the value of ~tree~,
+- ~:rest~ the value of ~rest~,
+- ~:comps~ the value of ~comps~ and,
+- ~:comp~ the value of ~comp~.
+
+First the state is initialized like this (before entering in the ~while~
+loop):
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left ""
+        :right "")
+ :rest nil
+ :comps ((:div/foo.bar
+          "A"
+          (:p (@ :class "baz") "B" (:hr) "C")
+          ("D" "E" "F")))
+ :comp (:div/foo.bar
+        "A"
+        (:p (@ :class "baz") "B" (:hr) "C")
+        ("D" "E" "F")))
+#+END_SRC
+
+As ~comp~ (equal to ~(:div/foo.bar ...)~) is a tag component, and is the
+only component in ~comps~:
+
+1) ~tree~ is updated with the left part and right part of the tag
+   returned by ~osta-tag~ function,
+2) ~rest~ stack stays ~nil~,
+3) the components of ~input-tree~ that should be treated in the next
+   iteration are the children of the tag ~comp~, which are the
+   components at the same level of the string component ~"A"~,
+   specifically, the new value of ~comps~ is ~cdr~ of the current ~comp~,
+
+so the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">"
+        :right "</div>")
+ :rest nil
+ :comps ("A"
+         (:p (@ :class "baz") "B" (:hr) "C")
+         ("D" "E" "F"))
+ :comp "A")
+#+END_SRC
+
+As ~comp~ (equal to ~"A"~) is a string component,
+
+1) we append ~"A"~ to the left part of ~tree~,
+2) and we iterate on the ~cdr~ of the current ~comps~ (it means on the
+   next components at the same level of ~"A"~ component),
+
+so the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A"
+        :right "</div>")
+ :rest nil
+ :comps ((:p (@ :class "baz") "B" (:hr) "C")
+         ("D" "E" "F"))
+ :comp (:p (@ :class "baz") "B" (:hr) "C"))
+#+END_SRC
+
+As ~comp~ (equal to ~(:p (@ :class "baz") ...)~) is a tag component but
+not the only components in ~comps~:
+
+1) ~tree~ is updated with the left part being the concatenation of its
+   current left part and the left part of the tag returned by
+   ~osta-tag~, and the right part is a subtree with its left part being
+   the right part of the tag return by ~osta-tag~ and the right part
+   being its current right part,
+2) we push the ~cdr~ of ~comps~ to the stack ~rest~ in order to treat it
+   after,
+3) the components to be treated in the next iteration are the children
+   of the tag component ~comp~ (which are the components at the same
+   level of the string component ~"B"~), so ~comps~ should be set to
+   contains those children only, but as we need to remember that once
+   those children has been treated we have to treat the element added
+   to the stack ~rest~, we also append to ~comps~ the keyword ~:rest~,
+
+so the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">"
+        :right (:left "</p>"
+                :right "</div>"))
+ :rest ((("D" "E" "F")))
+ :comps ("B" (:hr) "C" :rest)
+ :comp "B")
+#+END_SRC
+
+As ~comp~ (equal to ~"B"~) is a string component, we do the same thing we
+did before for the string component ~"A"~ (note that the right part of
+~tree~ and ~rest~ are unchanged).
+
+So the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B"
+        :right (:left "</p>"
+                :right "</div>"))
+ :rest ((("D" "E" "F")))
+ :comps ((:hr) "C" :rest)
+ :comp (:hr))
+#+END_SRC
+
+As ~comp~ (equal to ~(:hr)~) is a tag component but not the only
+components in ~comps~:
+
+1) ~tree~ is updated with the left part being the concatenation of its
+   current left part and the left part of the tag returned by
+   ~osta-tag~, and the right part is a subtree with its left part being
+   the empty string ~""~ (because ~(:hr)~ is a void tag) and the right
+   part being its current right part,
+2) we push the ~cdr~ of ~comps~ to the stack ~rest~ in order to treat it
+   after,
+3) because ~(:hr)~ has no children, ~comps~ is the empty list to which we
+   append the keyword ~:rest~ (for the same reason as before),
+
+so the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />"
+        :right (:left ""
+                :right (:left "</p>"
+                        :right "</div>")))
+ :rest (("C" :rest) (("D" "E" "F")))
+ :comps (:rest)
+ :comp :rest)
+#+END_SRC
+
+As ~comp~ is equal to the keyword ~:rest~,
+
+1) we update ~tree~ by appending the left part of the right part of ~tree~
+   to its left part, and we set its right part to be the right part of
+   the right part of ~tree~,
+2) we set ~comps~ to be the most recently added list of components in
+   the stack ~rest~ that we also remove from the stack,
+
+so the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />"
+        :right (:left "</p>"
+                :right "</div>"))
+ :rest ((("D" "E" "F")))
+ :comps ("C" :rest)
+ :comp "C")
+#+END_SRC
+
+As ~comp~ (equal to ~"C"~) is a string component, we do the same thing we
+did before for the string components ~"A"~ and ~"B"~ (note that the right
+part of ~tree~ and ~rest~ are unchanged).
+
+So the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C"
+        :right (:left "</p>"
+                :right "</div>"))
+ :rest ((("D" "E" "F")))
+ :comps (:rest)
+ :comp :rest)
+#+END_SRC
+
+As ~comp~ is equal to the keyword ~:rest~,
+
+1) we update ~tree~ by appending the left part of the right part of ~tree~
+   to its left part, and we set its right part to be the right part of
+   the right part of ~tree~,
+2) we set ~comps~ to be the most recently added list of components in
+   the stack ~rest~ that we also remove from the stack,
+
+so the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C</p>"
+        :right "</div>")
+ :rest nil
+ :comps (("D" "E" "F"))
+ :comp ("D" "E" "F"))
+#+END_SRC
+
+As ~comp~ (equal to ~("D" "E" "F")~) is a list of components,
+we put them at the same level of the ~cdr~ of ~comps~, specifically we set
+~comps~ to be ~(append comp (cdr comps))~.  Note that ~tree~ is unchanged.
+
+So the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C</p>"
+        :right "</div>")
+ :rest nil
+ :comps ("D" "E" "F")
+ :comp "D")
+#+END_SRC
+
+As ~comp~ (equal to ~"D"~) is a string component, we do the same thing we
+did before for the string components ~"A"~, ~"B"~ and ~"C"~ (note that the
+right part of ~tree~ and ~rest~ are unchanged).
+
+So the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C</p>D"
+        :right "</div>")
+ :rest nil
+ :comps ("E" "F")
+ :comp "E")
+#+END_SRC
+
+As ~comp~ (equal to ~"E"~) is a string component, we do the same thing we
+did before for the string components ~"A"~, ~"B"~, ~"C"~ and ~"D"~ (note that
+the right part of ~tree~ and ~rest~ are unchanged).
+
+So the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree
+ (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C</p>DE"
+  :right "</div>")
+ :rest nil
+ :comps ("F")
+ :comp "F")
+#+END_SRC
+
+As ~comp~ (equal to ~"F"~) is a string component, we do the same thing we
+did before for the string components ~"A"~, ~"B"~, ~"C"~, ~"D"~ and ~"F"~ (note
+that the right part of ~tree~ and ~rest~ are unchanged).
+
+So the new state is:
+
+#+BEGIN_SRC emacs-lisp
+(:tree (:left "<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C</p>DEF"
+        :right "</div>")
+ :rest nil
+ :comps nil
+ :comp nil)
+#+END_SRC
+
+At that point, as ~comp~ is ~nil~ and ~(cdr comps)~ too, we get out of the
+loop.
+
+That means that we have completely traversed ~input-tree~.
+
+And now ~tree~ contains all the data we need to produce the html
+string.
+
+Eventually, we return the concatenation of the left part and the right
+part of ~tree~.
+
+#+BEGIN_SRC emacs-lisp
+"<div id=\"foo\" class=\"bar\">A<p class=\"baz\">B<hr />C</p>DEF</div>"
+#+END_SRC
+
+** The code
+
+In this section we reproduce the code of the function ~osta-html~ at
+commit ~cd43e0b~.
+
+But before doing so, as ~osta-html~ uses the function ~osta-tag~, we
+describe it and give some examples that demonstrate its behavior.
+
+The function ~osta-tag~ takes as input a keyword (representing a tag
+maybe containing informations about its ~id~ or its ~class~) and
+optionally a plist of attributes.  The function ~osta-tag~ returns a
+plist describing the type of tag and its attributes that can be used
+to produce html strings.
+
+For instance:
+
+1) Evaluating the form:
+
+   #+BEGIN_SRC emacs-lisp
+   (osta-tag :hr)
+   #+END_SRC
+
+   returns
+
+   #+ATTR_OSTA_RESULTS:
+   #+BEGIN_SRC emacs-lisp
+   (:left "<hr />")
+   #+END_SRC
+
+2) Evaluating the form:
+
+   #+BEGIN_SRC emacs-lisp
+   (osta-tag :div/id.class)
+   #+END_SRC
+
+   returns
+
+   #+ATTR_OSTA_RESULTS:
+   #+BEGIN_SRC emacs-lisp
+   (:left  "<div id=\"id\" class=\"class\">"
+    :right "</div>")
+   #+END_SRC
+
+3) Evaluating the form:
+
+   #+BEGIN_SRC emacs-lisp
+   (osta-tag :div '(:id "id" :class "class"))
+   #+END_SRC
+
+   returns
+
+   #+ATTR_OSTA_RESULTS:
+   #+BEGIN_SRC emacs-lisp
+   (:left  "<div id=\"id\" class=\"class\">"
+    :right "</div>")
+   #+END_SRC
+
+With that said, here is the source code of ~osta-html~ at commit ~cd43e0b~:
+
+#+BEGIN_SRC emacs-lisp
+;; commit cd43e0bc6d2bf7affcc1fce0b071fa8f3f1978c0
+;; Author: tony <tony.aldon.adm@gmail.com>
+;; Date:   Mon Feb 7 10:51:35 2022 +0100
+
+(defun osta-html (&rest components)
+  ""
+  (let* ((update-tree-comp
+          (lambda (tree comp)
+            (let* ((comp-str (if (stringp comp) comp (number-to-string comp)))
+                   (left (concat (plist-get tree :left) comp-str))
+                   (right (plist-get tree :right)))
+              `(:left ,left :right ,right))))
+         (update-tree-tag
+          (lambda (tree tag new-rest)
+            (let* ((tag-left (plist-get tag :left))
+                   (left (concat (plist-get tree :left) tag-left))
+                   (tag-right (or (plist-get tag :right) ""))
+                   (tree-right (plist-get tree :right))
+                   (right (if new-rest
+                              `(:left ,tag-right :right ,tree-right)
+                            (concat tag-right tree-right))))
+              `(:left ,left :right ,right))))
+         (update-tree-rest
+          (lambda (tree)
+            (let* ((tree-left (plist-get tree :left))
+                   (tree-right-left (plist-get (plist-get tree :right) :left))
+                   (tree-right-right (plist-get (plist-get tree :right) :right))
+                   (left (concat tree-left tree-right-left)))
+              `(:left ,left :right ,tree-right-right))))
+         ;; initialize state
+         (tree '(:left "" :right ""))
+         rest
+         (comps components)
+         (comp (car comps)))
+    (while (or comp (cdr comps))
+      (pcase comp
+        ;; nil component is just ignored
+        ('nil
+         (setq comps (cdr comps))
+         (setq comp (car comps)))
+        ;; string component or an integer component
+        ((or (pred stringp) (pred numberp))
+         (setq tree (funcall update-tree-comp tree comp))
+         (setq comps (cdr comps))
+         (setq comp (car comps)))
+        ;; not a tag component but a list of components like '("foo" "bar")
+        ((and (pred listp) (guard (not (keywordp (car comp)))))
+         (setq comps (append comp (cdr comps)))
+         (setq comp (car comps)))
+        ;; tag component like '(:p "foo") or '(:p/id.class (@ :attr "attr") "foo")
+        ((pred listp)
+         (let ((new-rest (cdr comps)))
+           (seq-let (tag comp-children)
+               (seq-let (tag-kw attr) comp
+                 ;; check if `attr' is of the form '(@ :id "id" :class "class")
+                 (if (and (listp attr) (equal (car attr) '@))
+                     (list (osta-tag tag-kw (cdr attr)) (cddr comp))
+                   (list (osta-tag tag-kw) (cdr comp))))
+             (setq tree (funcall update-tree-tag tree tag new-rest))
+             (when new-rest (push new-rest rest))
+             (setq comps (append comp-children (and new-rest '(:rest))))
+             (setq comp (car comps)))))
+        ;; make the latest list of components added to `rest' the
+        ;; part of `components' to be treated in the next iteration
+        (:rest
+         (setq tree (funcall update-tree-rest tree))
+         (setq comps (pop rest))
+         (setq comp (car comps)))
+        ;; non component object
+        ((and _ obj)
+         (when osta-html-raise-error-p
+           (error "Object '%S' of type '%s' can't be a component in 'osta-html'"
+                  obj (type-of obj)))
+         (setq comps (cdr comps))
+         (setq comp (car comps)))))
+    (concat (plist-get tree :left) (plist-get tree :right))))
+#+END_SRC
+
 * Recursive vs. iterative implementation of osta-html in Elisp
 :PROPERTIES:
 :OSTA_PAGE: t
 :CUSTOM_ID: /recursive-vs-iterative-implementation-of-osta-html-in-elisp/
-:OSTA_DATE: [2022-02-06 Sun]
+:OSTA_DATE: [2022-02-07 Mon]
 :END:
 ** Push the limits
 
