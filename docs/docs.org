@@ -47,14 +47,15 @@ As a result, I left out many org elements:
 You can find the complete list of the org elements that are not
 supported in the commentary section of the file ~one.el~
 
-* Documentation
-** org elements not supported
+* ----- Documentation -----
+* org elements not supported
 :PROPERTIES:
 :ONE_PAGE: t
 :CUSTOM_ID: /doc/org-elements-not-supported/
 :END:
 
 I left out many org elements:
+
 - I don't do math.  No support for Latex,
 - I don't use images.  No support for images.
 - etc.
@@ -64,13 +65,13 @@ supported in the commentary section of the file ~one.el~
 
 Read more: [[#/why-one/][Why one?]].
 
-** src-block
+* src-block
 :PROPERTIES:
 :ONE_PAGE: t
 :CUSTOM_ID: /doc/src-block/
 :END:
-*** code highlighting with ~htmlize.el~
-**** description
+** code highlighting with ~htmlize.el~
+*** description
 
 ~one~ highlights code via the function ~one-ox-htmlize~ that uses
 ~htmlize.el~ to do the work.
@@ -114,7 +115,7 @@ have been done, is wrapped:
 
 See section [[#/doc/src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS and ATTR_ONE_RESULTS]].
 
-**** example with Bash code
+*** example with Bash code
 
 For instance, the following org src-block, containing some ~bash~ code:
 
@@ -171,7 +172,7 @@ specific faces used by each prog mode (except the ones I use often).
 You can add the CSS classes specific to the prog modes you use as you
 go and need them.
 
-**** Bash, Clojure and Elisp chunks of code
+*** Bash, Clojure and Elisp chunks of code
 
 Bash, Clojure and Elisp languages are the ones I want to talk about.
 And I'm sure they will appear in my tech writing.  So here they are:
@@ -227,12 +228,13 @@ Elisp code:
       )))
 #+END_SRC
 
-*** org keywords ~RESULTS~ and ~ATTR_ONE_RESULTS~
+** org keywords ~RESULTS~ and ~ATTR_ONE_RESULTS~
 :PROPERTIES:
 :CUSTOM_ID: /doc/src-block/#org-keywords-results-and-attr_one_results
 :END:
 
 A *block* is considered to be a /result/ block:
+
 1) if it is preceded by a line starting by ~#+RESULTS:~ or,
 2) if it is preceded by a line starting by ~#+ATTR_ONE_RESULTS:~.
 
@@ -246,7 +248,7 @@ CSS classes:
 This way /result/ blocks can be rendered with a different style
 than /normal/ blocks as we can see in the following 2 examples.
 
-**** example using org keyword ~RESULTS~
+*** example using org keyword ~RESULTS~
 
 The following org snippet:
 
@@ -286,7 +288,7 @@ ls
 : one.el
 : README.org
 
-**** example using org keyword ~ATTR_ONE_RESULTS~
+*** example using org keyword ~ATTR_ONE_RESULTS~
 
 The following org snippet:
 
@@ -330,7 +332,7 @@ we get:
 (:c "ccc" :d "ddd")
 #+END_SRC
 
-*** code blocks inside list
+** code blocks inside list
 
 Lists can contain src-block as we can see in the following org
 snippet:
@@ -371,7 +373,7 @@ and is rendered by ~one~ like this:
 2. item 2
 3. item 3
 
-** quote-block
+* quote-block
 :PROPERTIES:
 :ONE_PAGE: t
 :CUSTOM_ID: /doc/quote-block/
@@ -404,12 +406,12 @@ and look like this:
 A quitter never wins and a winner never quits. —Napoleon Hill
 #+END_QUOTE
 
-** fixed-width and example-block
+* fixed-width and example-block
 :PROPERTIES:
 :ONE_PAGE: t
 :CUSTOM_ID: /doc/fixed-width-and-example-block/
 :END:
-*** description
+** description
 
 A line starting with a colon ~:~ followed by a space defined a
 fixed-width element.  A fixed-width element can span several
@@ -429,7 +431,7 @@ Both fixed-width and example-block blocks are treated as [[#/doc/src-block/][src
 3) they are /normal/ blocks (with CSS classes ~one-hl one-hl-block~) *OR*
    /result/ blocks (with CSS classes ~one-hl one-hl-results~).
 
-*** example
+** example
 
 The following org snippet:
 
@@ -508,12 +510,12 @@ This    is
         an    example!
 #+END_EXAMPLE
 
-** links
+* links
 :PROPERTIES:
 :ONE_PAGE: t
-:CUSTOM_ID: /doc/links
+:CUSTOM_ID: /doc/links/
 :END:
-*** http, https, mailto links
+** http, https, mailto links
 
 - http://tonyaldon.com,
 - [[https://tonyaldon.com][Tony Aldon (https)]],
@@ -561,12 +563,12 @@ is exported as follow:
 <a href="mailto:aldon.tony.adm@gmail.com">send me an email</a>
 #+END_SRC
 
-*** custom-id links
+** custom-id links
 
 - [[#/doc/plain-list-and-item/][page about plain-list]],
 - [[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]].
 
-**** description
+*** description
 
 In ~one~, ~CUSTOM_ID~ properties are:
 
@@ -627,7 +629,7 @@ is exported as follow:
 <a href="/blog/page-1/">Page 1</a>
 #+END_SRC
 
-**** example (link to a page)
+*** example (link to a page)
 
 The following link to the headline with ~CUSTOM_ID~ equal to
 ~/doc/plain-list-and-item/~ (that is also an ~one~ page):
@@ -645,7 +647,7 @@ is exported to this anchor tag that links to the page ~/doc/plain-list-and-item/
 
 and is rendered like this: [[#/doc/plain-list-and-item/][page about plain-list]].
 
-**** example (link to a headline in a page)
+*** example (link to a headline in a page)
 
 The following link to the headline with ~CUSTOM_ID~ equal to
 ~/doc/plain-list-and-item/#unordered-lists~ (that must be a subsection of the
@@ -666,7 +668,7 @@ set to ~unordered-lists~ on the page ~/doc/plain-list-and-item/~:
 and is rendered like this: [[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about
 plain-list]].
 
-*** fuzzy links
+** fuzzy links
 
 # uncomment the last line of this comment (fuzzy search link),
 # narrow the buffer to this subsection, and export the narrowed
@@ -695,8 +697,8 @@ raise an error like the following:
 (one-link-broken "fuzzy search" "fuzzy links not supported" "goto-char: 5523")
 #+END_SRC
 
-*** file links
-**** links to local files mapped to web urls (~ONE_LINK~)
+** file links
+*** links to local files mapped to web urls (~ONE_LINK~)
 :PROPERTIES:
 :CUSTOM_ID: /doc/links/#local-files-mapped-to-web-urls
 :END:
@@ -724,8 +726,8 @@ raise an error like the following:
 - [[/tmp/clojurescript/][ClojureScript]],
 - [[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]].
 
-***** org keyword ~ONE_LINK~
-****** description
+**** org keyword ~ONE_LINK~
+***** description
 
 In my org files, I often use links to directories which are clones of
 repositories.  If those repositories are hosted on Github for
@@ -743,7 +745,7 @@ replace the links to the directories by their mapped web urls.
 Note that mapped links declared with org keyword ~ONE_LINK~ have
 prevalence over any other file links.
 
-****** example
+***** example
 
 Assuming, you have a cloned of ClojureScript repository
 (https://github.com/clojure/clojurescript) under the directory
@@ -771,13 +773,13 @@ be exported as follow:
 
 and is rendered like this: [[/tmp/clojurescript/][ClojureScript]].
 
-***** org keyword ~ONE_LINK~ combined with org keyword ~LINK~
-****** description
+**** org keyword ~ONE_LINK~ combined with org keyword ~LINK~
+***** description
 
 In the left part of ~#+ONE_LINK:~ statments you can use org abbreviated
 links that have been defined in ~#+LINK:~ statments.
 
-****** example
+***** example
 
 For instance, in the following org snippets:
 1) we defined the abbreviated link ~clj~ that resolves to ~./clojure/~,
@@ -815,14 +817,14 @@ that points:
 
 and is rendered like this: [[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]].
 
-**** links to local files in the ~public~ directory
+*** links to local files in the ~public~ directory
 :PROPERTIES:
 :CUSTOM_ID: /doc/links/#local-files-in-public-dir
 :END:
 
 - [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]]
 
-***** description
+**** description
 
 One might want to generate at build time files that are going to be
 available in the ~public~ (root of the website by default) directory.
@@ -840,7 +842,7 @@ the ~./public~ part of the path making them accessible via web url.
 It's convenient, because this way, after the build of the website,
 those links stop being broken in this org file.
 
-***** example
+**** example
 
 For instance, assuming the build of the website produces the markdown
 file ~./public/doc/plain-list-and-item.md~ that is a markdown
@@ -860,7 +862,7 @@ This previous link is exported as follow:
 
 and is rendered like this: [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]].
 
-***** root directory ~public~ can be modify with org keyword ~ONE_ROOT~
+**** root directory ~public~ can be modify with org keyword ~ONE_ROOT~
 
 The root directory of the website is defined in the ~:option-alist~ of
 ~one~ org export backend with the keyword ~:one-root~.
@@ -889,14 +891,14 @@ is exported as follow:
 
 and is rendered like this: [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]].
 
-**** links to local files in the ~assets~ directory
+*** links to local files in the ~assets~ directory
 :PROPERTIES:
 :CUSTOM_ID: /doc/links/#local-files-in-assets-dir
 :END:
 
 - [[./assets/images/one.png][one image]]
 
-***** description
+**** description
 
 Files in the directory ~assets~ (by default) are copied into the
 directory ~public~ (root of the website by default) when the website is
@@ -911,7 +913,7 @@ It's convenient, because this way:
 1) we can "clean" the ~public~ directory whenever we need it and,
 2) local file links in this org file are never broken.
 
-***** example
+**** example
 
 For instance the following link:
 
@@ -928,7 +930,7 @@ is exported as follow:
 
 and is rendered like this: [[./assets/images/one.png][one image]].
 
-***** assets directory ~assets~ can be modify with org keyword ~ONE_ASSETS~
+**** assets directory ~assets~ can be modify with org keyword ~ONE_ASSETS~
 
 The directory where the assets go (~css~, ~js~, ~images~) is define in the
 ~:option-alist~ of ~one~ org export backend with the keyword
@@ -958,8 +960,8 @@ is exported as follow:
 
 and is rendered like this: [[./assets/images/one.png][one image]].
 
-**** local file links that raise an error (~one-link-broken~)
-***** description
+*** local file links that raise an error (~one-link-broken~)
+**** description
 
 # uncomment the last line of this comment (unresolved file link),
 # narrow the buffer to this subsection, and export the narrowed
@@ -981,7 +983,7 @@ Any file link that is not one of the following links:
 
 raises an ~one-link-broken~ error when ~one~ try to export it.
 
-***** example
+**** example
 
 Assuming we haven't declared an ~ONE_LINK~ mapping between the
 directory ~/tmp/~ and any web url, the org file link:
@@ -998,7 +1000,7 @@ we try to export the link with ~one~) an error like the following:
 (one-link-broken "/tmp/" "goto-char: 26308")
 #+END_SRC
 
-** plain-list and item
+* plain-list and item
 :PROPERTIES:
 :ONE_PAGE: t
 :CUSTOM_ID: /doc/plain-list-and-item/
@@ -1006,7 +1008,7 @@ we try to export the link with ~one~) an error like the following:
 
 Only /unordered/ and /ordered/ lists are supported.
 
-*** unordered lists
+** unordered lists
 :PROPERTIES:
 :CUSTOM_ID: /doc/plain-list-and-item/#unordered-lists
 :END:
@@ -1042,7 +1044,7 @@ and is rendered like this:
 - another thing,
 - and the last one.
 
-*** ordered list
+** ordered list
 
 The following org snippet (unordered list):
 
