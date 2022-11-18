@@ -1,4 +1,4 @@
-;;; osta.el --- few functions to build static websites -*- lexical-binding: t; -*-
+;;; one.el --- few functions to build static websites -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2021 Tony Aldon
 
@@ -11,13 +11,13 @@
 ;;     node-property, planning, property-drawer, radio-target, special-block,
 ;;     statistics-cookie, table, table-cell, table-row,target, timestamp, verse-block
 ;;
-;; As I don't export org files directly but via `osta' HTML template system,
+;; As I don't export org files directly but via `one' HTML template system,
 ;; I don't implement function for inner-template and template symbol use
 ;; by org export when exporting files.
 
 ;;; utils
 
-(defun osta-escape (s)
+(defun one-escape (s)
   "Return the string S with some caracters escaped.
 `<', `>' and `&' are escaped."
   (replace-regexp-in-string
@@ -30,45 +30,45 @@
                  ("'"  "&apos;")))
    s))
 
-;;; osta-ox
+;;; one-ox
 
 (require 'ox)
 
-;;;; osta backend
+;;;; one backend
 
-(org-export-define-backend 'osta
-  '((headline . osta-ox-headline)
-    (section . osta-ox-section)
-    (paragraph . osta-ox-paragraph)
+(org-export-define-backend 'one
+  '((headline . one-ox-headline)
+    (section . one-ox-section)
+    (paragraph . one-ox-paragraph)
 
-    (plain-text . osta-ox-plain-text)
+    (plain-text . one-ox-plain-text)
 
-    (bold . osta-ox-bold)
-    (italic . osta-ox-italic)
-    (strike-through . osta-ox-strike-through)
-    (underline . osta-ox-underline)
-    (code . osta-ox-code)
-    (verbatim . osta-ox-verbatim)
+    (bold . one-ox-bold)
+    (italic . one-ox-italic)
+    (strike-through . one-ox-strike-through)
+    (underline . one-ox-underline)
+    (code . one-ox-code)
+    (verbatim . one-ox-verbatim)
 
-    (subscript . osta-ox-subscript)
-    (superscript . osta-ox-superscript)
+    (subscript . one-ox-subscript)
+    (superscript . one-ox-superscript)
 
-    (plain-list . osta-ox-plain-list)
-    (item . osta-ox-item)
+    (plain-list . one-ox-plain-list)
+    (item . one-ox-item)
 
-    (src-block . osta-ox-src-block)
-    (example-block . osta-ox-example-block)
-    (fixed-width . osta-ox-fixed-width)
-    (quote-block . osta-ox-quote-block)
+    (src-block . one-ox-src-block)
+    (example-block . one-ox-example-block)
+    (fixed-width . one-ox-fixed-width)
+    (quote-block . one-ox-quote-block)
 
-    (link . osta-ox-link))
+    (link . one-ox-link))
   :options-alist
-  '((:osta-root "OSTA_ROOT" nil "public")
-    (:osta-assets "OSTA_ASSETS" nil "assets")))
+  '((:one-root "ONE_ROOT" nil "public")
+    (:one-assets "ONE_ASSETS" nil "assets")))
 
 ;;;; export/rendering
 
-(defun osta-prettify-html (html)
+(defun one-prettify-html (html)
   "Return the HTML string prettified.
 Use for debugging/exploring purpose."
   (with-temp-buffer
@@ -86,29 +86,29 @@ Use for debugging/exploring purpose."
                          ;; they all are exported as is.
                          (org-export-use-babel nil)
                          (exported (with-current-buffer "content.org"
-                                     (org-export-as 'osta nil nil nil `(:osta-links ,(osta-map-links))))))
-                    (with-current-buffer (get-buffer-create "*osta*")
+                                     (org-export-as 'one nil nil nil `(:one-links ,(one-map-links))))))
+                    (with-current-buffer (get-buffer-create "*one*")
                       (erase-buffer)
                       (insert "<!DOCTYPE html>")
                       (insert "<html>")
                       (insert "<head>")
                       (insert "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>")
-                      (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"osta.css\" />")
+                      (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"one.css\" />")
                       (insert "</head>")
                       (insert "<body>")
                       (insert "<div class=\"container\">")
-                      ;; (insert (osta-prettify-html exported))
+                      ;; (insert (one-prettify-html exported))
                       (insert exported)
                       (insert "</div>")
                       (insert "</body>")
                       (insert "</html>")
                       (mhtml-mode)
                       (write-region (point-min) (point-max) "index.html"))
-                    (switch-to-buffer "*osta*"))))
+                    (switch-to-buffer "*one*"))))
 
 ;;;; headline, section, paragraph, etc.
 
-(defun osta-ox-headline (headline contents info)
+(defun one-ox-headline (headline contents info)
   (let* ((level (org-export-get-relative-level headline info))
          (title (org-export-data (org-element-property :title headline) info))
          (ct (if (null contents) "" contents))
@@ -119,130 +119,130 @@ Use for debugging/exploring purpose."
                   (format " id=\"%s\"" (match-string-no-properties 1 custom-id)))))
     (format "<div><h%s%s>%s</h%s>%s</div>" level (or id "") title level ct)))
 
-(defun osta-ox-section (_section contents _info)
+(defun one-ox-section (_section contents _info)
   (if (null contents) "" (format "<div>%s</div>" contents)))
 
-(defun osta-ox-paragraph (_paragraph contents _info)
+(defun one-ox-paragraph (_paragraph contents _info)
   (format "<p>%s</p>" contents))
 
-(defun osta-ox-plain-text (text _info)
-  (osta-escape text))
+(defun one-ox-plain-text (text _info)
+  (one-escape text))
 
-(defun osta-ox-bold (_bold contents _info)
+(defun one-ox-bold (_bold contents _info)
   (format "<b>%s</b>" contents))
 
-(defun osta-ox-italic (_italic contents _info)
+(defun one-ox-italic (_italic contents _info)
   (format "<i>%s</i>" contents))
 
-(defun osta-ox-strike-through (_strike-through contents _info)
+(defun one-ox-strike-through (_strike-through contents _info)
   (format "<del>%s</del>" contents))
 
-(defun osta-ox-underline (_underline contents _info)
+(defun one-ox-underline (_underline contents _info)
   (format "<u>%s</u>" contents))
 
-(defun osta-ox-code (code _contents _info)
-  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>"
-          (osta-escape (org-element-property :value code))))
+(defun one-ox-code (code _contents _info)
+  (format "<code class=\"one-hl one-hl-inline\">%s</code>"
+          (one-escape (org-element-property :value code))))
 
-(defun osta-ox-verbatim (verbatim _contents _info)
-  (format "<code class=\"osta-hl osta-hl-inline\">%s</code>"
-          (osta-escape (org-element-property :value verbatim))))
+(defun one-ox-verbatim (verbatim _contents _info)
+  (format "<code class=\"one-hl one-hl-inline\">%s</code>"
+          (one-escape (org-element-property :value verbatim))))
 
-(defun osta-ox-plain-list (plain-list contents _info)
+(defun one-ox-plain-list (plain-list contents _info)
   (let* ((type (pcase (org-element-property :type plain-list)
                  (`ordered "ol")
                  (`unordered "ul")
-                 (other (error "`osta' doesn't support list type: %s" other)))))
+                 (other (error "`one' doesn't support list type: %s" other)))))
     (format "<%s>%s</%s>" type contents type)))
 
-(defun osta-ox-item (_item contents _info)
+(defun one-ox-item (_item contents _info)
   (format "<li>%s</li>" contents))
 
-(defun osta-ox-subscript (_subscript contents _info)
+(defun one-ox-subscript (_subscript contents _info)
   (format "<sub>%s</sub>" contents))
 
-(defun osta-ox-superscript (_superscript contents _info)
+(defun one-ox-superscript (_superscript contents _info)
   (format "<sup>%s</sup>" contents))
 
 ;;;; blocks
 
-(defun osta-ox-is-results-p (element)
+(defun one-ox-is-results-p (element)
   "Return t if ELEMENT is considered to be a result block.
 In `org-mode', the following \"allowed\" blocks are result blocks:
   - block after the line `#+RESULTS:',
-  - block after the line `#+ATTR_OSTA_RESULTS:'.
+  - block after the line `#+ATTR_ONE_RESULTS:'.
 Blocks that are \"allowed\" to be result blocks are of the type:
   - `src-block',
   - `fixed-width',
   - `example-block'."
   (or (org-element-property :results element)
-      (org-element-property :attr_osta_results element)))
+      (org-element-property :attr_one_results element)))
 
-(defun osta-ox-htmlize (code lang &optional is-results-p)
+(defun one-ox-htmlize (code lang &optional is-results-p)
   "Return CODE string htmlized using `htmlize.el' in language LANG.
 
 If `is-results-p' is non-nil, CSS class of tag <code> in the returned
-string is \"osta-hl osta-hl-results\".
-If nil, the CSS class is `osta-hl osta-hl-block'.
+string is \"one-hl one-hl-results\".
+If nil, the CSS class is `one-hl one-hl-block'.
 
 Use `org-html-fontify-code'."
-  (let* ((org-html-htmlize-font-prefix "osta-hl-")
+  (let* ((org-html-htmlize-font-prefix "one-hl-")
          (org-html-htmlize-output-type 'css)
          (class (if is-results-p
-                    "osta-hl osta-hl-results"
-                  "osta-hl osta-hl-block")))
+                    "one-hl one-hl-results"
+                  "one-hl one-hl-block")))
     (format "<pre><code class=\"%s\">%s</code></pre>"
             class
             (replace-regexp-in-string
-             "<span class=\"osta-hl-default\">\\([^<]*\\)</span>"
+             "<span class=\"one-hl-default\">\\([^<]*\\)</span>"
              "\\1"
              (org-html-fontify-code code lang)))))
 
-(defun osta-ox-src-block (src-block _contents _info)
+(defun one-ox-src-block (src-block _contents _info)
   "Return SRC-BLOCK element htmlized using `htmlize.el'."
   (let* ((code (car (org-export-unravel-code src-block)))
          (lang (org-element-property :language src-block))
-         (is-results-p (osta-ox-is-results-p src-block)))
-    (osta-ox-htmlize code lang is-results-p)))
+         (is-results-p (one-ox-is-results-p src-block)))
+    (one-ox-htmlize code lang is-results-p)))
 
-(defun osta-ox-example-block (example-block _contents _info)
+(defun one-ox-example-block (example-block _contents _info)
   "Return EXAMPLE-BLOCK element htmlized using `htmlize.el'."
   (let* ((code (car (org-export-unravel-code example-block)))
          (lang "text")
-         (is-results-p (osta-ox-is-results-p example-block)))
-    (osta-ox-htmlize code lang is-results-p)))
+         (is-results-p (one-ox-is-results-p example-block)))
+    (one-ox-htmlize code lang is-results-p)))
 
-(defun osta-ox-fixed-width (fixed-width _contents _info)
+(defun one-ox-fixed-width (fixed-width _contents _info)
   "Return FIXED-WIDTH element htmlized using `htmlize.el'."
   (let* ((code (car (org-export-unravel-code fixed-width)))
          (lang "text")
-         (is-results-p (osta-ox-is-results-p fixed-width)))
-    (osta-ox-htmlize code lang is-results-p)))
+         (is-results-p (one-ox-is-results-p fixed-width)))
+    (one-ox-htmlize code lang is-results-p)))
 
-(defun osta-ox-quote-block (_quote-block contents _info)
-  (format "<blockquote class=\"osta-blockquote\">%s</blockquote>" contents))
+(defun one-ox-quote-block (_quote-block contents _info)
+  (format "<blockquote class=\"one-blockquote\">%s</blockquote>" contents))
 
 ;;;; links
 
-(defun osta-map-links ()
+(defun one-map-links ()
   "Return an alist of (LINK-EXPANDED . TARGET) in current buffer.
 
-Those links are defined by the org keyword `OSTA_LINK', like this:
+Those links are defined by the org keyword `ONE_LINK', like this:
 
-  #+OSTA_LINK: link --> target
+  #+ONE_LINK: link --> target
 
-This osta link is a mapping between a LINK (first part in \"link --> target\")
+This one link is a mapping between a LINK (first part in \"link --> target\")
 that org commands (related to visiting links, etc) understand,
 and a TARGET that is either:
-- the path to an available file in the website (exported by `osta'),
+- the path to an available file in the website (exported by `one'),
 - or a valid URL that point to an existing target on the web.
 
-If LINK in \"#+OSTA_LINK: link --> target\" contains an org
+If LINK in \"#+ONE_LINK: link --> target\" contains an org
 abbreviated link, in the mapping, LINK is replaced by its expanded
 version computed by `org-link-expand-abbrev'.  Note: this expansion
 works only when the variable `org-link-abbrev-alist-local' is set.
 This can be done by the function `org-export-get-environment'.
-`osta-map-links' assumes that `org-link-abbrev-alist-local' is
+`one-map-links' assumes that `org-link-abbrev-alist-local' is
 already set.
 
 Here is an example.
@@ -250,35 +250,35 @@ Here is an example.
 In a org-mode buffer with the following content:
 
 #+LINK: abbrev-link /path/to/project/
-#+OSTA_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
-#+OSTA_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56
+#+ONE_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
+#+ONE_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56
 
-`osta-map-links' returns:
+`one-map-links' returns:
 
  ((\"/path/to/project/file-1.clj::(defn func-1\" . \"https://github.com/user/project/blob/master/file-1.clj#L12\")
   (\"/path/to/project/file-2.clj::(defn func-2\" . \"https://github.com/user/project/blob/master/file-2.clj#L56\"))
 "
-  (when-let* ((osta-links (cdar (org-collect-keywords '("OSTA_LINK"))))
-              (map-link (lambda (osta-link)
-                          (and (string-match "\\`\\(.+\\S-\\)[ \t]+-->[ \t]*\\(.+\\)" osta-link)
-                               (cons (match-string-no-properties 1 osta-link)
-                                     (match-string-no-properties 2 osta-link)))))
-              (osta-links-alist (delq nil (mapcar map-link osta-links))))
+  (when-let* ((one-links (cdar (org-collect-keywords '("ONE_LINK"))))
+              (map-link (lambda (one-link)
+                          (and (string-match "\\`\\(.+\\S-\\)[ \t]+-->[ \t]*\\(.+\\)" one-link)
+                               (cons (match-string-no-properties 1 one-link)
+                                     (match-string-no-properties 2 one-link)))))
+              (one-links-alist (delq nil (mapcar map-link one-links))))
     (mapcar (lambda (l) (cons (org-link-expand-abbrev (car l)) (cdr l)))
-            osta-links-alist)))
+            one-links-alist)))
 
-(define-error 'osta-link-broken "Unable to resolve link")
+(define-error 'one-link-broken "Unable to resolve link")
 
-(define-error 'osta-options "Option not defined")
+(define-error 'one-options "Option not defined")
 
-(defun osta-ox-link (link desc info)
+(defun one-ox-link (link desc info)
   "Transcode a LINK object from Org to HTML.
 DESC is the description part of the link, or the empty string.
 INFO is a plist holding contextual information."
-  (let* ((osta-links (plist-get info :osta-links))
-         (osta-root (plist-get info :osta-root))
-         (osta-assets (plist-get info :osta-assets))
-         ;; (root-assets-re (concat "\\`\\./" "\\(" osta-root "\\|" osta-assets "\\)"))
+  (let* ((one-links (plist-get info :one-links))
+         (one-root (plist-get info :one-root))
+         (one-assets (plist-get info :one-assets))
+         ;; (root-assets-re (concat "\\`\\./" "\\(" one-root "\\|" one-assets "\\)"))
          (type (org-element-property :type link))
          (path (org-element-property :path link))
          (raw-link (org-element-property :raw-link link))
@@ -286,27 +286,27 @@ INFO is a plist holding contextual information."
                 ((string= type "custom-id") path)
                 ((string= type "fuzzy")
                  (let ((beg (org-element-property :begin link)))
-                   (signal 'osta-link-broken
+                   (signal 'one-link-broken
                            `(,raw-link
                              "fuzzy links not supported"
                              ,(format "goto-char: %s" beg)))))
                 ((string= type "file")
                  (or
-                  ;; mapped links in `:osta-links' have priority
-                  (cdr (assoc raw-link osta-links))
-                  ;; for instance, when `:osta-root' is equal to "public",
+                  ;; mapped links in `:one-links' have priority
+                  (cdr (assoc raw-link one-links))
+                  ;; for instance, when `:one-root' is equal to "public",
                   ;; ./public/blog/page-1.md --> /blog/page-1.md
-                  (and (or osta-root (signal 'osta-options '(":osta-root")))
-                       (string-match (concat "\\`\\./" osta-root) path)
+                  (and (or one-root (signal 'one-options '(":one-root")))
+                       (string-match (concat "\\`\\./" one-root) path)
                        (replace-match "" nil nil path))
-                  ;; for instance, when `:osta-assets' is equal to "assets",
+                  ;; for instance, when `:one-assets' is equal to "assets",
                   ;; ./assets/images/image-1.png --> /images/image-1.png
-                  (and (or osta-assets (signal 'osta-options '(":osta-assets")))
-                       (string-match (concat "\\`\\./" osta-assets) path)
+                  (and (or one-assets (signal 'one-options '(":one-assets")))
+                       (string-match (concat "\\`\\./" one-assets) path)
                        (replace-match "" nil nil path))
                   ;; any other file link raises an error
                   (let ((beg (org-element-property :begin link)))
-                    (signal 'osta-link-broken
+                    (signal 'one-link-broken
                             `(,raw-link ,(format "goto-char: %s" beg))))))
 
                 (t raw-link))))
@@ -315,29 +315,29 @@ INFO is a plist holding contextual information."
 
 ;;; pages
 
-(defun osta-page-p (element)
-  "Return ELEMENT if ELEMENT is an `osta' page.
+(defun one-page-p (element)
+  "Return ELEMENT if ELEMENT is an `one' page.
 
-If ELEMENT isn't an `osta' page, return nil.
+If ELEMENT isn't an `one' page, return nil.
 
-A root element (a `headline') is an `osta' page if:
-1) it has the org property `OSTA_PAGE' set to `t' and
+A root element (a `headline') is an `one' page if:
+1) it has the org property `ONE_PAGE' set to `t' and
 2) the org property `CUSTOM_ID' set.
-The value of `CUSTOM_ID' of an `osta' page is the relative path of
-the page from the root of the `osta' website.
+The value of `CUSTOM_ID' of an `one' page is the relative path of
+the page from the root of the `one' website.
 
-An `osta' page with `CUSTOM_ID' set to `/' is the homepage of the
-`osta' website.
+An `one' page with `CUSTOM_ID' set to `/' is the homepage of the
+`one' website.
 
 Assuming that we locally serve our website at `http://localhost:3000',
-the following org snippet defines an `osta' page which url is
+the following org snippet defines an `one' page which url is
 `http://localhost:3000/2022-01-09/my-page/':
 
 --------------------
 
 * my super cool page
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /2022-01-09/my-page/
 :END:
 
@@ -347,31 +347,31 @@ This page contains a list:
 - item 3
 
 --------------------"
-  (and (org-element-property :OSTA_PAGE element)
+  (and (org-element-property :ONE_PAGE element)
        (org-string-nw-p (org-element-property :CUSTOM_ID element))
        element))
 
-(defun osta-page (element)
-  "Return root element (a `headline') that is an `osta' page containing ELEMENT.
+(defun one-page (element)
+  "Return root element (a `headline') that is an `one' page containing ELEMENT.
 
 If ELEMENT doesn't belong to any page, return nil.
 
-See `osta-page-p'."
+See `one-page-p'."
   (pcase (org-element-type element)
     (`nil nil)
     (`org-data nil)
-    (`headline (or (osta-page-p element)
-                   (osta-page (org-element-property :parent element))))
-    (_ (osta-page (org-element-property :parent element)))))
+    (`headline (or (one-page-p element)
+                   (one-page (org-element-property :parent element))))
+    (_ (one-page (org-element-property :parent element)))))
 
-(defun osta-page-path (element)
-  "Return path of `osta' page if ELEMENT is part of an `osta' page.
+(defun one-page-path (element)
+  "Return path of `one' page if ELEMENT is part of an `one' page.
 
 Return nil if not.
-See `osta-page'."
-  (org-element-property :CUSTOM_ID (osta-page element)))
+See `one-page'."
+  (org-element-property :CUSTOM_ID (one-page element)))
 
-;;; osta provide
+;;; one provide
 
-(provide 'osta)
+(provide 'one)
 ;;; org-bars.el ends here

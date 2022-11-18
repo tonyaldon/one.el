@@ -43,7 +43,7 @@ a:hover {
   text-decoration: underline;
 }
 
-.osta-blockquote {
+.one-blockquote {
   background: linear-gradient(to right bottom, #313b52, #2f394f, #2d364b, #2b3448, #293245);
   border-left: 0.3em solid #d3b2a1;
   color: #d3b2a1;
@@ -52,7 +52,7 @@ a:hover {
   width: 50%;
 }
 
-.osta-hl {
+.one-hl {
   border-radius:0.5em;
   color: #dedede;
 	font-family: 'Fira Mono', monospace;
@@ -60,13 +60,13 @@ a:hover {
   font-weight: normal;
 }
 
-.osta-hl-inline {
+.one-hl-inline {
   background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
 	border: 1px solid #141b2a;
   padding: 0.2em 0.35em;
 }
 
-.osta-hl-block {
+.one-hl-block {
 	background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
 	border-radius: 0.5em;
   border: 1px solid #141b2a;
@@ -75,7 +75,7 @@ a:hover {
   padding: 0.5em;
 }
 
-.osta-hl-results {
+.one-hl-results {
   background: linear-gradient(to right bottom, #313b52, #2f394f, #2d364b, #2b3448, #293245);
   border-left: 3px solid #dedede;
 	border-radius: 0.2em;
@@ -86,28 +86,28 @@ a:hover {
   width: 92%;
 }
 
-.osta-hl-negation-char { color: #ff6c60}              /* font-lock-negation-char-face */
-.osta-hl-warning { color: #fd971f}                    /* font-lock-warning-face */
-.osta-hl-variable-name { color: #fd971f}              /* font-lock-variable-name-face */
-.osta-hl-doc { color: #eedc82}                        /* font-lock-doc-face */
-.osta-hl-doc-string { color: #eedc82}                 /* font-lock-doc-string-face */
-.osta-hl-string { color: #eedc82}                     /* font-lock-string-face */
-.osta-hl-function-name { color: #458b74}              /* font-lock-function-name-face */
-.osta-hl-builtin { color: #457f8b}                    /* font-lock-builtin-face */
-.osta-hl-type { color: #d3b2a1}                       /* font-lock-type-face */
-.osta-hl-keyword { color: #f92672}                    /* font-lock-keyword-face */
-.osta-hl-preprocessor { color: #f92672}               /* font-lock-preprocessor-face */
-.osta-hl-comment-delimiter { color: #8c8c8c}          /* font-lock-comment-delimiter-face */
-.osta-hl-comment { color: #8c8c8c}                    /* font-lock-comment-face */
-.osta-hl-constant { color: #87cefa}                   /* font-lock-constant-face */
-.osta-hl-reference { color: #f5ebb6}                  /* font-lock-reference-face */
-.osta-hl-regexp-grouping-backslash { color: #87cefa}  /* font-lock-regexp-grouping-backslash */
-.osta-hl-regexp-grouping-construct { color: #87cefa}  /* font-lock-regexp-grouping-construct */
-.osta-hl-number { color: #eedc82}                     /* font-lock-number-face */
+.one-hl-negation-char { color: #ff6c60}              /* font-lock-negation-char-face */
+.one-hl-warning { color: #fd971f}                    /* font-lock-warning-face */
+.one-hl-variable-name { color: #fd971f}              /* font-lock-variable-name-face */
+.one-hl-doc { color: #eedc82}                        /* font-lock-doc-face */
+.one-hl-doc-string { color: #eedc82}                 /* font-lock-doc-string-face */
+.one-hl-string { color: #eedc82}                     /* font-lock-string-face */
+.one-hl-function-name { color: #458b74}              /* font-lock-function-name-face */
+.one-hl-builtin { color: #457f8b}                    /* font-lock-builtin-face */
+.one-hl-type { color: #d3b2a1}                       /* font-lock-type-face */
+.one-hl-keyword { color: #f92672}                    /* font-lock-keyword-face */
+.one-hl-preprocessor { color: #f92672}               /* font-lock-preprocessor-face */
+.one-hl-comment-delimiter { color: #8c8c8c}          /* font-lock-comment-delimiter-face */
+.one-hl-comment { color: #8c8c8c}                    /* font-lock-comment-face */
+.one-hl-constant { color: #87cefa}                   /* font-lock-constant-face */
+.one-hl-reference { color: #f5ebb6}                  /* font-lock-reference-face */
+.one-hl-regexp-grouping-backslash { color: #87cefa}  /* font-lock-regexp-grouping-backslash */
+.one-hl-regexp-grouping-construct { color: #87cefa}  /* font-lock-regexp-grouping-construct */
+.one-hl-number { color: #eedc82}                     /* font-lock-number-face */
 
 
-.osta-hl-clojure-keyword { color: #457f8b}            /* clojure-keyword-face */
-.osta-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
+.one-hl-clojure-keyword { color: #457f8b}            /* clojure-keyword-face */
+.one-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
 
 ::-webkit-scrollbar {
   width: 0.6em;

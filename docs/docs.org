@@ -1,9 +1,6 @@
-#+TITLE: OSTA - Org Static
-#+DATE: <2022-02-06 Sun>
-
 * Home page
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /
 :END:
 
@@ -11,7 +8,7 @@ I'm the home page.
 
 * About page
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /about/
 :END:
 
@@ -19,19 +16,19 @@ I'm the about page.
 
 * 404
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /404/
 :END:
 
 I'm the 404 page.
 
-* Why osta?
+* Why one?
 :PROPERTIES:
-:OSTA_PAGE: t
-:CUSTOM_ID: /why-osta/
+:ONE_PAGE: t
+:CUSTOM_ID: /why-one/
 :END:
 
-I wrote ~osta~ to do *tech* blogging.
+I wrote ~one~ to do *tech* blogging.
 
 More precisely to talk about *programs* (not programming).
 
@@ -48,12 +45,12 @@ As a result, I left out many org elements:
 - etc.
 
 You can find the complete list of the org elements that are not
-supported in the commentary section of the file ~osta.el~
+supported in the commentary section of the file ~one.el~
 
 * Documentation
 ** org elements not supported
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /doc/org-elements-not-supported/
 :END:
 
@@ -63,19 +60,19 @@ I left out many org elements:
 - etc.
 
 You can find the complete list of the org elements that are not
-supported in the commentary section of the file ~osta.el~
+supported in the commentary section of the file ~one.el~
 
-Read more: [[#/why-osta/][Why osta?]].
+Read more: [[#/why-one/][Why one?]].
 
 ** src-block
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /doc/src-block/
 :END:
 *** code highlighting with ~htmlize.el~
 **** description
 
-~osta~ highlights code via the function ~osta-ox-htmlize~ that uses
+~one~ highlights code via the function ~one-ox-htmlize~ that uses
 ~htmlize.el~ to do the work.
 
 For a given piece of code ~X~ in a certain language ~Y~, ~X~ will be
@@ -93,9 +90,9 @@ For instance, in ~sh-mode~, the word ~echo~ is highlighted with the face
 ~font-lock-builtin-face~.  So, the word ~echo~ in a piece of Shell (or
 Bash) code will be transformed into:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<span class="osta-hl-builtin">echo</span>
+<span class="one-hl-builtin">echo</span>
 #+END_SRC
 
 The whole piece of code ~X~, once the previously described operations
@@ -103,19 +100,19 @@ have been done, is wrapped:
 
 1) for a /normal/ block by the component:
 
-   #+ATTR_OSTA_RESULTS:
+   #+ATTR_ONE_RESULTS:
    #+BEGIN_SRC html
-   <pre><code class="osta-hl osta-hl-block">...</code></pre>
+   <pre><code class="one-hl one-hl-block">...</code></pre>
    #+END_SRC
 
 2) for a /result/ block by the component:
 
-   #+ATTR_OSTA_RESULTS:
+   #+ATTR_ONE_RESULTS:
    #+BEGIN_SRC html
-   <pre><code class="osta-hl osta-hl-results">...</code></pre>
+   <pre><code class="one-hl one-hl-results">...</code></pre>
    #+END_SRC
 
-See section [[#/doc/src-block/#org-keywords-results-and-attr_osta_results][org keywords RESULTS and ATTR_OSTA_RESULTS]].
+See section [[#/doc/src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS and ATTR_ONE_RESULTS]].
 
 **** example with Bash code
 
@@ -132,12 +129,12 @@ done
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<pre><code class="osta-hl osta-hl-block"><span class="osta-hl-builtin">echo</span> <span class="osta-hl-string">"list file's extensions in current dir:"</span>
-<span class="osta-hl-keyword">for</span> f<span class="osta-hl-keyword"> in</span> <span class="osta-hl-sh-quoted-exec">`ls`</span>; <span class="osta-hl-keyword">do</span>
-    <span class="osta-hl-builtin">echo</span> ${<span class="osta-hl-variable-name">f</span>##*.}
-<span class="osta-hl-keyword">done</span></code></pre>
+<pre><code class="one-hl one-hl-block"><span class="one-hl-builtin">echo</span> <span class="one-hl-string">"list file's extensions in current dir:"</span>
+<span class="one-hl-keyword">for</span> f<span class="one-hl-keyword"> in</span> <span class="one-hl-sh-quoted-exec">`ls`</span>; <span class="one-hl-keyword">do</span>
+    <span class="one-hl-builtin">echo</span> ${<span class="one-hl-variable-name">f</span>##*.}
+<span class="one-hl-keyword">done</span></code></pre>
 </div>
 #+END_SRC
 
@@ -150,24 +147,24 @@ for f in `ls`; do
 done
 #+END_SRC
 
-Note that ~osta-ox-htmlize~ has produced and used the following CSS
+Note that ~one-ox-htmlize~ has produced and used the following CSS
 classes (listed with their corresponding emacs faces):
 
 #+BEGIN_SRC text
 # from font-lock
-osta-hl-builtin        --> font-lock-builtin-face
-osta-hl-keyword        --> font-lock-keyword-face
-osta-hl-string         --> font-lock-string-face
-osta-hl-variable-name  --> font-lock-variable-name-face
+one-hl-builtin        --> font-lock-builtin-face
+one-hl-keyword        --> font-lock-keyword-face
+one-hl-string         --> font-lock-string-face
+one-hl-variable-name  --> font-lock-variable-name-face
 
 # specific to sh-mode
-osta-hl-sh-quoted-exec --> sh-quoted-exec
+one-hl-sh-quoted-exec --> sh-quoted-exec
 #+END_SRC
 
 You might have notice the pattern used for ~font-lock~ faces and the one
 used for mode specific faces.
 
-~osta~ provides a style sheet that has the CSS classes defined for all
+~one~ provides a style sheet that has the CSS classes defined for all
 the ~font-lock~ faces (faces starting by ~font-lock-~) but not the
 specific faces used by each prog mode (except the ones I use often).
 
@@ -230,21 +227,21 @@ Elisp code:
       )))
 #+END_SRC
 
-*** org keywords ~RESULTS~ and ~ATTR_OSTA_RESULTS~
+*** org keywords ~RESULTS~ and ~ATTR_ONE_RESULTS~
 :PROPERTIES:
-:CUSTOM_ID: /doc/src-block/#org-keywords-results-and-attr_osta_results
+:CUSTOM_ID: /doc/src-block/#org-keywords-results-and-attr_one_results
 :END:
 
 A *block* is considered to be a /result/ block:
 1) if it is preceded by a line starting by ~#+RESULTS:~ or,
-2) if it is preceded by a line starting by ~#+ATTR_OSTA_RESULTS:~.
+2) if it is preceded by a line starting by ~#+ATTR_ONE_RESULTS:~.
 
 Blocks that are not /result/ blocks are /normal/ blocks.
 
 When exported, /normal/ blocks and /result/ blocks differ only by their
 CSS classes:
-- ~osta-hl osta-hl-block~ for /normal/ blocks,
-- ~osta-hl osta-hl-results~ for /result/ blocks.
+- ~one-hl one-hl-block~ for /normal/ blocks,
+- ~one-hl one-hl-results~ for /result/ blocks.
 
 This way /result/ blocks can be rendered with a different style
 than /normal/ blocks as we can see in the following 2 examples.
@@ -260,23 +257,23 @@ ls
 
 ,#+RESULTS:
 : content.org
-: osta.css
-: osta.el
+: one.css
+: one.el
 : README.org
 #+END_SRC
 
-is exported by ~osta~ as follow:
+is exported by ~one~ as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<pre><code class="osta-hl osta-hl-block">ls</code></pre>
-<pre><code class="osta-hl osta-hl-results">content.org
-osta.css
-osta.el
+<pre><code class="one-hl one-hl-block">ls</code></pre>
+<pre><code class="one-hl one-hl-results">content.org
+one.css
+one.el
 README.org</code></pre>
 #+END_SRC
 
-and is rendered by ~osta~ with the first block (/normal/ block) having a
+and is rendered by ~one~ with the first block (/normal/ block) having a
 different style from second block (/result/ block):
 
 #+BEGIN_SRC bash :results output
@@ -285,11 +282,11 @@ ls
 
 #+RESULTS:
 : content.org
-: osta.css
-: osta.el
+: one.css
+: one.el
 : README.org
 
-**** example using org keyword ~ATTR_OSTA_RESULTS~
+**** example using org keyword ~ATTR_ONE_RESULTS~
 
 The following org snippet:
 
@@ -302,23 +299,23 @@ After evaluating this code block:
 
 we get:
 
-,#+ATTR_OSTA_RESULTS:
+,#+ATTR_ONE_RESULTS:
 ,#+BEGIN_SRC emacs-lisp
 (:c "ccc" :d "ddd")
 ,#+END_SRC
 #+END_SRC
 
-is exported by ~osta~ as follow:
+is exported by ~one~ as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <p>After evaluating this code block:</p>
-<pre><code class="osta-hl osta-hl-block">(plist-get '(<span class="osta-hl-builtin">:a</span> <span class="osta-hl-string">"aaa"</span> <span class="osta-hl-builtin">:b</span> (<span class="osta-hl-builtin">:c</span> <span class="osta-hl-string">"ccc"</span> <span class="osta-hl-builtin">:d</span> <span class="osta-hl-string">"ddd"</span>)) <span class="osta-hl-builtin">:b</span>)</code></pre>
+<pre><code class="one-hl one-hl-block">(plist-get '(<span class="one-hl-builtin">:a</span> <span class="one-hl-string">"aaa"</span> <span class="one-hl-builtin">:b</span> (<span class="one-hl-builtin">:c</span> <span class="one-hl-string">"ccc"</span> <span class="one-hl-builtin">:d</span> <span class="one-hl-string">"ddd"</span>)) <span class="one-hl-builtin">:b</span>)</code></pre>
 <p>we get:</p>
-<pre><code class="osta-hl osta-hl-results">(<span class="osta-hl-builtin">:c</span> <span class="osta-hl-string">"ccc"</span> <span class="osta-hl-builtin">:d</span> <span class="osta-hl-string">"ddd"</span>)</code></pre>
+<pre><code class="one-hl one-hl-results">(<span class="one-hl-builtin">:c</span> <span class="one-hl-string">"ccc"</span> <span class="one-hl-builtin">:d</span> <span class="one-hl-string">"ddd"</span>)</code></pre>
 #+END_SRC
 
-and is rendered by ~osta~ like this:
+and is rendered by ~one~ like this:
 
 After evaluating this code block:
 
@@ -328,7 +325,7 @@ After evaluating this code block:
 
 we get:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC emacs-lisp
 (:c "ccc" :d "ddd")
 #+END_SRC
@@ -349,21 +346,21 @@ snippet:
 3. item 3
 #+END_SRC
 
-that is exported by ~osta~ as follow:
+that is exported by ~one~ as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <ol>
   <li>
     <p>item 1</p>
-    <pre><code class="osta-hl osta-hl-block">(message <span class="osta-hl-string">"src-block in item 1"</span>)</code></pre>
+    <pre><code class="one-hl one-hl-block">(message <span class="one-hl-string">"src-block in item 1"</span>)</code></pre>
   </li>
   <li><p>item 2</p></li>
   <li><p>item 3</p></li>
 </ol>
 #+END_SRC
 
-and is rendered by ~osta~ like this:
+and is rendered by ~one~ like this:
 
 1. item 1
 
@@ -376,15 +373,15 @@ and is rendered by ~osta~ like this:
 
 ** quote-block
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /doc/quote-block/
 :END:
 
 Blocks defined with ~#+BEGIN_QUOTE ... #+END_QUOTE~ pattern are
 quote-block.
 
-They are exported by ~osta~ in a ~<blockquote>...</blockquote>~ component
-with the CSS class ~osta-blockquote~.
+They are exported by ~one~ in a ~<blockquote>...</blockquote>~ component
+with the CSS class ~one-blockquote~.
 
 The following org snippet:
 
@@ -394,11 +391,11 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 ,#+END_QUOTE
 #+END_SRC
 
-defines a quote and is exported by ~osta~ as follow:
+defines a quote and is exported by ~one~ as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<blockquote class="osta-blockquote">A quitter never wins and a winner never quits. —Napoleon Hill</blockquote>
+<blockquote class="one-blockquote">A quitter never wins and a winner never quits. —Napoleon Hill</blockquote>
 #+END_SRC
 
 and look like this:
@@ -409,7 +406,7 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 
 ** fixed-width and example-block
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /doc/fixed-width-and-example-block/
 :END:
 *** description
@@ -429,8 +426,8 @@ Both fixed-width and example-block blocks are treated as [[#/doc/src-block/][src
 1) they are highlighted as ~text-mode~ would do,
 2) they are rendered in a ~<pre><code>...</code></pre>~ component
    (indentation and newlines are respected),
-3) they are /normal/ blocks (with CSS classes ~osta-hl osta-hl-block~) *OR*
-   /result/ blocks (with CSS classes ~osta-hl osta-hl-results~).
+3) they are /normal/ blocks (with CSS classes ~one-hl one-hl-block~) *OR*
+   /result/ blocks (with CSS classes ~one-hl one-hl-results~).
 
 *** example
 
@@ -446,7 +443,7 @@ fixed-width elements can also be used within lists:
 - item 1
   : fixed-width element
 - item 2
-  ,#+ATTR_OSTA_RESULTS:
+  ,#+ATTR_ONE_RESULTS:
   : multiline fixed-width element
   : that is also a result block,
   : so has a different style.
@@ -459,24 +456,24 @@ This    is
 ,#+END_EXAMPLE
 #+END_SRC
 
-is exported by ~osta~ as follow:
+is exported by ~one~ as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <p>Here is a fixed-width element (one line):</p>
 
-<pre><code class="osta-hl osta-hl-block">I'm a fixed-width element</code></pre>
+<pre><code class="one-hl one-hl-block">I'm a fixed-width element</code></pre>
 
 <p>fixed-width elements can also be used within lists:</p>
 
 <ul>
   <li>
     <p>item 1</p>
-    <pre><code class="osta-hl osta-hl-block">fixed-width element</code></pre>
+    <pre><code class="one-hl one-hl-block">fixed-width element</code></pre>
   </li>
   <li>
     <p>item 2</p>
-    <pre><code class="osta-hl osta-hl-results">multiline fixed-width element
+    <pre><code class="one-hl one-hl-results">multiline fixed-width element
 that is also a result block,
 so has a different style.</code></pre>
   </li>
@@ -484,7 +481,7 @@ so has a different style.</code></pre>
 
 <p>Although I don&apos;t often use example blocks, here is one:</p>
 
-<pre><code class="osta-hl osta-hl-block">This    is
+<pre><code class="one-hl one-hl-block">This    is
         an    example!</code></pre>
 #+END_SRC
 
@@ -499,7 +496,7 @@ fixed-width elements can also be used within lists:
 - item 1
   : fixed-width element
 - item 2
-  #+ATTR_OSTA_RESULTS:
+  #+ATTR_ONE_RESULTS:
   : multiline fixed-width element
   : that is also a result block,
   : so has a different style.
@@ -513,7 +510,7 @@ This    is
 
 ** links
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /doc/links
 :END:
 *** http, https, mailto links
@@ -533,7 +530,7 @@ http://tonyaldon.com
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="http://tonyaldon.com">http://tonyaldon.com</a>
 #+END_SRC
@@ -546,7 +543,7 @@ and this following link with a description:
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="https://tonyaldon.com">Tony Aldon (https)</a>
 #+END_SRC
@@ -559,7 +556,7 @@ and this ~mailto~ link:
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="mailto:aldon.tony.adm@gmail.com">send me an email</a>
 #+END_SRC
@@ -571,15 +568,15 @@ is exported as follow:
 
 **** description
 
-In ~osta~, ~CUSTOM_ID~ properties are:
+In ~one~, ~CUSTOM_ID~ properties are:
 
 - paths to pages (if the corresponding headline has also the property
-  ~OSTA_PAGE~ set to ~t~):
+  ~ONE_PAGE~ set to ~t~):
 
   #+BEGIN_SRC text
   ,* Page 1
   :PROPERTIES:
-  :OSTA_PAGE: t
+  :ONE_PAGE: t
   :CUSTOM_ID: /blog/page-1/
   :END:
   #+END_SRC
@@ -590,7 +587,7 @@ In ~osta~, ~CUSTOM_ID~ properties are:
   #+BEGIN_SRC text
   ,* Page 1
   :PROPERTIES:
-  :OSTA_PAGE: t
+  :ONE_PAGE: t
   :CUSTOM_ID: /blog/page-1/
   :END:
   ,** headline 1 in page Page 1
@@ -610,10 +607,10 @@ if you respect (you must):
 
 The benefits of these "rules/conventions" are:
 
-1) ~osta~ not need to compute anything regarding of the paths of the
+1) ~one~ not need to compute anything regarding of the paths of the
    pages,
-2) ~osta~ can leave ~custom-id~ links as they are,
-3) navigation between ~osta~ pages (specific headlines) inside emacs
+2) ~one~ can leave ~custom-id~ links as they are,
+3) navigation between ~one~ pages (specific headlines) inside emacs
    using ~custom-id~ links is *not broken*!  (This is a big win for the
    writer of the blog who can enjoy his own blog inside emacs!!!).
 
@@ -625,7 +622,7 @@ Precisely, the following link to the ~custom-id~ equal to ~/blog/page-1/~:
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="/blog/page-1/">Page 1</a>
 #+END_SRC
@@ -633,7 +630,7 @@ is exported as follow:
 **** example (link to a page)
 
 The following link to the headline with ~CUSTOM_ID~ equal to
-~/doc/plain-list-and-item/~ (that is also an ~osta~ page):
+~/doc/plain-list-and-item/~ (that is also an ~one~ page):
 
 #+BEGIN_SRC text
 [[#/doc/plain-list-and-item/][page about plain-list]]
@@ -641,7 +638,7 @@ The following link to the headline with ~CUSTOM_ID~ equal to
 
 is exported to this anchor tag that links to the page ~/doc/plain-list-and-item/~:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="/doc/plain-list-and-item/">page about plain-list</a>
 #+END_SRC
@@ -652,7 +649,7 @@ and is rendered like this: [[#/doc/plain-list-and-item/][page about plain-list]]
 
 The following link to the headline with ~CUSTOM_ID~ equal to
 ~/doc/plain-list-and-item/#unordered-lists~ (that must be a subsection of the
-~osta~ page ~/doc/plain-list-and-item/~):
+~one~ page ~/doc/plain-list-and-item/~):
 
 #+BEGIN_SRC text
 [[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]]
@@ -661,7 +658,7 @@ The following link to the headline with ~CUSTOM_ID~ equal to
 is exported to this anchor tag that links to the heading with the ~id~
 set to ~unordered-lists~ on the page ~/doc/plain-list-and-item/~:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="/doc/plain-list-and-item/#unordered-lists">unordered lists heading in the page about plain-list</a>
 #+END_SRC
@@ -673,7 +670,7 @@ plain-list]].
 
 # uncomment the last line of this comment (fuzzy search link),
 # narrow the buffer to this subsection, and export the narrowed
-# buffer with osta.
+# buffer with one.
 # --> This must raise an error.
 # --> [[fuzzy search]]
 
@@ -682,7 +679,7 @@ in the document, that means I wrote the link wrong.
 
 Broken links are bad user experience.  I don't like them.
 
-So I decided that ~osta~ raises an error (hard-coded) when we try to
+So I decided that ~one~ raises an error (hard-coded) when we try to
 export a fuzzy link to HTML.
 
 For instance, the following ~fuzzy~ link:
@@ -693,13 +690,13 @@ For instance, the following ~fuzzy~ link:
 
 raise an error like the following:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC text
-(osta-link-broken "fuzzy search" "fuzzy links not supported" "goto-char: 5523")
+(one-link-broken "fuzzy search" "fuzzy links not supported" "goto-char: 5523")
 #+END_SRC
 
 *** file links
-**** links to local files mapped to web urls (~OSTA_LINK~)
+**** links to local files mapped to web urls (~ONE_LINK~)
 :PROPERTIES:
 :CUSTOM_ID: /doc/links/#local-files-mapped-to-web-urls
 :END:
@@ -712,10 +709,10 @@ raise an error like the following:
 #+LINK: clj ./clojure/
 
 # mapped links between local files and web urls are
-# declared with the osta org keyword OSTA_LINK.
+# declared with the one org keyword ONE_LINK.
 
-#+OSTA_LINK: /tmp/clojurescript/ --> https://github.com/clojure/clojurescript
-#+OSTA_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
+#+ONE_LINK: /tmp/clojurescript/ --> https://github.com/clojure/clojurescript
+#+ONE_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
 
 # to make those following links works correctly inside emacs,
 # you must have:
@@ -727,23 +724,23 @@ raise an error like the following:
 - [[/tmp/clojurescript/][ClojureScript]],
 - [[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]].
 
-***** org keyword ~OSTA_LINK~
+***** org keyword ~ONE_LINK~
 ****** description
 
 In my org files, I often use links to directories which are clones of
 repositories.  If those repositories are hosted on Github for
 instance, they can be reached with web urls.
 
-With ~osta~ you can declare such mappings between directories and
-web urls with the org keyword ~OSTA_LINK~ respecting the following
+With ~one~ you can declare such mappings between directories and
+web urls with the org keyword ~ONE_LINK~ respecting the following
 syntax:
 
-: #+OSTA_LINK: /path/to/example/ --> https://example.com
+: #+ONE_LINK: /path/to/example/ --> https://example.com
 
-Once you've declared those mappings, ~osta~, when exporting, will
+Once you've declared those mappings, ~one~, when exporting, will
 replace the links to the directories by their mapped web urls.
 
-Note that mapped links declared with org keyword ~OSTA_LINK~ have
+Note that mapped links declared with org keyword ~ONE_LINK~ have
 prevalence over any other file links.
 
 ****** example
@@ -756,7 +753,7 @@ You can declare a mapping between the repository on your machine
 (~/tmp/clojurescript/~) and the repository on Github by adding
 (anywhere) the following line to this org file:
 
-: #+OSTA_LINK: /tmp/clojurescript/ --> https://github.com/clojure/clojurescript
+: #+ONE_LINK: /tmp/clojurescript/ --> https://github.com/clojure/clojurescript
 
 With this mapping declared, the following link:
 
@@ -767,29 +764,29 @@ With this mapping declared, the following link:
 that links on your machine to the directory ~/tmp/clojurescript/~ will
 be exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="https://github.com/clojure/clojurescript">ClojureScript</a>
 #+END_SRC
 
 and is rendered like this: [[/tmp/clojurescript/][ClojureScript]].
 
-***** org keyword ~OSTA_LINK~ combined with org keyword ~LINK~
+***** org keyword ~ONE_LINK~ combined with org keyword ~LINK~
 ****** description
 
-In the left part of ~#+OSTA_LINK:~ statments you can use org abbreviated
+In the left part of ~#+ONE_LINK:~ statments you can use org abbreviated
 links that have been defined in ~#+LINK:~ statments.
 
 ****** example
 
 For instance, in the following org snippets:
 1) we defined the abbreviated link ~clj~ that resolves to ~./clojure/~,
-2) we use it in the left part of the ~#+OSTA_LINK:~ statements and,
+2) we use it in the left part of the ~#+ONE_LINK:~ statements and,
 3) we use it in a link.
 
 #+BEGIN_SRC text
 ,#+LINK: clj ./clojure/
-,#+OSTA_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
+,#+ONE_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
 
 [[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]]
 #+END_SRC
@@ -800,10 +797,10 @@ function ~str~ defined in the file ~./clojure/src/clj/clojure/core.clj~
 (assuming, you have a cloned of Clojure repository
 https://github.com/clojure/clojure under the directory ~./clojure/~).
 
-When you export the previous link with ~osta~, you get the following
+When you export the previous link with ~one~, you get the following
 anchor tag:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546">clojure.core/str</a>
 #+END_SRC
@@ -829,10 +826,10 @@ and is rendered like this: [[clj:src/clj/clojure/core.clj::(defn str][clojure.co
 
 One might want to generate at build time files that are going to be
 available in the ~public~ (root of the website by default) directory.
-Those files not need to be ~osta~ pages (that means not need to have
+Those files not need to be ~one~ pages (that means not need to have
 dedicated entries in this org file).
 
-Those files, that are not ~osta~ pages, can't be linked in this
+Those files, that are not ~one~ pages, can't be linked in this
 org file with ~custom-id~ links (because those links would be broken
 inside emacs, and we don't want that).
 
@@ -856,36 +853,36 @@ to that markdown file in this org file as follow:
 
 This previous link is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="/doc/plain-list-and-item.md">page about plain-list in markdown format</a>
 #+END_SRC
 
 and is rendered like this: [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]].
 
-***** root directory ~public~ can be modify with org keyword ~OSTA_ROOT~
+***** root directory ~public~ can be modify with org keyword ~ONE_ROOT~
 
 The root directory of the website is defined in the ~:option-alist~ of
-~osta~ org export backend with the keyword ~:osta-root~.
+~one~ org export backend with the keyword ~:one-root~.
 
 By default, it is set to ~public~, but you can change it using the org
-keyword ~OSTA_ROOT~ in this org file.
+keyword ~ONE_ROOT~ in this org file.
 
 For instance, you can set the default root directory of the website to
-the directory ~build~ adding this line ~#+OSTA_ROOT: build~ at the top of
+the directory ~build~ adding this line ~#+ONE_ROOT: build~ at the top of
 this org file.
 
 If you do so, the following link:
 
 #+BEGIN_SRC text
-#+OSTA_ROOT: build
+#+ONE_ROOT: build
 # ...
 [[./build/doc/plain-list-and-item.md][page about plain-list in markdown format]]
 #+END_SRC
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="/doc/plain-list-and-item.md">page about plain-list in markdown format</a>
 #+END_SRC
@@ -897,7 +894,7 @@ and is rendered like this: [[./public/doc/plain-list-and-item.md][page about pla
 :CUSTOM_ID: /doc/links/#local-files-in-assets-dir
 :END:
 
-- [[./assets/images/osta.png][osta image]]
+- [[./assets/images/one.png][one image]]
 
 ***** description
 
@@ -919,57 +916,57 @@ It's convenient, because this way:
 For instance the following link:
 
 #+BEGIN_SRC text
-[[./assets/images/osta.png][osta image]]
+[[./assets/images/one.png][one image]]
 #+END_SRC
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<a href="/images/osta.png">osta image</a>
+<a href="/images/one.png">one image</a>
 #+END_SRC
 
-and is rendered like this: [[./assets/images/osta.png][osta image]].
+and is rendered like this: [[./assets/images/one.png][one image]].
 
-***** assets directory ~assets~ can be modify with org keyword ~OSTA_ASSETS~
+***** assets directory ~assets~ can be modify with org keyword ~ONE_ASSETS~
 
 The directory where the assets go (~css~, ~js~, ~images~) is define in the
-~:option-alist~ of ~osta~ org export backend with the keyword
-~:osta-assets~.
+~:option-alist~ of ~one~ org export backend with the keyword
+~:one-assets~.
 
 By default, it is set to ~assets~, but you can change it using the org
-keyword ~OSTA_ASSETS~ in this org file.
+keyword ~ONE_ASSETS~ in this org file.
 
 For instance, you can set the assets directory to the directory
-~resources~ adding this line ~#+OSTA_ASSETS: resources~ at the top of this
+~resources~ adding this line ~#+ONE_ASSETS: resources~ at the top of this
 org file.
 
 If you do so, the following link:
 
 #+BEGIN_SRC text
-#+OSTA_ASSETS: resources
+#+ONE_ASSETS: resources
 # ...
-[[./resources/images/osta.png][osta image]]
+[[./resources/images/one.png][one image]]
 #+END_SRC
 
 is exported as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<a href="/images/osta.png">osta image</a>
+<a href="/images/one.png">one image</a>
 #+END_SRC
 
-and is rendered like this: [[./assets/images/osta.png][osta image]].
+and is rendered like this: [[./assets/images/one.png][one image]].
 
-**** local file links that raise an error (~osta-link-broken~)
+**** local file links that raise an error (~one-link-broken~)
 ***** description
 
 # uncomment the last line of this comment (unresolved file link),
 # narrow the buffer to this subsection, and export the narrowed
-# buffer with osta.
+# buffer with one.
 # --> This must raise an error because:
 #     1) the directory /tmp/ has no mapping to an web url
-#        declared with org keyword OSTA_LINK,
+#        declared with org keyword ONE_LINK,
 #     2) neither is a local relative file in the root
 #        directory ./public/,
 #     3) neither is a local relative file in the assets
@@ -982,11 +979,11 @@ Any file link that is not one of the following links:
 2) [[#/doc/links/#local-files-in-public-dir][link to a local file in the public directory]],
 3) [[#/doc/links/#local-files-in-assets-dir][link to a local file in the assets directory]],
 
-raises an ~osta-link-broken~ error when ~osta~ try to export it.
+raises an ~one-link-broken~ error when ~one~ try to export it.
 
 ***** example
 
-Assuming we haven't declared an ~OSTA_LINK~ mapping between the
+Assuming we haven't declared an ~ONE_LINK~ mapping between the
 directory ~/tmp/~ and any web url, the org file link:
 
 #+BEGIN_SRC text
@@ -994,16 +991,16 @@ directory ~/tmp/~ and any web url, the org file link:
 #+END_SRC
 
 that is not in the ~public~ nor in the ~assets~ directory will raise (when
-we try to export the link with ~osta~) an error like the following:
+we try to export the link with ~one~) an error like the following:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC text
-(osta-link-broken "/tmp/" "goto-char: 26308")
+(one-link-broken "/tmp/" "goto-char: 26308")
 #+END_SRC
 
 ** plain-list and item
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /doc/plain-list-and-item/
 :END:
 
@@ -1022,9 +1019,9 @@ The following org snippet (unordered list):
 - and the last one.
 #+END_SRC
 
-is exported by ~osta~ as follow:
+is exported by ~one~ as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <ul>
   <li>
@@ -1055,9 +1052,9 @@ The following org snippet (unordered list):
 3) third.
 #+END_SRC
 
-is exported by ~osta~ as follow:
+is exported by ~one~ as follow:
 
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <ol>
   <li>

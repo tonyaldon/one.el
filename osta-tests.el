@@ -46,23 +46,23 @@ variable, and communication channel under `info'."
 
 ;;; utils
 
-(ert-deftest osta-escape-test ()
-  (should (string= (osta-escape "<") "&lt;"))
-  (should (string= (osta-escape ">") "&gt;"))
-  (should (string= (osta-escape "&") "&amp;"))
-  (should (string= (osta-escape "\"") "&quot;"))
-  (should (string= (osta-escape "'") "&apos;"))
-  (should (string= (osta-escape "regular text") "regular text"))
-  (should (string= (osta-escape "<...>...&...\"...'") "&lt;...&gt;...&amp;...&quot;...&apos;")))
+(ert-deftest one-escape-test ()
+  (should (string= (one-escape "<") "&lt;"))
+  (should (string= (one-escape ">") "&gt;"))
+  (should (string= (one-escape "&") "&amp;"))
+  (should (string= (one-escape "\"") "&quot;"))
+  (should (string= (one-escape "'") "&apos;"))
+  (should (string= (one-escape "regular text") "regular text"))
+  (should (string= (one-escape "<...>...&...\"...'") "&lt;...&gt;...&amp;...&quot;...&apos;")))
 
-;;; osta-ox tests
+;;; one-ox tests
 
-;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "osta-ox-test")))
+;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "one-ox-test")))
 
 ;;;; headline, section, paragraph, etc.
 
-(ert-deftest osta-ox-test ()
-  ;; osta-ox-headline
+(ert-deftest one-ox-test ()
+  ;; one-ox-headline
   (let ((get-headline
          (lambda (rv tree)
            (car (org-element-map tree 'headline
@@ -73,21 +73,21 @@ variable, and communication channel under `info'."
     (should
      (string=
       (org-test-with-parsed-data "* headline 1"
-        (osta-ox-headline (funcall get-headline "headline 1" tree)
+        (one-ox-headline (funcall get-headline "headline 1" tree)
                           "<div>contents<div>" info))
       "<div><h1>headline 1</h1><div>contents<div></div>"))
     ;; headline level 1 with contents nil
     (should
      (string=
       (org-test-with-parsed-data "* headline 1"
-        (osta-ox-headline (funcall get-headline "headline 1" tree)
+        (one-ox-headline (funcall get-headline "headline 1" tree)
                           nil info))
       "<div><h1>headline 1</h1></div>"))
     ;; headline level 2 with contents
     (should
      (string=
       (org-test-with-parsed-data "* headline 1\n** headline 2"
-        (osta-ox-headline (funcall get-headline "headline 2" tree)
+        (one-ox-headline (funcall get-headline "headline 2" tree)
                           "<div>contents<div>" info))
       "<div><h2>headline 2</h2><div>contents<div></div>"))
     ;; headline with CUSTOM_ID without id part
@@ -97,7 +97,7 @@ variable, and communication channel under `info'."
 :PROPERTIES:
 :CUSTOM_ID: /path/to/page/
 :END:"
-        (osta-ox-headline (funcall get-headline "headline 1" tree)
+        (one-ox-headline (funcall get-headline "headline 1" tree)
                           "<div>contents<div>" info))
       "<div><h1>headline 1</h1><div>contents<div></div>"))
     ;; headline with CUSTOM_ID and id part
@@ -107,18 +107,18 @@ variable, and communication channel under `info'."
 :PROPERTIES:
 :CUSTOM_ID: /path/to/page/#id-test
 :END:"
-        (osta-ox-headline (funcall get-headline "headline 2" tree) nil info))
+        (one-ox-headline (funcall get-headline "headline 2" tree) nil info))
       "<div><h2 id=\"id-test\">headline 2</h2></div>")))
 
   ;; section, paragraph, plain-text, bold, italic, strike-through, underline
-  (should (string= (osta-ox-section nil "section" nil) "<div>section</div>"))
-  (should (string= (osta-ox-section nil nil nil) ""))
-  (should (string= (osta-ox-paragraph nil "paragraph" nil) "<p>paragraph</p>"))
-  (should (string= (osta-ox-plain-text "<...>...&" nil) "&lt;...&gt;...&amp;"))
-  (should (string= (osta-ox-bold nil "bold" nil) "<b>bold</b>"))
-  (should (string= (osta-ox-italic nil "italic" nil) "<i>italic</i>"))
-  (should (string= (osta-ox-strike-through nil "strike-through" nil) "<del>strike-through</del>"))
-  (should (string= (osta-ox-underline nil "underline" nil) "<u>underline</u>"))
+  (should (string= (one-ox-section nil "section" nil) "<div>section</div>"))
+  (should (string= (one-ox-section nil nil nil) ""))
+  (should (string= (one-ox-paragraph nil "paragraph" nil) "<p>paragraph</p>"))
+  (should (string= (one-ox-plain-text "<...>...&" nil) "&lt;...&gt;...&amp;"))
+  (should (string= (one-ox-bold nil "bold" nil) "<b>bold</b>"))
+  (should (string= (one-ox-italic nil "italic" nil) "<i>italic</i>"))
+  (should (string= (one-ox-strike-through nil "strike-through" nil) "<del>strike-through</del>"))
+  (should (string= (one-ox-underline nil "underline" nil) "<u>underline</u>"))
 
   ;; plain-list, item
   (let ((ordered-list
@@ -136,27 +136,27 @@ variable, and communication channel under `info'."
 - second :: description 2
 - third :: description 3"
            (org-element-at-point))))
-    (should (string= (osta-ox-plain-list ordered-list "contents" nil) "<ol>contents</ol>"))
-    (should (string= (osta-ox-plain-list unordered-list "contents" nil) "<ul>contents</ul>"))
-    (should-error (osta-ox-plain-list other-list "contents" nil)))
-  (should (string= (osta-ox-item nil "item" nil) "<li>item</li>")))
+    (should (string= (one-ox-plain-list ordered-list "contents" nil) "<ol>contents</ol>"))
+    (should (string= (one-ox-plain-list unordered-list "contents" nil) "<ul>contents</ul>"))
+    (should-error (one-ox-plain-list other-list "contents" nil)))
+  (should (string= (one-ox-item nil "item" nil) "<li>item</li>")))
 
-(ert-deftest osta-ox-code-and-verbatim-test ()
+(ert-deftest one-ox-code-and-verbatim-test ()
   ;; code and verbatim nodes
   (let ((code (org-test-with-temp-text "before the ~inline code<point>~"
                 (org-element-context)))
         (verbatim (org-test-with-temp-text "before the ~verbatim<point>~"
                     (org-element-context))))
-    (should (string= (osta-ox-code code nil nil)
-                     "<code class=\"osta-hl osta-hl-inline\">inline code</code>"))
-    (should (string= (osta-ox-verbatim verbatim nil nil)
-                     "<code class=\"osta-hl osta-hl-inline\">verbatim</code>"))))
+    (should (string= (one-ox-code code nil nil)
+                     "<code class=\"one-hl one-hl-inline\">inline code</code>"))
+    (should (string= (one-ox-verbatim verbatim nil nil)
+                     "<code class=\"one-hl one-hl-inline\">verbatim</code>"))))
 
-(ert-deftest osta-ox--subscript-and-superscript ()
-  ;; osta-ox-subscript, osta-ox-superscript
-  (should (string= (osta-ox-subscript nil "subscript" nil)
+(ert-deftest one-ox--subscript-and-superscript ()
+  ;; one-ox-subscript, one-ox-superscript
+  (should (string= (one-ox-subscript nil "subscript" nil)
                    "<sub>subscript</sub>"))
-  (should (string= (osta-ox-superscript nil "superscript" nil)
+  (should (string= (one-ox-superscript nil "superscript" nil)
                    "<sup>superscript</sup>"))
 
   ;; by default ox.el exports with specific transcode functions
@@ -168,8 +168,8 @@ variable, and communication channel under `info'."
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (subscript . osta-ox-subscript)
-            (superscript . osta-ox-superscript)))))
+            (subscript . one-ox-subscript)
+            (superscript . one-ox-superscript)))))
     (let ((org-export-with-sub-superscripts t))
       (should
        (string=
@@ -195,15 +195,15 @@ variable, and communication channel under `info'."
 
 ;;;; blocks
 
-(ert-deftest osta-ox-blocks-test ()
-  ;; `osta-ox-is-results-p'
+(ert-deftest one-ox-blocks-test ()
+  ;; `one-ox-is-results-p'
   (let ((src-block (org-test-with-temp-text "
 #+BEGIN_SRC bash
 echo \"Hello world!\"
 #+END_SRC<point>"
                      (org-element-context)))
         (src-block-results (org-test-with-temp-text "
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC bash
 echo \"Hello world!\"
 #+END_SRC<point>"
@@ -220,7 +220,7 @@ A simple example
 #+END_EXAMPLE<point>"
                                    (org-element-context)))
         (example-block-results-2 (org-test-with-temp-text "
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_EXAMPLE
 A simple example
 #+END_EXAMPLE<point>"
@@ -235,59 +235,59 @@ A simple example
 : yes I am!<point>"
                                  (org-element-context)))
         (fixed-width-results-2 (org-test-with-temp-text "
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 : I'm a multiline fixed width
 : yes I am!<point>"
                                  (org-element-context))))
-    (should-not (osta-ox-is-results-p src-block))
-    (should (osta-ox-is-results-p src-block-results))
-    (should-not (osta-ox-is-results-p example-block))
-    (should (osta-ox-is-results-p example-block-results-1))
-    (should (osta-ox-is-results-p example-block-results-2))
-    (should-not (osta-ox-is-results-p fixed-width))
-    (should (osta-ox-is-results-p fixed-width-results-1))
-    (should (osta-ox-is-results-p fixed-width-results-2)))
+    (should-not (one-ox-is-results-p src-block))
+    (should (one-ox-is-results-p src-block-results))
+    (should-not (one-ox-is-results-p example-block))
+    (should (one-ox-is-results-p example-block-results-1))
+    (should (one-ox-is-results-p example-block-results-2))
+    (should-not (one-ox-is-results-p fixed-width))
+    (should (one-ox-is-results-p fixed-width-results-1))
+    (should (one-ox-is-results-p fixed-width-results-2)))
 
-  ;; `osta-ox-htmlize'
+  ;; `one-ox-htmlize'
   ;; note that in `sh-mode', `echo' word has the face `font-lock-builtin-face',
   ;; and strings have the faces `font-lock-string-face'.
   ;; normal blocks
-  (should (string= (osta-ox-htmlize "echo \"Hello world!\"" "bash")
-                   (concat "<pre><code class=\"osta-hl osta-hl-block\">"
-                           "<span class=\"osta-hl-builtin\">echo</span> "
-                           "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+  (should (string= (one-ox-htmlize "echo \"Hello world!\"" "bash")
+                   (concat "<pre><code class=\"one-hl one-hl-block\">"
+                           "<span class=\"one-hl-builtin\">echo</span> "
+                           "<span class=\"one-hl-string\">\"Hello world!\"</span>"
                            "</code></pre>")))
   ;; results blocks
-  (should (string= (osta-ox-htmlize "echo \"Hello world!\"" "bash" t)
-                   (concat "<pre><code class=\"osta-hl osta-hl-results\">"
-                           "<span class=\"osta-hl-builtin\">echo</span> "
-                           "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+  (should (string= (one-ox-htmlize "echo \"Hello world!\"" "bash" t)
+                   (concat "<pre><code class=\"one-hl one-hl-results\">"
+                           "<span class=\"one-hl-builtin\">echo</span> "
+                           "<span class=\"one-hl-string\">\"Hello world!\"</span>"
                            "</code></pre>")))
 
-  ;; `osta-ox-src-block'
+  ;; `one-ox-src-block'
   (let ((src-block (org-test-with-temp-text "
 #+BEGIN_SRC bash
 echo \"Hello world!\"
 #+END_SRC<point>"
                      (org-element-context)))
         (src-block-results (org-test-with-temp-text "
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC bash
 echo \"Hello world!\"
 #+END_SRC<point>"
                              (org-element-context))))
-    (should (string= (osta-ox-src-block src-block nil nil )
-                     (concat "<pre><code class=\"osta-hl osta-hl-block\">"
-                             "<span class=\"osta-hl-builtin\">echo</span> "
-                             "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+    (should (string= (one-ox-src-block src-block nil nil )
+                     (concat "<pre><code class=\"one-hl one-hl-block\">"
+                             "<span class=\"one-hl-builtin\">echo</span> "
+                             "<span class=\"one-hl-string\">\"Hello world!\"</span>"
                              "</code></pre>")))
-    (should (string= (osta-ox-src-block src-block-results nil nil )
-                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
-                             "<span class=\"osta-hl-builtin\">echo</span> "
-                             "<span class=\"osta-hl-string\">\"Hello world!\"</span>"
+    (should (string= (one-ox-src-block src-block-results nil nil )
+                     (concat "<pre><code class=\"one-hl one-hl-results\">"
+                             "<span class=\"one-hl-builtin\">echo</span> "
+                             "<span class=\"one-hl-string\">\"Hello world!\"</span>"
                              "</code></pre>"))))
 
-  ;; `osta-ox-example-block'
+  ;; `one-ox-example-block'
   (let ((example-block (org-test-with-temp-text "
 #+BEGIN_EXAMPLE
 A simple example
@@ -300,24 +300,24 @@ A simple example
 #+END_EXAMPLE<point>"
                                    (org-element-context)))
         (example-block-results-2 (org-test-with-temp-text "
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 #+BEGIN_EXAMPLE
 A simple example
 #+END_EXAMPLE<point>"
                                    (org-element-context))))
-    (should (string= (osta-ox-example-block example-block nil nil)
-                     (concat "<pre><code class=\"osta-hl osta-hl-block\">"
+    (should (string= (one-ox-example-block example-block nil nil)
+                     (concat "<pre><code class=\"one-hl one-hl-block\">"
                              "A simple example"
                              "</code></pre>")))
-    (should (string= (osta-ox-example-block example-block-results-1 nil nil)
-                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+    (should (string= (one-ox-example-block example-block-results-1 nil nil)
+                     (concat "<pre><code class=\"one-hl one-hl-results\">"
                              "A simple example"
                              "</code></pre>")))
-    (should (string= (osta-ox-example-block example-block-results-2 nil nil)
-                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+    (should (string= (one-ox-example-block example-block-results-2 nil nil)
+                     (concat "<pre><code class=\"one-hl one-hl-results\">"
                              "A simple example"
                              "</code></pre>"))))
-  ;; `osta-ox-fixed-width'
+  ;; `one-ox-fixed-width'
   (let ((fixed-width (org-test-with-temp-text "
 : I'm a multiline fixed width
 : yes I am!<point>"
@@ -328,62 +328,62 @@ A simple example
 : yes I am!<point>"
                                  (org-element-context)))
         (fixed-width-results-2 (org-test-with-temp-text "
-#+ATTR_OSTA_RESULTS:
+#+ATTR_ONE_RESULTS:
 : I'm a multiline fixed width
 : yes I am!<point>"
                                  (org-element-context))))
-    (should (string= (osta-ox-fixed-width fixed-width nil nil)
-                     (concat "<pre><code class=\"osta-hl osta-hl-block\">"
+    (should (string= (one-ox-fixed-width fixed-width nil nil)
+                     (concat "<pre><code class=\"one-hl one-hl-block\">"
                              "I'm a multiline fixed width\nyes I am!"
                              "</code></pre>")))
-    (should (string= (osta-ox-fixed-width fixed-width-results-1 nil nil)
-                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+    (should (string= (one-ox-fixed-width fixed-width-results-1 nil nil)
+                     (concat "<pre><code class=\"one-hl one-hl-results\">"
                              "I'm a multiline fixed width\nyes I am!"
                              "</code></pre>")))
-    (should (string= (osta-ox-fixed-width fixed-width-results-2 nil nil)
-                     (concat "<pre><code class=\"osta-hl osta-hl-results\">"
+    (should (string= (one-ox-fixed-width fixed-width-results-2 nil nil)
+                     (concat "<pre><code class=\"one-hl one-hl-results\">"
                              "I'm a multiline fixed width\nyes I am!"
                              "</code></pre>"))))
 
-  ;; `osta-ox-quote-block'
-  (should (string= (osta-ox-quote-block nil "I'm a quote. —Tony Aldon" nil)
-                   "<blockquote class=\"osta-blockquote\">I'm a quote. —Tony Aldon</blockquote>")))
+  ;; `one-ox-quote-block'
+  (should (string= (one-ox-quote-block nil "I'm a quote. —Tony Aldon" nil)
+                   "<blockquote class=\"one-blockquote\">I'm a quote. —Tony Aldon</blockquote>")))
 
 ;;;; links
 
-(ert-deftest osta-map-links-test ()
+(ert-deftest one-map-links-test ()
   (should
    (equal
     (org-test-with-temp-text "#+LINK: abbrev-link /path/to/project/
-#+OSTA_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
-#+OSTA_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56"
+#+ONE_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
+#+ONE_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56"
       (org-set-regexps-and-options)
-      (osta-map-links))
+      (one-map-links))
     '(("/path/to/project/file-1.clj::(defn func-1" . "https://github.com/user/project/blob/master/file-1.clj#L12")
       ("/path/to/project/file-2.clj::(defn func-2" . "https://github.com/user/project/blob/master/file-2.clj#L56"))))
   (should
    (equal
     (org-test-with-temp-text "#+LINK: abbrev-link /path/to/project/
-#+OSTA_LINK: abbrev-link:                           --> foo
-#+OSTA_LINK: /path/to/project/                      --> foo
-#+OSTA_LINK: abbrev-link:file.clj::(defn func-1      --> bar
-#+OSTA_LINK: /path/to/project/file.clj::(defn func-1 --> bar
-#+OSTA_LINK: not a valid OSTA_LINK declaration"
+#+ONE_LINK: abbrev-link:                           --> foo
+#+ONE_LINK: /path/to/project/                      --> foo
+#+ONE_LINK: abbrev-link:file.clj::(defn func-1      --> bar
+#+ONE_LINK: /path/to/project/file.clj::(defn func-1 --> bar
+#+ONE_LINK: not a valid ONE_LINK declaration"
       (org-set-regexps-and-options)
-      (osta-map-links))
+      (one-map-links))
     '(("/path/to/project/" . "foo")
       ("/path/to/project/" . "foo")
       ("/path/to/project/file.clj::(defn func-1" . "bar")
       ("/path/to/project/file.clj::(defn func-1" . "bar")))))
 
-(ert-deftest osta-ox-link--custom-id-https-mailto-test ()
+(ert-deftest one-ox-link--custom-id-https-mailto-test ()
   "link type: custom-id, https, mailto"
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . osta-ox-link)))))
+            (link . one-ox-link)))))
     (should
      (string=
       (org-test-with-temp-text "[[#foo][bar]]"
@@ -415,14 +415,14 @@ A simple example
         (org-export-as backend))
       "<a href=\"mailto:aldon.tony.adm@gmail.com\">my email</a>\n"))))
 
-(ert-deftest osta-ox-link--fuzzy-test ()
+(ert-deftest one-ox-link--fuzzy-test ()
   "link type: fuzzy"
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . osta-ox-link)))))
+            (link . one-ox-link)))))
     (should-error
      (org-test-with-temp-text "[[fuzzy search]]"
        (org-export-as backend)))
@@ -430,22 +430,22 @@ A simple example
      (org-test-with-temp-text "[[*fuzzy search]]"
        (org-export-as backend)))))
 
-(ert-deftest osta-ox-link--file-mapped-links-test ()
-  "link type: file (`:osta-links')"
+(ert-deftest one-ox-link--file-mapped-links-test ()
+  "link type: file (`:one-links')"
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . osta-ox-link))
+            (link . one-ox-link))
           :options
-          '((:osta-root nil nil "public")
-            (:osta-assets nil nil "assets")
-            (:osta-links nil nil
+          '((:one-root nil nil "public")
+            (:one-assets nil nil "assets")
+            (:one-links nil nil
              '(("/tmp/clojurescript/" . "https://github.com/clojure/clojurescript")
                ("./clojure/src/clj/clojure/core.clj::(defn str" .
                 "https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546")))))))
-    ;; link to directory mapped to github repository in `:osta-links'
+    ;; link to directory mapped to github repository in `:one-links'
     (should
      (string=
       (org-test-with-temp-text "[[/tmp/clojurescript/][ClojureScript]]"
@@ -461,139 +461,139 @@ A simple example
               "clojure.core/str"
               "</a>\n")))
     ;; link to a file that:
-    ;;   1) has no mapping in `:osta-links',
-    ;;   2) is not in the directory `:osta-root',
-    ;;   3) is not in the directory `:osta-assets',
+    ;;   1) has no mapping in `:one-links',
+    ;;   2) is not in the directory `:one-root',
+    ;;   3) is not in the directory `:one-assets',
     ;; should return an error.
     (should-error
      (org-test-with-temp-text "[[/path/to/example.txt]]"
        (org-export-as backend))))
 
-  ;; `:osta-links' set using org keywords and the function `osta-map-links'
+  ;; `:one-links' set using org keywords and the function `one-map-links'
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . osta-ox-link))
+            (link . one-ox-link))
           :options
-          '((:osta-root nil nil "public")
-            (:osta-assets nil nil "assets")))))
+          '((:one-root nil nil "public")
+            (:one-assets nil nil "assets")))))
     (should
      (string=
       (org-test-with-temp-text "#+LINK: clj ./clojure/
-#+OSTA_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
+#+ONE_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
 
 [[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]]"
         (org-set-regexps-and-options)
         (org-export-as backend nil nil nil
-                       `(:osta-links ,(osta-map-links))))
+                       `(:one-links ,(one-map-links))))
       (concat "<a href=\"https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546\">"
               "clojure.core/str"
               "</a>\n")))))
 
-(ert-deftest osta-ox-link--file-root-and-assets-test ()
-  "link type: file (`:osta-root', `:osta-assets')"
+(ert-deftest one-ox-link--file-root-and-assets-test ()
+  "link type: file (`:one-root', `:one-assets')"
 
-  ;; `:osta-root'
+  ;; `:one-root'
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . osta-ox-link))
+            (link . one-ox-link))
           :options
-          '((:osta-assets "OSTA_ASSETS" nil "assets")))))
+          '((:one-assets "ONE_ASSETS" nil "assets")))))
     (should
      (string=
       (org-test-with-temp-text "[[./public/blog/page-1.md][Page 1 in markdown]]"
-        (org-export-as backend nil nil nil '(:osta-root "public")))
+        (org-export-as backend nil nil nil '(:one-root "public")))
       "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
     (should-error
      (org-test-with-temp-text "[[./build/blog/page-1.md][Page 1 in markdown]]"
-       (org-export-as backend nil nil nil '(:osta-root "public"))))
+       (org-export-as backend nil nil nil '(:one-root "public"))))
     (should
      (string=
       (org-test-with-temp-text "[[./build/blog/page-1.md][Page 1 in markdown]]"
-        (org-export-as backend nil nil nil '(:osta-root "build")))
+        (org-export-as backend nil nil nil '(:one-root "build")))
       "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
-    ;; :osta-root not defined
+    ;; :one-root not defined
     (should-error
      (org-test-with-temp-text "[[./public/blog/page-1.md][Page 1 in markdown]]"
        (org-export-as backend))))
 
-  ;; `:osta-assets'
+  ;; `:one-assets'
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . osta-ox-link))
+            (link . one-ox-link))
           :options
-          '((:osta-root "OSTA_ROOT" nil "public")))))
+          '((:one-root "ONE_ROOT" nil "public")))))
     (should
      (string=
-      (org-test-with-temp-text "[[./assets/images/osta.png][osta image]]"
-        (org-export-as backend nil nil nil '(:osta-assets "assets")))
-      "<a href=\"/images/osta.png\">osta image</a>\n"))
+      (org-test-with-temp-text "[[./assets/images/one.png][one image]]"
+        (org-export-as backend nil nil nil '(:one-assets "assets")))
+      "<a href=\"/images/one.png\">one image</a>\n"))
     (should
      (string=
-      (org-test-with-temp-text "[[./resources/images/osta.png][osta image]]"
-        (org-export-as backend nil nil nil '(:osta-assets "resources")))
-      "<a href=\"/images/osta.png\">osta image</a>\n"))
+      (org-test-with-temp-text "[[./resources/images/one.png][one image]]"
+        (org-export-as backend nil nil nil '(:one-assets "resources")))
+      "<a href=\"/images/one.png\">one image</a>\n"))
     (should-error
-     (org-test-with-temp-text "[[./resources/images/osta.png][osta image]]"
-       (org-export-as backend nil nil nil '(:osta-assets "assets"))))
-    ;; :osta-assets not defined
+     (org-test-with-temp-text "[[./resources/images/one.png][one image]]"
+       (org-export-as backend nil nil nil '(:one-assets "assets"))))
+    ;; :one-assets not defined
     (should-error
-     (org-test-with-temp-text "[[./assets/images/osta.png][osta image]]"
+     (org-test-with-temp-text "[[./assets/images/one.png][one image]]"
        (org-export-as backend))))
 
-  ;; `:osta-root' and `:osta-assets' set via org keyword
+  ;; `:one-root' and `:one-assets' set via org keyword
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . osta-ox-link))
+            (link . one-ox-link))
           :options
-          '((:osta-root "OSTA_ROOT" nil "public")
-            (:osta-assets "OSTA_ASSETS" nil "assets")))))
+          '((:one-root "ONE_ROOT" nil "public")
+            (:one-assets "ONE_ASSETS" nil "assets")))))
     (should
      (string=
-      (org-test-with-temp-text "#+OSTA_ROOT: build
+      (org-test-with-temp-text "#+ONE_ROOT: build
     [[./build/blog/page-1.md][Page 1 in markdown]]"
         (org-set-regexps-and-options)
         (org-export-as backend))
       "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
     (should
      (string=
-      (org-test-with-temp-text "#+OSTA_ASSETS: resources
-[[./resources/images/osta.png][osta image]]"
+      (org-test-with-temp-text "#+ONE_ASSETS: resources
+[[./resources/images/one.png][one image]]"
         (org-set-regexps-and-options)
         (org-export-as backend))
-      "<a href=\"/images/osta.png\">osta image</a>\n"))))
+      "<a href=\"/images/one.png\">one image</a>\n"))))
 
 
 ;;; pages
 
-(ert-deftest osta-page-p-test ()
+(ert-deftest one-page-p-test ()
   (should-not
    (org-test-with-temp-text "<point>* page 1
 :PROPERTIES:
 :CUSTOM_ID: /date-1/page-1/
 :END:"
-     (osta-page-p (org-element-context))))
+     (one-page-p (org-element-context))))
   (should-not
    (org-test-with-temp-text "<point>* page 1
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :END:"
-     (osta-page-p (org-element-context))))
+     (one-page-p (org-element-context))))
   (should-not
    (org-test-with-parsed-data "* page 1
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /date-1/page-1/
 :END:
 ** headline 1
@@ -606,44 +606,44 @@ some text
                                             (lambda (e)
                                               (when (string= (org-element-property :raw-value e) "headline 1")
                                                 e))))))
-                                (osta-page-p headline-1))))
+                                (one-page-p headline-1))))
   (should
    (equal
     (org-test-with-temp-text "<point>* page 1
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /date-1/page-1/
 :END:"
-      (let ((page (osta-page-p (org-element-context))))
+      (let ((page (one-page-p (org-element-context))))
         `(:raw-value ,(org-element-property :raw-value page)
-          :OSTA_PAGE ,(org-element-property :OSTA_PAGE page)
+          :ONE_PAGE ,(org-element-property :ONE_PAGE page)
           :CUSTOM_ID ,(org-element-property :CUSTOM_ID page))))
     '(:raw-value "page 1"
-      :OSTA_PAGE "t"
+      :ONE_PAGE "t"
       :CUSTOM_ID "/date-1/page-1/"))))
 
-(ert-deftest osta-page-test ()
+(ert-deftest one-page-test ()
   (should-not
    (org-test-with-parsed-data "* page 1
 :PROPERTIES:
 :CUSTOM_ID: /date-1/page-1/
 :END:
   "
-     (let ((headline (car (org-element-map tree 'headline #'identity))))
-       (osta-page headline))))
+                              (let ((headline (car (org-element-map tree 'headline #'identity))))
+                                (one-page headline))))
   (should-not
    (org-test-with-parsed-data "* page 1
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :END:
   "
-     (let ((headline (car (org-element-map tree 'headline #'identity))))
-       (osta-page headline))))
+                              (let ((headline (car (org-element-map tree 'headline #'identity))))
+                                (one-page headline))))
   (should
    (equal
     (org-test-with-parsed-data "* page 1
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /date-1/page-1/
 :END:
 ** headline 1
@@ -651,63 +651,63 @@ some text
 
 some text
   "
-      (let* ((get-headline
-              (lambda (rv)
-                (car (org-element-map tree 'headline
-                       (lambda (e)
-                         (when (string= (org-element-property :raw-value e) rv)
-                           e))))))
-             (headline-page-1 (funcall get-headline "page 1"))
-             (page-headline-page-1 (osta-page headline-page-1))
-             (headline-2 (funcall get-headline "headline 2"))
-             (page-headline-2 (osta-page headline-2))
-             (paragraph (car (org-element-map tree 'paragraph #'identity)))
-             (page-paragraph (osta-page paragraph))
-             (content-paragraph (substring-no-properties (nth 2 paragraph))))
-        `(:headline-page-1
-          (:raw-value ,(org-element-property :raw-value headline-page-1)
-           :OSTA_PAGE ,(org-element-property :OSTA_PAGE page-headline-page-1)
-           :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-headline-page-1))
-          :headline-2
-          (:raw-value ,(org-element-property :raw-value headline-2)
-           :OSTA_PAGE ,(org-element-property :OSTA_PAGE page-headline-2)
-           :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-headline-2))
-          :paragraph
-          (:content ,content-paragraph
-           :OSTA_PAGE ,(org-element-property :OSTA_PAGE page-paragraph)
-           :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-paragraph)))))
+                               (let* ((get-headline
+                                       (lambda (rv)
+                                         (car (org-element-map tree 'headline
+                                                (lambda (e)
+                                                  (when (string= (org-element-property :raw-value e) rv)
+                                                    e))))))
+                                      (headline-page-1 (funcall get-headline "page 1"))
+                                      (page-headline-page-1 (one-page headline-page-1))
+                                      (headline-2 (funcall get-headline "headline 2"))
+                                      (page-headline-2 (one-page headline-2))
+                                      (paragraph (car (org-element-map tree 'paragraph #'identity)))
+                                      (page-paragraph (one-page paragraph))
+                                      (content-paragraph (substring-no-properties (nth 2 paragraph))))
+                                 `(:headline-page-1
+                                   (:raw-value ,(org-element-property :raw-value headline-page-1)
+                                    :ONE_PAGE ,(org-element-property :ONE_PAGE page-headline-page-1)
+                                    :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-headline-page-1))
+                                   :headline-2
+                                   (:raw-value ,(org-element-property :raw-value headline-2)
+                                    :ONE_PAGE ,(org-element-property :ONE_PAGE page-headline-2)
+                                    :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-headline-2))
+                                   :paragraph
+                                   (:content ,content-paragraph
+                                    :ONE_PAGE ,(org-element-property :ONE_PAGE page-paragraph)
+                                    :CUSTOM_ID ,(org-element-property :CUSTOM_ID page-paragraph)))))
     '(:headline-page-1
       (:raw-value "page 1"
-       :OSTA_PAGE "t"
+       :ONE_PAGE "t"
        :CUSTOM_ID "/date-1/page-1/")
       :headline-2
       (:raw-value "headline 2"
-       :OSTA_PAGE "t"
+       :ONE_PAGE "t"
        :CUSTOM_ID "/date-1/page-1/")
       :paragraph
       (:content "some text\n"
-       :OSTA_PAGE "t"
+       :ONE_PAGE "t"
        :CUSTOM_ID "/date-1/page-1/")))))
 
-(ert-deftest osta-page-path-test ()
+(ert-deftest one-page-path-test ()
   (should
    (string=
     (org-test-with-temp-text "<point>* page 1
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :CUSTOM_ID: /date-1/page-1/
 :END:"
-      (osta-page-path (org-element-context)))
+      (one-page-path (org-element-context)))
     "/date-1/page-1/"))
   (should-not
    (org-test-with-temp-text "<point>* page 1
 :PROPERTIES:
 :CUSTOM_ID: /date-1/page-1/
 :END:"
-     (osta-page-path (org-element-context))))
+     (one-page-path (org-element-context))))
   (should-not
    (org-test-with-temp-text "<point>* page 1
 :PROPERTIES:
-:OSTA_PAGE: t
+:ONE_PAGE: t
 :END:"
-     (osta-page-path (org-element-context)))))
+     (one-page-path (org-element-context)))))

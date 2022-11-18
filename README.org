@@ -1,2 +1,2 @@
-~osta~ (Org Static) provides few functions to build static websites
-leveraging Emacs Lisp and org-mode.
+~one~ provides few functions to build static websites leveraging Emacs
+Lisp and org-mode.
