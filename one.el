@@ -326,6 +326,28 @@ INFO is a plist holding contextual information."
       "/path/to/page-1/" nil headline
       "/path/to/page-2/" render-function headline)))
 
+  ;; narrow to the first element
+  (should
+   (equal
+    (org-test-with-temp-text "* page 1
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:CUSTOM_ID: /path/to/page-1/
+:END:
+* page 2
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:CUSTOM_ID: /path/to/page-2/
+:END:"
+      (org-narrow-to-element)
+      (let* ((pages (one-list-pages))
+             (page-1 (car pages)))
+        (list (length pages)
+              (plist-get page-1 :one-path)
+              (plist-get page-1 :one-render-page-with)
+              (car (plist-get page-1 :one-data)))))
+    '(1 "/path/to/page-1/" nil headline)))
+
   ;; a page must have the property CUSTOM_ID defined
   (should-error
    (org-test-with-temp-text "* CUSTOM_ID PROPERTY IS NOT DEFINED
