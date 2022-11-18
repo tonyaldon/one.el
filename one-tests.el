@@ -351,31 +351,6 @@ A simple example
 
 ;;;; links
 
-(ert-deftest one-map-links-test ()
-  (should
-   (equal
-    (org-test-with-temp-text "#+LINK: abbrev-link /path/to/project/
-#+ONE_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
-#+ONE_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56"
-      (org-set-regexps-and-options)
-      (one-map-links))
-    '(("/path/to/project/file-1.clj::(defn func-1" . "https://github.com/user/project/blob/master/file-1.clj#L12")
-      ("/path/to/project/file-2.clj::(defn func-2" . "https://github.com/user/project/blob/master/file-2.clj#L56"))))
-  (should
-   (equal
-    (org-test-with-temp-text "#+LINK: abbrev-link /path/to/project/
-#+ONE_LINK: abbrev-link:                           --> foo
-#+ONE_LINK: /path/to/project/                      --> foo
-#+ONE_LINK: abbrev-link:file.clj::(defn func-1      --> bar
-#+ONE_LINK: /path/to/project/file.clj::(defn func-1 --> bar
-#+ONE_LINK: not a valid ONE_LINK declaration"
-      (org-set-regexps-and-options)
-      (one-map-links))
-    '(("/path/to/project/" . "foo")
-      ("/path/to/project/" . "foo")
-      ("/path/to/project/file.clj::(defn func-1" . "bar")
-      ("/path/to/project/file.clj::(defn func-1" . "bar")))))
-
 (ert-deftest one-ox-link--custom-id-https-mailto-test ()
   "link type: custom-id, https, mailto"
   (let ((backend
@@ -429,68 +404,6 @@ A simple example
     (should-error
      (org-test-with-temp-text "[[*fuzzy search]]"
        (org-export-as backend)))))
-
-(ert-deftest one-ox-link--file-mapped-links-test ()
-  "link type: file (`:one-links')"
-  (let ((backend
-         (org-export-create-backend
-          :transcoders
-          '((section . (lambda (_e c _i) c))
-            (paragraph . (lambda (_e c _i) c))
-            (link . one-ox-link))
-          :options
-          '((:one-root nil nil "public")
-            (:one-assets nil nil "assets")
-            (:one-links nil nil
-             '(("/tmp/clojurescript/" . "https://github.com/clojure/clojurescript")
-               ("./clojure/src/clj/clojure/core.clj::(defn str" .
-                "https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546")))))))
-    ;; link to directory mapped to github repository in `:one-links'
-    (should
-     (string=
-      (org-test-with-temp-text "[[/tmp/clojurescript/][ClojureScript]]"
-        (org-export-as backend))
-      "<a href=\"https://github.com/clojure/clojurescript\">ClojureScript</a>\n"))
-    ;; link to the function `str' in the file `core.clj'
-    ;; mapped to the id `L546' on a specific webpages on github
-    (should
-     (string=
-      (org-test-with-temp-text "[[./clojure/src/clj/clojure/core.clj::(defn str][clojure.core/str]]"
-        (org-export-as backend))
-      (concat "<a href=\"https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546\">"
-              "clojure.core/str"
-              "</a>\n")))
-    ;; link to a file that:
-    ;;   1) has no mapping in `:one-links',
-    ;;   2) is not in the directory `:one-root',
-    ;;   3) is not in the directory `:one-assets',
-    ;; should return an error.
-    (should-error
-     (org-test-with-temp-text "[[/path/to/example.txt]]"
-       (org-export-as backend))))
-
-  ;; `:one-links' set using org keywords and the function `one-map-links'
-  (let ((backend
-         (org-export-create-backend
-          :transcoders
-          '((section . (lambda (_e c _i) c))
-            (paragraph . (lambda (_e c _i) c))
-            (link . one-ox-link))
-          :options
-          '((:one-root nil nil "public")
-            (:one-assets nil nil "assets")))))
-    (should
-     (string=
-      (org-test-with-temp-text "#+LINK: clj ./clojure/
-#+ONE_LINK: clj:src/clj/clojure/core.clj::(defn str --> https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546
-
-[[clj:src/clj/clojure/core.clj::(defn str][clojure.core/str]]"
-        (org-set-regexps-and-options)
-        (org-export-as backend nil nil nil
-                       `(:one-links ,(one-map-links))))
-      (concat "<a href=\"https://github.com/clojure/clojure/blob/abe19832c0294fec4c9c55430c9262c4b6d2f8b1/src/clj/clojure/core.clj#L546\">"
-              "clojure.core/str"
-              "</a>\n")))))
 
 (ert-deftest one-ox-link--file-root-and-assets-test ()
   "link type: file (`:one-root', `:one-assets')"

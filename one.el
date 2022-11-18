@@ -85,8 +85,10 @@ Use for debugging/exploring purpose."
                          ;; no evaluation of any source block,
                          ;; they all are exported as is.
                          (org-export-use-babel nil)
-                         (exported (with-current-buffer "content.org"
-                                     (org-export-as 'one nil nil nil `(:one-links ,(one-map-links))))))
+                         ;; (exported (with-current-buffer "content.org"
+                         ;;             (org-export-as 'one nil nil nil `(:one-links ,(one-map-links)))))
+                         (exported (with-current-buffer "content.org" (org-export-as 'one)))
+                         )
                     (with-current-buffer (get-buffer-create "*one*")
                       (erase-buffer)
                       (insert "<!DOCTYPE html>")
@@ -224,49 +226,6 @@ Use `org-html-fontify-code'."
 
 ;;;; links
 
-(defun one-map-links ()
-  "Return an alist of (LINK-EXPANDED . TARGET) in current buffer.
-
-Those links are defined by the org keyword `ONE_LINK', like this:
-
-  #+ONE_LINK: link --> target
-
-This one link is a mapping between a LINK (first part in \"link --> target\")
-that org commands (related to visiting links, etc) understand,
-and a TARGET that is either:
-- the path to an available file in the website (exported by `one'),
-- or a valid URL that point to an existing target on the web.
-
-If LINK in \"#+ONE_LINK: link --> target\" contains an org
-abbreviated link, in the mapping, LINK is replaced by its expanded
-version computed by `org-link-expand-abbrev'.  Note: this expansion
-works only when the variable `org-link-abbrev-alist-local' is set.
-This can be done by the function `org-export-get-environment'.
-`one-map-links' assumes that `org-link-abbrev-alist-local' is
-already set.
-
-Here is an example.
-
-In a org-mode buffer with the following content:
-
-#+LINK: abbrev-link /path/to/project/
-#+ONE_LINK: abbrev-link:file-1.clj::(defn func-1 --> https://github.com/user/project/blob/master/file-1.clj#L12
-#+ONE_LINK: abbrev-link:file-2.clj::(defn func-2 --> https://github.com/user/project/blob/master/file-2.clj#L56
-
-`one-map-links' returns:
-
- ((\"/path/to/project/file-1.clj::(defn func-1\" . \"https://github.com/user/project/blob/master/file-1.clj#L12\")
-  (\"/path/to/project/file-2.clj::(defn func-2\" . \"https://github.com/user/project/blob/master/file-2.clj#L56\"))
-"
-  (when-let* ((one-links (cdar (org-collect-keywords '("ONE_LINK"))))
-              (map-link (lambda (one-link)
-                          (and (string-match "\\`\\(.+\\S-\\)[ \t]+-->[ \t]*\\(.+\\)" one-link)
-                               (cons (match-string-no-properties 1 one-link)
-                                     (match-string-no-properties 2 one-link)))))
-              (one-links-alist (delq nil (mapcar map-link one-links))))
-    (mapcar (lambda (l) (cons (org-link-expand-abbrev (car l)) (cdr l)))
-            one-links-alist)))
-
 (define-error 'one-link-broken "Unable to resolve link")
 
 (define-error 'one-options "Option not defined")
@@ -275,8 +234,7 @@ In a org-mode buffer with the following content:
   "Transcode a LINK object from Org to HTML.
 DESC is the description part of the link, or the empty string.
 INFO is a plist holding contextual information."
-  (let* ((one-links (plist-get info :one-links))
-         (one-root (plist-get info :one-root))
+  (let* ((one-root (plist-get info :one-root))
          (one-assets (plist-get info :one-assets))
          ;; (root-assets-re (concat "\\`\\./" "\\(" one-root "\\|" one-assets "\\)"))
          (type (org-element-property :type link))
@@ -292,8 +250,6 @@ INFO is a plist holding contextual information."
                              ,(format "goto-char: %s" beg)))))
                 ((string= type "file")
                  (or
-                  ;; mapped links in `:one-links' have priority
-                  (cdr (assoc raw-link one-links))
                   ;; for instance, when `:one-root' is equal to "public",
                   ;; ./public/blog/page-1.md --> /blog/page-1.md
                   (and (or one-root (signal 'one-options '(":one-root")))
@@ -311,7 +267,6 @@ INFO is a plist holding contextual information."
 
                 (t raw-link))))
     (format "<a href=\"%s\">%s</a>" href (or (org-string-nw-p desc) href))))
-
 
 ;;; pages
 
