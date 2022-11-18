@@ -270,10 +270,69 @@ INFO is a plist holding contextual information."
 
 ;;; pages
 
+(define-error 'one-path "CUSTOM_ID not defined")
+
+(defun one-list-pages ()
+  "Return a list of the pages in current buffer."
+  (org-element-map (org-element-parse-buffer) 'headline
+    (lambda (elt)
+      (when (and (= (org-element-property :level elt) 1)
+                 (string= (org-element-property :ONE_IS_PAGE elt) "t"))
+        (list
+         :one-path
+         (or (org-element-property :CUSTOM_ID elt)
+             (let ((beg (org-element-property :begin elt)))
+               (signal 'one-path
+                       (list (format "goto-char: %s" beg)))))
+         :one-render-page-with
+         (when-let ((render-function
+                     (org-element-property :ONE_RENDER_PAGE_WITH elt)))
+           (intern render-function))
+         :one-data elt))))))
+
+(global-set-key (kbd "C-<f1>") (lambda () (interactive) (ert "one-list-pages-test")))
+
+(ert-deftest one-list-pages-test ()
+  (should
+   (equal
+    (org-test-with-temp-text "* page 1
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:CUSTOM_ID: /path/to/page-1/
 :END:
 * NOT A PAGE
+* page 2
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: render-function
+:CUSTOM_ID: /path/to/page-2/
+:END:
+* Headline level 1
+** NOT A PAGE (because at level headline level 2)
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:END:"
+      (let* ((pages (one-list-pages))
+             (page-1 (car pages))
+             (page-2 (cadr pages)))
+        (list (length pages)
+              (plist-get page-1 :one-path)
+              (plist-get page-1 :one-render-page-with)
+              (car (plist-get page-1 :one-data))
+              (plist-get page-2 :one-path)
+              (plist-get page-2 :one-render-page-with)
+              (car (plist-get page-2 :one-data)))))
+    '(2
+      "/path/to/page-1/" nil headline
+      "/path/to/page-2/" render-function headline)))
+
+  ;; a page must have the property CUSTOM_ID defined
+  (should-error
+   (org-test-with-temp-text "* CUSTOM_ID PROPERTY IS NOT DEFINED
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:END:"
+     (one-list-pages))))
 
 ;;; one provide
 
