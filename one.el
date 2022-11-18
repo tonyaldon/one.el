@@ -270,61 +270,10 @@ INFO is a plist holding contextual information."
 
 ;;; pages
 
-(defun one-page-p (element)
-  "Return ELEMENT if ELEMENT is an `one' page.
-
-If ELEMENT isn't an `one' page, return nil.
-
-A root element (a `headline') is an `one' page if:
-1) it has the org property `ONE_PAGE' set to `t' and
-2) the org property `CUSTOM_ID' set.
-The value of `CUSTOM_ID' of an `one' page is the relative path of
-the page from the root of the `one' website.
-
-An `one' page with `CUSTOM_ID' set to `/' is the homepage of the
-`one' website.
-
-Assuming that we locally serve our website at `http://localhost:3000',
-the following org snippet defines an `one' page which url is
-`http://localhost:3000/2022-01-09/my-page/':
-
---------------------
-
-* my super cool page
 :PROPERTIES:
-:ONE_PAGE: t
-:CUSTOM_ID: /2022-01-09/my-page/
+:ONE_IS_PAGE: t
 :END:
-
-This page contains a list:
-- item 1
-- item 2
-- item 3
-
---------------------"
-  (and (org-element-property :ONE_PAGE element)
-       (org-string-nw-p (org-element-property :CUSTOM_ID element))
-       element))
-
-(defun one-page (element)
-  "Return root element (a `headline') that is an `one' page containing ELEMENT.
-
-If ELEMENT doesn't belong to any page, return nil.
-
-See `one-page-p'."
-  (pcase (org-element-type element)
-    (`nil nil)
-    (`org-data nil)
-    (`headline (or (one-page-p element)
-                   (one-page (org-element-property :parent element))))
-    (_ (one-page (org-element-property :parent element)))))
-
-(defun one-page-path (element)
-  "Return path of `one' page if ELEMENT is part of an `one' page.
-
-Return nil if not.
-See `one-page'."
-  (org-element-property :CUSTOM_ID (one-page element)))
+* NOT A PAGE
 
 ;;; one provide
 
