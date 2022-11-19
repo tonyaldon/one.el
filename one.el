@@ -30,6 +30,22 @@
                  ("'"  "&apos;")))
    s))
 
+(defun one-headline (headline)
+  "Return a plist describing HEADLINE.
+
+The properties are `:id', `:level' and `:title'.
+The value of `:id' is built from CUSTOM_ID property of HEADLINE
+if it exists or generated randomly."
+  (let* ((custom-id (org-element-property :CUSTOM_ID headline))
+         (id (or (and custom-id
+                      ;; we match "baz" in "/foo/bar/#baz"
+                      (string-match "\\`\\(?:[^#]+\\S-\\)#\\(.+\\)" custom-id)
+                      (match-string-no-properties 1 custom-id))
+                 (format "one-%x" (random #x10000000000))))
+         (level (org-element-property :level headline))
+         (title (org-element-property :raw-value headline)))
+    (list :id id :level level :title title)))
+
 ;;; one-ox
 
 (require 'ox)
@@ -109,53 +125,6 @@ Use for debugging/exploring purpose."
                     (switch-to-buffer "*one*"))))
 
 ;;;; headline, section, paragraph, etc.
-
-(defun one-headline (headline)
-  "Return a plist describing HEADLINE.
-
-The properties are `:id', `:level' and `:title'.
-The value of `:id' is built from CUSTOM_ID property of HEADLINE
-if it exists or generated randomly."
-  (let* ((custom-id (org-element-property :CUSTOM_ID headline))
-         (id (or (and custom-id
-                      ;; we match "baz" in "/foo/bar/#baz"
-                      (string-match "\\`\\(?:[^#]+\\S-\\)#\\(.+\\)" custom-id)
-                      (match-string-no-properties 1 custom-id))
-                 (format "one-%x" (random #x10000000000))))
-         (level (org-element-property :level headline))
-         (title (org-element-property :raw-value headline)))
-    (list :id id :level level :title title)))
-
-(ert-deftest one-headline-test ()
-  (let ((get-headline
-         (lambda (rv tree)
-           (car (org-element-map tree 'headline
-                  (lambda (e)
-                    (when (string= (org-element-property :raw-value e) rv)
-                      e)))))))
-    (should
-     (equal
-      (org-test-with-parsed-data "* headline 1
-** headline 2
-:PROPERTIES:
-:CUSTOM_ID: /path/to/page/#id-test
-:END:"
-        (one-headline (funcall get-headline "headline 2" tree)))
-      '(:id "id-test"
-        :level 2
-        :title "headline 2")))
-    (should
-     (string-prefix-p "one-"
-                      (org-test-with-parsed-data "* headline 1
-:PROPERTIES:
-:CUSTOM_ID: /path/to/page/
-:END:"
-                        (one-headline-id (funcall get-headline "headline 1" tree)))))
-    (should
-     (string-prefix-p "one-"
-                      (org-test-with-parsed-data "* headline 1
-** headline 2"
-                        (one-headline-id (funcall get-headline "headline 2" tree)))))))
 
 (defun one-ox-headline (headline contents info)
   ;; Note that markups and links are not exported if
