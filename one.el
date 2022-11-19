@@ -284,10 +284,10 @@ Each page in the list is a plist with the following properties:
 - `:one-path': ...
 - `:one-render-page-with': symbol of the function to use to render
   the page.  This function takes two arguments: PAGE (corresponding
-  to `:one-page') and HEADLINES (corresponding to `:one-headlines').
-- `:one-page': tree (as produced by `org-element') containing the content
+  to `:one-tree') and HEADLINES (corresponding to `:one-headlines').
+- `:one-tree': tree (as produced by `org-element') containing the content
   of the page.
-- `:one-headlines': list in order of the headlines in the tree `:one-page'.
+- `:one-headlines': list in order of the headlines in the tree `:one-tree'.
   Each headline in that list is a plist with the following properties `:id',
   `:level' and `:title'."
   (org-element-map (org-element-parse-buffer) 'headline
@@ -304,7 +304,7 @@ Each page in the list is a plist with the following properties:
          (when-let ((render-function
                      (org-element-property :ONE_RENDER_PAGE_WITH elt)))
            (intern render-function))
-         :one-page elt
+         :one-tree elt
          :one-headlines (org-element-map elt 'headline
                           (lambda (elt) (one-headline elt))))))))
 

@@ -504,10 +504,10 @@ A simple example
         (list (length pages)
               (plist-get page-1 :one-path)
               (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-page))
+              (car (plist-get page-1 :one-tree))
               (plist-get page-2 :one-path)
               (plist-get page-2 :one-render-page-with)
-              (car (plist-get page-2 :one-page)))))
+              (car (plist-get page-2 :one-tree)))))
     '(2
       "/path/to/page-1/" nil headline
       "/path/to/page-2/" render-function headline)))
@@ -530,7 +530,7 @@ A simple example
         (list (length pages)
               (plist-get page-1 :one-path)
               (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-page)))))
+              (car (plist-get page-1 :one-tree)))))
     '(1 "/path/to/page-1/" nil headline)))
 
   ;; a page must have the property CUSTOM_ID defined
