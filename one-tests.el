@@ -412,87 +412,23 @@ A simple example
      (org-test-with-temp-text "[[*fuzzy search]]"
        (org-export-as backend)))))
 
-(ert-deftest one-ox-link--file-root-and-assets-test ()
-  "link type: file (`:one-root', `:one-assets')"
-
-  ;; `:one-root'
+(ert-deftest one-ox-link--file-public-and-assets-test ()
+  ;; relative file links starting with ./public or ./assets
   (let ((backend
          (org-export-create-backend
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))
-            (link . one-ox-link))
-          :options
-          '((:one-assets "ONE_ASSETS" nil "assets")))))
+            (link . one-ox-link)))))
     (should
      (string=
       (org-test-with-temp-text "[[./public/blog/page-1.md][Page 1 in markdown]]"
-        (org-export-as backend nil nil nil '(:one-root "public")))
+        (org-export-as backend))
       "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
-    (should-error
-     (org-test-with-temp-text "[[./build/blog/page-1.md][Page 1 in markdown]]"
-       (org-export-as backend nil nil nil '(:one-root "public"))))
-    (should
-     (string=
-      (org-test-with-temp-text "[[./build/blog/page-1.md][Page 1 in markdown]]"
-        (org-export-as backend nil nil nil '(:one-root "build")))
-      "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
-    ;; :one-root not defined
-    (should-error
-     (org-test-with-temp-text "[[./public/blog/page-1.md][Page 1 in markdown]]"
-       (org-export-as backend))))
-
-  ;; `:one-assets'
-  (let ((backend
-         (org-export-create-backend
-          :transcoders
-          '((section . (lambda (_e c _i) c))
-            (paragraph . (lambda (_e c _i) c))
-            (link . one-ox-link))
-          :options
-          '((:one-root "ONE_ROOT" nil "public")))))
     (should
      (string=
       (org-test-with-temp-text "[[./assets/images/one.png][one image]]"
-        (org-export-as backend nil nil nil '(:one-assets "assets")))
-      "<a href=\"/images/one.png\">one image</a>\n"))
-    (should
-     (string=
-      (org-test-with-temp-text "[[./resources/images/one.png][one image]]"
-        (org-export-as backend nil nil nil '(:one-assets "resources")))
-      "<a href=\"/images/one.png\">one image</a>\n"))
-    (should-error
-     (org-test-with-temp-text "[[./resources/images/one.png][one image]]"
-       (org-export-as backend nil nil nil '(:one-assets "assets"))))
-    ;; :one-assets not defined
-    (should-error
-     (org-test-with-temp-text "[[./assets/images/one.png][one image]]"
-       (org-export-as backend))))
-
-  ;; `:one-root' and `:one-assets' set via org keyword
-  (let ((backend
-         (org-export-create-backend
-          :transcoders
-          '((section . (lambda (_e c _i) c))
-            (paragraph . (lambda (_e c _i) c))
-            (link . one-ox-link))
-          :options
-          '((:one-root "ONE_ROOT" nil "public")
-            (:one-assets "ONE_ASSETS" nil "assets")))))
-    (should
-     (string=
-      (org-test-with-temp-text "#+ONE_ROOT: build
-    [[./build/blog/page-1.md][Page 1 in markdown]]"
-        (org-set-regexps-and-options)
-        (org-export-as backend))
-      "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
-    (should
-     (string=
-      (org-test-with-temp-text "#+ONE_ASSETS: resources
-[[./resources/images/one.png][one image]]"
-        (org-set-regexps-and-options)
         (org-export-as backend))
       "<a href=\"/images/one.png\">one image</a>\n"))))
-
 
 ;;; pages

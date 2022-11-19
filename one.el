@@ -250,10 +250,7 @@ Use `org-html-fontify-code'."
   "Transcode a LINK object from Org to HTML.
 DESC is the description part of the link, or the empty string.
 INFO is a plist holding contextual information."
-  (let* ((one-root (plist-get info :one-root))
-         (one-assets (plist-get info :one-assets))
-         ;; (root-assets-re (concat "\\`\\./" "\\(" one-root "\\|" one-assets "\\)"))
-         (type (org-element-property :type link))
+  (let* ((type (org-element-property :type link))
          (path (org-element-property :path link))
          (raw-link (org-element-property :raw-link link))
          (href (cond
@@ -266,17 +263,10 @@ INFO is a plist holding contextual information."
                              ,(format "goto-char: %s" beg)))))
                 ((string= type "file")
                  (or
-                  ;; for instance, when `:one-root' is equal to "public",
-                  ;; ./public/blog/page-1.md --> /blog/page-1.md
-                  (and (or one-root (signal 'one-options '(":one-root")))
-                       (string-match (concat "\\`\\./" one-root) path)
-                       (replace-match "" nil nil path))
-                  ;; for instance, when `:one-assets' is equal to "assets",
                   ;; ./assets/images/image-1.png --> /images/image-1.png
-                  (and (or one-assets (signal 'one-options '(":one-assets")))
-                       (string-match (concat "\\`\\./" one-assets) path)
+                  ;; ./public/blog/page-1.md     --> /blog/page-1.md
+                  (and (string-match "\\`\\./\\(assets\\|public\\)" path)
                        (replace-match "" nil nil path))
-                  ;; any other file link raises an error
                   (let ((beg (org-element-property :begin link)))
                     (signal 'one-link-broken
                             `(,raw-link ,(format "goto-char: %s" beg))))))
