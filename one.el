@@ -288,7 +288,7 @@ INFO is a plist holding contextual information."
          (when-let ((render-function
                      (org-element-property :ONE_RENDER_PAGE_WITH elt)))
            (intern render-function))
-         :one-data elt))))))
+         :one-data elt)))))
 
 (global-set-key (kbd "C-<f1>") (lambda () (interactive) (ert "one-list-pages-test")))
 
