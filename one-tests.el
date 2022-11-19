@@ -57,59 +57,11 @@ variable, and communication channel under `info'."
 
 ;;; one-ox tests
 
-;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "one-ox-test")))
+;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "one-ox-section-markup-plain-list-test")))
 
 ;;;; headline, section, paragraph, etc.
 
-(ert-deftest one-ox-test ()
-  ;; one-ox-headline
-  (let ((get-headline
-         (lambda (rv tree)
-           (car (org-element-map tree 'headline
-                  (lambda (e)
-                    (when (string= (org-element-property :raw-value e) rv)
-                      e)))))))
-    ;; headline level 1 with contents
-    (should
-     (string=
-      (org-test-with-parsed-data "* headline 1"
-        (one-ox-headline (funcall get-headline "headline 1" tree)
-                          "<div>contents<div>" info))
-      "<div><h1>headline 1</h1><div>contents<div></div>"))
-    ;; headline level 1 with contents nil
-    (should
-     (string=
-      (org-test-with-parsed-data "* headline 1"
-        (one-ox-headline (funcall get-headline "headline 1" tree)
-                          nil info))
-      "<div><h1>headline 1</h1></div>"))
-    ;; headline level 2 with contents
-    (should
-     (string=
-      (org-test-with-parsed-data "* headline 1\n** headline 2"
-        (one-ox-headline (funcall get-headline "headline 2" tree)
-                          "<div>contents<div>" info))
-      "<div><h2>headline 2</h2><div>contents<div></div>"))
-    ;; headline with CUSTOM_ID without id part
-    (should
-     (string=
-      (org-test-with-parsed-data "* headline 1
-:PROPERTIES:
-:CUSTOM_ID: /path/to/page/
-:END:"
-        (one-ox-headline (funcall get-headline "headline 1" tree)
-                          "<div>contents<div>" info))
-      "<div><h1>headline 1</h1><div>contents<div></div>"))
-    ;; headline with CUSTOM_ID and id part
-    (should
-     (string=
-      (org-test-with-parsed-data "* headline 1\n** headline 2
-:PROPERTIES:
-:CUSTOM_ID: /path/to/page/#id-test
-:END:"
-        (one-ox-headline (funcall get-headline "headline 2" tree) nil info))
-      "<div><h2 id=\"id-test\">headline 2</h2></div>")))
-
+(ert-deftest one-ox-section-markup-plain-list-test ()
   ;; section, paragraph, plain-text, bold, italic, strike-through, underline
   (should (string= (one-ox-section nil "section" nil) "<div>section</div>"))
   (should (string= (one-ox-section nil nil nil) ""))
