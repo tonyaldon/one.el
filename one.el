@@ -158,15 +158,15 @@ if it exists or generated randomly."
                         (one-headline-id (funcall get-headline "headline 2" tree)))))))
 
 (defun one-ox-headline (headline contents info)
-  (let* ((level (org-export-get-relative-level headline info))
-         (title (org-export-data (org-element-property :title headline) info))
-         (ct (if (null contents) "" contents))
-         (custom-id (org-element-property :CUSTOM_ID headline))
-         (id (and custom-id
-                  ;; we match "baz" in "/foo/bar/#baz"
-                  (string-match "\\`\\(?:[^#]+\\S-\\)#\\(.*\\)" custom-id)
-                  (format " id=\"%s\"" (match-string-no-properties 1 custom-id)))))
-    (format "<div><h%s%s>%s</h%s>%s</div>" level (or id "") title level ct)))
+  ;; Note that markups and links are not exported if
+  ;; used in headlines, only the raw value string.
+  ;; So don't use them in headlines.
+  (let* ((headline-plist (one-headline headline))
+         (id (plist-get headline-plist :id))
+         (level (plist-get headline-plist :level))
+         (title (plist-get headline-plist :title))
+         (ct (if (null contents) "" contents)))
+    (format "<div><h%s id=\"%s\">%s</h%s>%s</div>" level id title level ct)))
 
 (defun one-ox-section (_section contents _info)
   (if (null contents) "" (format "<div>%s</div>" contents)))
