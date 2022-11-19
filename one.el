@@ -289,7 +289,19 @@ INFO is a plist holding contextual information."
 (define-error 'one-path "CUSTOM_ID not defined")
 
 (defun one-list-pages ()
-  "Return a list of the pages in current buffer."
+  "Return a list of the pages in current buffer.
+
+Each page in the list is a plist with the following properties:
+
+- `:one-path': ...
+- `:one-render-page-with': symbol of the function to use to render
+  the page.  This function takes two arguments: PAGE (corresponding
+  to `:one-page') and HEADLINES (corresponding to `:one-headlines').
+- `:one-page': tree (as produced by `org-element') containing the content
+  of the page.
+- `:one-headlines': list in order of the headlines in the tree `:one-page'.
+  Each headline in that list is a plist with the following properties `:id',
+  `:level' and `:title'."
   (org-element-map (org-element-parse-buffer) 'headline
     (lambda (elt)
       (when (and (= (org-element-property :level elt) 1)
@@ -304,11 +316,59 @@ INFO is a plist holding contextual information."
          (when-let ((render-function
                      (org-element-property :ONE_RENDER_PAGE_WITH elt)))
            (intern render-function))
-         :one-data elt)))))
+         :one-page elt
+         :one-headlines (org-element-map elt 'headline
+                          (lambda (elt) (one-headline elt))))))))
 
 (global-set-key (kbd "C-<f1>") (lambda () (interactive) (ert "one-list-pages-test")))
 
 (ert-deftest one-list-pages-test ()
+  ;; list of headlines in pages
+  (should
+   (equal
+    (org-test-with-temp-text "* page 1
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:CUSTOM_ID: /path/to/page-1/
+:END:
+** headline 1.1
+:PROPERTIES:
+:CUSTOM_ID: /path/to/page-1/#id-11
+:END:
+** headline 1.2
+*** headline 1.2.1
+** headline 1.3
+*** headline 1.3.1
+* page 2
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: render-function
+:CUSTOM_ID: /path/to/page-2/
+:END:
+** headline 2.1
+*** headline 2.1.1
+"
+      (let* ((pages (one-list-pages))
+             (page-1 (car pages))
+             (page-2 (cadr pages))
+             (headlines-1 (plist-get page-1 :one-headlines))
+             (headlines-2 (plist-get page-2 :one-headlines)))
+        (list (length headlines-1)
+              (plist-get (car headlines-1) :title)
+              (plist-get (cadr headlines-1) :id)
+              (plist-get (cadr headlines-1) :level)
+              (plist-get (cadr headlines-1) :title)
+              (length headlines-2)
+              (plist-get (car headlines-2) :title)
+              (substring-no-properties (plist-get (caddr headlines-2) :id) 0 4)
+              (plist-get (caddr headlines-2) :level)
+              (plist-get (caddr headlines-2) :title)
+              )))
+    '(;; page 1
+      6 "page 1" "id-11" 2 "headline 1.1"
+      ;; page 2
+      3 "page 2" "one-" 3 "headline 2.1.1")))
+  ;; list pages
   (should
    (equal
     (org-test-with-temp-text "* page 1
@@ -334,14 +394,13 @@ INFO is a plist holding contextual information."
         (list (length pages)
               (plist-get page-1 :one-path)
               (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-data))
+              (car (plist-get page-1 :one-page))
               (plist-get page-2 :one-path)
               (plist-get page-2 :one-render-page-with)
-              (car (plist-get page-2 :one-data)))))
+              (car (plist-get page-2 :one-page)))))
     '(2
       "/path/to/page-1/" nil headline
       "/path/to/page-2/" render-function headline)))
-
   ;; narrow to the first element
   (should
    (equal
@@ -361,7 +420,7 @@ INFO is a plist holding contextual information."
         (list (length pages)
               (plist-get page-1 :one-path)
               (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-data)))))
+              (car (plist-get page-1 :one-page)))))
     '(1 "/path/to/page-1/" nil headline)))
 
   ;; a page must have the property CUSTOM_ID defined
