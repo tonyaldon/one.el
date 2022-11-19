@@ -77,10 +77,7 @@ if it exists or generated randomly."
     (fixed-width . one-ox-fixed-width)
     (quote-block . one-ox-quote-block)
 
-    (link . one-ox-link))
-  :options-alist
-  '((:one-root "ONE_ROOT" nil "public")
-    (:one-assets "ONE_ASSETS" nil "assets")))
+    (link . one-ox-link)))
 
 ;;;; export/rendering
 
@@ -103,7 +100,7 @@ Use for debugging/exploring purpose."
                          (org-export-use-babel nil)
                          ;; (exported (with-current-buffer "content.org"
                          ;;             (org-export-as 'one nil nil nil `(:one-links ,(one-map-links)))))
-                         (exported (with-current-buffer "content.org" (org-export-as 'one)))
+                         (exported (org-export-as 'one))
                          )
                     (with-current-buffer (get-buffer-create "*one*")
                       (erase-buffer)
@@ -111,7 +108,7 @@ Use for debugging/exploring purpose."
                       (insert "<html>")
                       (insert "<head>")
                       (insert "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>")
-                      (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"one.css\" />")
+                      (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/one.css\" />")
                       (insert "</head>")
                       (insert "<body>")
                       (insert "<div class=\"container\">")
@@ -122,7 +119,8 @@ Use for debugging/exploring purpose."
                       (insert "</html>")
                       (mhtml-mode)
                       (write-region (point-min) (point-max) "index.html"))
-                    (switch-to-buffer "*one*"))))
+                    ;; (switch-to-buffer "*one*")
+                    )))
 
 ;;;; headline, section, paragraph, etc.
 
@@ -309,117 +307,6 @@ Each page in the list is a plist with the following properties:
          :one-page elt
          :one-headlines (org-element-map elt 'headline
                           (lambda (elt) (one-headline elt))))))))
-
-(global-set-key (kbd "C-<f1>") (lambda () (interactive) (ert "one-list-pages-test")))
-
-(ert-deftest one-list-pages-test ()
-  ;; list of headlines in pages
-  (should
-   (equal
-    (org-test-with-temp-text "* page 1
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:CUSTOM_ID: /path/to/page-1/
-:END:
-** headline 1.1
-:PROPERTIES:
-:CUSTOM_ID: /path/to/page-1/#id-11
-:END:
-** headline 1.2
-*** headline 1.2.1
-** headline 1.3
-*** headline 1.3.1
-* page 2
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:ONE_RENDER_PAGE_WITH: render-function
-:CUSTOM_ID: /path/to/page-2/
-:END:
-** headline 2.1
-*** headline 2.1.1
-"
-      (let* ((pages (one-list-pages))
-             (page-1 (car pages))
-             (page-2 (cadr pages))
-             (headlines-1 (plist-get page-1 :one-headlines))
-             (headlines-2 (plist-get page-2 :one-headlines)))
-        (list (length headlines-1)
-              (plist-get (car headlines-1) :title)
-              (plist-get (cadr headlines-1) :id)
-              (plist-get (cadr headlines-1) :level)
-              (plist-get (cadr headlines-1) :title)
-              (length headlines-2)
-              (plist-get (car headlines-2) :title)
-              (substring-no-properties (plist-get (caddr headlines-2) :id) 0 4)
-              (plist-get (caddr headlines-2) :level)
-              (plist-get (caddr headlines-2) :title)
-              )))
-    '(;; page 1
-      6 "page 1" "id-11" 2 "headline 1.1"
-      ;; page 2
-      3 "page 2" "one-" 3 "headline 2.1.1")))
-  ;; list pages
-  (should
-   (equal
-    (org-test-with-temp-text "* page 1
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:CUSTOM_ID: /path/to/page-1/
-:END:
-* NOT A PAGE
-* page 2
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:ONE_RENDER_PAGE_WITH: render-function
-:CUSTOM_ID: /path/to/page-2/
-:END:
-* Headline level 1
-** NOT A PAGE (because at level headline level 2)
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:END:"
-      (let* ((pages (one-list-pages))
-             (page-1 (car pages))
-             (page-2 (cadr pages)))
-        (list (length pages)
-              (plist-get page-1 :one-path)
-              (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-page))
-              (plist-get page-2 :one-path)
-              (plist-get page-2 :one-render-page-with)
-              (car (plist-get page-2 :one-page)))))
-    '(2
-      "/path/to/page-1/" nil headline
-      "/path/to/page-2/" render-function headline)))
-  ;; narrow to the first element
-  (should
-   (equal
-    (org-test-with-temp-text "* page 1
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:CUSTOM_ID: /path/to/page-1/
-:END:
-* page 2
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:CUSTOM_ID: /path/to/page-2/
-:END:"
-      (org-narrow-to-element)
-      (let* ((pages (one-list-pages))
-             (page-1 (car pages)))
-        (list (length pages)
-              (plist-get page-1 :one-path)
-              (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-page)))))
-    '(1 "/path/to/page-1/" nil headline)))
-
-  ;; a page must have the property CUSTOM_ID defined
-  (should-error
-   (org-test-with-temp-text "* CUSTOM_ID PROPERTY IS NOT DEFINED
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:END:"
-     (one-list-pages))))
 
 ;;; one provide
 
