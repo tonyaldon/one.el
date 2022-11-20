@@ -546,6 +546,54 @@ the function ~one-default~ (see [[#/blog/page-2/]])
       (insert "</body>\n</html>")
       (buffer-substring-no-properties (point-min) (point-max)))))
 
+(defun one-default (tree headlines &optional pages)
+  ""
+  (let ((org-export-with-sub-superscripts nil)
+        (org-export-use-babel nil)
+        (title (org-element-property :raw-value tree))
+        (content (org-export-data-with-backend
+                  (org-element-contents tree) 'one nil)))
+    (with-temp-buffer
+      (insert
+       "<!DOCTYPE html>
+<html>
+<head>
+<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>
+<link rel=\"stylesheet\" type=\"text/css\" href=\"/one.css\" />\n")
+      (insert (concat "<title>" title "</title>"))
+      (insert "</head>")
+      (insert "<div class=\"container\">")
+      (insert "<body>")
+      (insert (concat "<div style=\"text-align: center;\">" (upcase title) "</div>"))
+      (insert content)
+      (insert "</div>")
+      (insert "</body>\n</html>")
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+(defun one-default-with-toc (tree headlines &optional pages)
+  ""
+  (let ((org-export-with-sub-superscripts nil)
+        (org-export-use-babel nil)
+        (title (org-element-property :raw-value tree))
+        (content (org-export-data-with-backend
+                  (org-element-contents tree) 'one nil)))
+    (with-temp-buffer
+      (insert
+       "<!DOCTYPE html>
+<html>
+<head>
+<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>
+<link rel=\"stylesheet\" type=\"text/css\" href=\"/one.css\" />\n")
+      (insert (concat "<title>" title "</title>"))
+      (insert "</head>")
+      (insert "<div class=\"container\">")
+      (insert "<body>")
+      (insert (concat "<div style=\"text-align: center;\">" (upcase title) "</div>"))
+      (insert content)
+      (insert "</div>")
+      (insert "</body>\n</html>")
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
 (defun one-build-only-html ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
 
