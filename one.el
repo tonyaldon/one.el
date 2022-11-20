@@ -440,6 +440,88 @@ a:hover {
 }
 "
   "css file used by `one'.")
+
+(defun one-new-project ()
+  ""
+  (interactive)
+  (let ((one-org "* Home
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-home
+:CUSTOM_ID: /
+:END:
+
+This text is inserted before we list the pages in our web site.
+
+- [[#/blog/page-1/]]
+- [[#/blog/page-2/]]
+- [[#/blog/page-3/]]
+
+* Page 1
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:CUSTOM_ID: /blog/page-1/
+:END:
+
+When we don't specify a function to render a page with the org
+property ~ONE_RENDER_PAGE_WITH~, the function ~one-default~ is used
+by default.
+
+* Page 2
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default
+:CUSTOM_ID: /blog/page-2/
+:END:
+
+This page is rendered with the function ~one-default~ specified in the
+org property ~ONE_RENDER_PAGE_WITH~.
+
+** headline 1
+*** headline 1.1
+
+foo
+
+*** headline 1.2
+
+bar
+
+** headline 2
+
+As you can see, ~one-default~ doesn't add the table of content (TOC).
+If you want a default function that adds the TOC to the page you can
+use the function ~one-default-with-toc~ (see [[#/blog/page-3/]])
+
+* Page 3
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
+:CUSTOM_ID: /blog/page-3/
+:END:
+
+This page is rendered with the function ~one-default-with-toc~ specified
+in the org property ~ONE_RENDER_PAGE_WITH~.
+
+** headline 1
+*** headline 1.1
+
+foo
+
+*** headline 1.2
+
+bar
+
+** headline 2
+
+As you can see, ~one-default~ doesn't add the table of content (TOC).
+If you don't want the table of content (TOC) to be added, you can use
+the function ~one-default~ (see [[#/blog/page-2/]])
+"))
+    (with-temp-file "one.org" (insert one-org))
+    (make-directory "assets" t)
+    (with-temp-file "./assets/one.css" (insert one-css))
+    (find-file "one.org")))
+
 (defun one-default-home (tree headlines &optional pages)
   ""
   (let ((org-export-with-sub-superscripts nil)
