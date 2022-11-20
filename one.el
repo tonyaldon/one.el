@@ -310,6 +310,136 @@ Each page in the list is a plist with the following properties:
          :one-headlines (org-element-map elt 'headline
                           (lambda (elt) (one-headline elt))))))))
 
+(defvar one-css
+  "@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Signika:wght@300;400;500;600;700&display=swap');
+
+body {
+  background-image: radial-gradient(47.66% 38.4% at 52.19% 28.51%, rgb(18, 25, 40) 0%, rgb(8, 11, 18) 100%);
+  color: rgba(204, 215, 229, 1);
+	font-size: 140%;
+  font-family: \"Signika\",sans-serif;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 0 2em;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.2em;
+  }
+
+  body {
+    font-size: 110%;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #f7dcba;
+}
+
+a {
+  color: #00d1b2;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.one-blockquote {
+  background: linear-gradient(to right bottom, #313b52, #2f394f, #2d364b, #2b3448, #293245);
+  border-left: 0.3em solid #d3b2a1;
+  color: #d3b2a1;
+  margin: auto;
+  padding: 0.1em 1.5em;
+  width: 50%;
+}
+
+.one-hl {
+  border-radius:0.5em;
+  color: #dedede;
+	font-family: 'Fira Mono', monospace;
+  font-size: 0.9em;
+  font-weight: normal;
+}
+
+.one-hl-inline {
+  background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
+	border: 1px solid #141b2a;
+  padding: 0.2em 0.35em;
+}
+
+.one-hl-block {
+	background: linear-gradient(to right bottom, #222939, #1e2535, #1b2231, #171e2e, #141b2a);
+	border-radius: 0.5em;
+  border: 1px solid #141b2a;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+}
+
+.one-hl-results {
+  background: linear-gradient(to right bottom, #313b52, #2f394f, #2d364b, #2b3448, #293245);
+  border-left: 3px solid #dedede;
+	border-radius: 0.2em;
+  display: block;
+  margin: auto;
+  padding: 0.5em 1em;
+  overflow-x: auto;
+  width: 92%;
+}
+
+.one-hl-negation-char { color: #ff6c60}              /* font-lock-negation-char-face */
+.one-hl-warning { color: #fd971f}                    /* font-lock-warning-face */
+.one-hl-variable-name { color: #fd971f}              /* font-lock-variable-name-face */
+.one-hl-doc { color: #eedc82}                        /* font-lock-doc-face */
+.one-hl-doc-string { color: #eedc82}                 /* font-lock-doc-string-face */
+.one-hl-string { color: #eedc82}                     /* font-lock-string-face */
+.one-hl-function-name { color: #458b74}              /* font-lock-function-name-face */
+.one-hl-builtin { color: #457f8b}                    /* font-lock-builtin-face */
+.one-hl-type { color: #d3b2a1}                       /* font-lock-type-face */
+.one-hl-keyword { color: #f92672}                    /* font-lock-keyword-face */
+.one-hl-preprocessor { color: #f92672}               /* font-lock-preprocessor-face */
+.one-hl-comment-delimiter { color: #8c8c8c}          /* font-lock-comment-delimiter-face */
+.one-hl-comment { color: #8c8c8c}                    /* font-lock-comment-face */
+.one-hl-constant { color: #87cefa}                   /* font-lock-constant-face */
+.one-hl-reference { color: #f5ebb6}                  /* font-lock-reference-face */
+.one-hl-regexp-grouping-backslash { color: #87cefa}  /* font-lock-regexp-grouping-backslash */
+.one-hl-regexp-grouping-construct { color: #87cefa}  /* font-lock-regexp-grouping-construct */
+.one-hl-number { color: #eedc82}                     /* font-lock-number-face */
+
+
+.one-hl-clojure-keyword { color: #457f8b}            /* clojure-keyword-face */
+.one-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
+
+::-webkit-scrollbar {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(8, 11, 18);
+}
+
+::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(to right top, #345157, #2d4751, #283d4a, #253342, #222939);
+  border-radius: 0.5em;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-image: linear-gradient(to right top, #345157, #304c54, #2d4751, #2a424e, #283d4a);
+}
+"
+  "css file used by `one'.")
 (defun one-default-home (tree headlines &optional pages)
   ""
   (let ((org-export-with-sub-superscripts nil)
