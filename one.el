@@ -310,6 +310,48 @@ Each page in the list is a plist with the following properties:
          :one-headlines (org-element-map elt 'headline
                           (lambda (elt) (one-headline elt))))))))
 
+(defun one-default-home (tree headlines &optional pages)
+  ""
+  (let ((org-export-with-sub-superscripts nil)
+        (org-export-use-babel nil)
+        (title (org-element-property :raw-value tree))
+        (content (org-export-data-with-backend
+                  (org-element-contents tree) 'one nil)))
+    (with-temp-buffer
+      (insert
+       "<!DOCTYPE html>
+<html>
+<head>
+<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>
+<link rel=\"stylesheet\" type=\"text/css\" href=\"/one.css\" />\n")
+      (insert (concat "<title>" title "</title>"))
+      (insert "</head>")
+      (insert "<div class=\"container\">")
+      (insert "<body>")
+      (insert (concat "<div style=\"text-align: center;\">" (upcase title) "</div>"))
+      (insert content)
+      (insert "</div>")
+      (insert "</body>\n</html>")
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+(defun one-build-only-html ()
+  "Build `one' web site of the current buffer under subdirectory `./public/'.
+
+Doesn't copy files from `./assets/' to `./public/'.
+See also `one-build'."
+  (interactive)
+  (dolist (page (one-list-pages))
+    (let* ((path (concat "./public" (plist-get page :one-path)))
+           (file (concat path "index.html"))
+           (render-page-with (plist-get page :one-render-page-with))
+           (tree (plist-get page :one-tree))
+           (headlines (plist-get page :one-headlines)))
+      (make-directory path t)
+      (with-temp-file file
+        (insert
+         (funcall (or render-page-with 'one-default)
+                  tree headlines))))))
+
 ;;; one provide
 
 (provide 'one)
