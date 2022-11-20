@@ -79,49 +79,6 @@ if it exists or generated randomly."
 
     (link . one-ox-link)))
 
-;;;; export/rendering
-
-(defun one-prettify-html (html)
-  "Return the HTML string prettified.
-Use for debugging/exploring purpose."
-  (with-temp-buffer
-    (insert (replace-regexp-in-string ">\\s-*<" ">\n<" html))
-    (html-mode)
-    (indent-region (point-min) (point-max))
-    (buffer-substring-no-properties (point-min) (point-max))))
-
-(global-set-key (kbd "C-<f2>")
-                (lambda () (interactive)
-                  (let* (
-                         ;; _ and ^ characters are exported as is.
-                         (org-export-with-sub-superscripts nil)
-                         ;; no evaluation of any source block,
-                         ;; they all are exported as is.
-                         (org-export-use-babel nil)
-                         ;; (exported (with-current-buffer "content.org"
-                         ;;             (org-export-as 'one nil nil nil `(:one-links ,(one-map-links)))))
-                         (exported (org-export-as 'one))
-                         )
-                    (with-current-buffer (get-buffer-create "*one*")
-                      (erase-buffer)
-                      (insert "<!DOCTYPE html>")
-                      (insert "<html>")
-                      (insert "<head>")
-                      (insert "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>")
-                      (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/one.css\" />")
-                      (insert "</head>")
-                      (insert "<body>")
-                      (insert "<div class=\"container\">")
-                      ;; (insert (one-prettify-html exported))
-                      (insert exported)
-                      (insert "</div>")
-                      (insert "</body>")
-                      (insert "</html>")
-                      (mhtml-mode)
-                      (write-region (point-min) (point-max) "index.html"))
-                    ;; (switch-to-buffer "*one*")
-                    )))
-
 ;;;; headline, section, paragraph, etc.
 
 (defun one-ox-headline (headline contents info)
