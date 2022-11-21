@@ -577,6 +577,158 @@ See also `one-build'."
          (funcall (or render-page-with 'one-default)
                   tree headlines))))))
 
+;;; tree operation
+
+;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "one-default--toc")))
+
+(defun one-default--toc (headlines)
+  "Generate the TOC (a `jack' component) from the list HEADLINES of headlines.
+See `jack-html', `one-list-pages' and `one-default-with-toc'."
+  (let* ((-headlines (cdr headlines))
+         (stack (list (car headlines)))
+         headline
+         (anchor-title-id
+          (lambda (title id)
+            `(:a (@ :href ,(concat "#" id)) ,title)))
+         (ul-or-child
+          (lambda (title id child)
+            (or (and title child `(:ul (:li ,(funcall anchor-title-id title id) ,child)))
+                (and title `(:ul (:li ,(funcall anchor-title-id title id))))
+                child))))
+    (while -headlines
+      (setq headline (pop -headlines))
+      (while headline
+        (if (>= (plist-get headline :level)
+                (plist-get (car stack) :level))
+            (progn (push headline stack)
+                   (setq headline nil))
+          (let* ((stack-0 (pop stack))
+                 (level-0 (plist-get stack-0 :level))
+                 (title-0 (plist-get stack-0 :title))
+                 (id-0 (plist-get stack-0 :id))
+                 (child-0 (plist-get stack-0 :child))
+                 (stack-1 (pop stack))
+                 (level-1 (plist-get stack-1 :level))
+                 (title-1 (plist-get stack-1 :title))
+                 (id-1 (plist-get stack-1 :id))
+                 (child-1 (plist-get stack-1 :child))
+                 (anchor-0 (funcall anchor-title-id title-0 id-0))
+                 (anchor-1 (funcall anchor-title-id title-1 id-1)))
+            (if (> level-0 level-1)
+                (push `(:level ,level-1 :title ,title-1 :id ,id-1
+                        :child ,(funcall ul-or-child title-0 id-0 child-0))
+                      stack)
+              (push
+               `(:level ,level-1
+                 :child
+                 (:ul
+                  (:li ,anchor-1 ,child-1)
+                  ,(if child-0 `(:li ,anchor-0 child-0) `(:li ,anchor-0))))
+               stack))))))
+    ;; pop the stack
+    (while (>= (length stack) 2)
+      (let* ((stack-0 (pop stack))
+             (level-0 (plist-get stack-0 :level))
+             (title-0 (plist-get stack-0 :title))
+             (id-0 (plist-get stack-0 :id))
+             (child-0 (plist-get stack-0 :child))
+             (stack-1 (pop stack))
+             (level-1 (plist-get stack-1 :level))
+             (title-1 (plist-get stack-1 :title))
+             (id-1 (plist-get stack-1 :id))
+             (child-1 (plist-get stack-1 :child))
+             (anchor-0 (funcall anchor-title-id title-0 id-0))
+             (anchor-1 (funcall anchor-title-id title-1 id-1)))
+        (if (> level-0 level-1)
+            (push `(:level ,level-1 :title ,title-1 :id ,id-1
+                    :child ,(funcall ul-or-child title-0 id-0 child-0))
+                  stack)
+          (push
+           `(:level ,level-1
+             :child ,(if title-0
+                         `(:ul
+                           ,(if child-1 `(:li ,anchor-1 ,child-1) `(:li ,anchor-1))
+                           ,(if child-0 `(:li ,anchor-0 ,child-0) `(:li ,anchor-0)))
+                       `(:ul
+                         ,(if child-1
+                              `(:li ,anchor-1 ,child-1)
+                            `(:li ,anchor-1))
+                         ,@(cdr child-0))))
+           stack))))
+    (funcall
+     ul-or-child
+     (plist-get (car stack) :title)
+     (plist-get (car stack) :id)
+     (plist-get (car stack) :child))))
+
+(ert-deftest one-default--toc ()
+  (should
+   (equal
+    (one-default--toc
+     '((:level 1 :title "bar-1" :id "id-bar-1")
+       (:level 2 :title "bar-2" :id "id-bar-2")
+       (:level 3 :title "bar-3" :id "id-bar-3")))
+    '(:ul
+      (:li (:a (@ :href "#id-bar-1") "bar-1")
+       (:ul
+        (:li (:a (@ :href "#id-bar-2") "bar-2")
+         (:ul
+          (:li (:a (@ :href "#id-bar-3") "bar-3")))))))))
+  (should
+   (equal
+    (one-default--toc
+     '((:level 1 :title "foo" :id "id-foo")
+       (:level 1 :title "bar-1" :id "id-bar-1")
+       (:level 2 :title "bar-2" :id "id-bar-2")
+       (:level 3 :title "bar-3" :id "id-bar-3")
+       (:level 2 :title "bar-22" :id "id-bar-22")
+       (:level 1 :title "baz" :id "id-baz")))
+    '(:ul
+      (:li (:a (@ :href "#id-foo") "foo"))
+      (:li (:a (@ :href "#id-bar-1") "bar-1")
+       (:ul
+        (:li (:a (@ :href "#id-bar-2") "bar-2")
+         (:ul
+          (:li (:a (@ :href "#id-bar-3") "bar-3"))))
+        (:li (:a (@ :href "#id-bar-22") "bar-22"))))
+      (:li (:a (@ :href "#id-baz") "baz")))))
+  (should
+   (equal
+    (one-default--toc
+     '((:level 1 :title "foo" :id "id-foo")
+       (:level 1 :title "bar-1" :id "id-bar-1")
+       (:level 2 :title "bar-2" :id "id-bar-2")
+       (:level 3 :title "bar-3" :id "id-bar-3")
+       (:level 1 :title "baz" :id "id-baz")))
+    '(:ul
+      (:li (:a (@ :href "#id-foo") "foo"))
+      (:li (:a (@ :href "#id-bar-1") "bar-1")
+       (:ul
+        (:li (:a (@ :href "#id-bar-2") "bar-2")
+         (:ul
+          (:li (:a (@ :href "#id-bar-3") "bar-3"))))))
+      (:li (:a (@ :href "#id-baz") "baz")))))
+  (should
+   (equal
+    (one-default--toc
+     '((:level 2 :title "foo" :id "id-foo")
+       (:level 2 :title "bar-1" :id "id-bar-1")
+       (:level 3 :title "bar-2" :id "id-bar-2")
+       (:level 4 :title "bar-3" :id "id-bar-3")))
+    '(:ul
+      (:li (:a (@ :href "#id-foo") "foo"))
+      (:li (:a (@ :href "#id-bar-1") "bar-1")
+       (:ul
+        (:li (:a (@ :href "#id-bar-2") "bar-2")
+         (:ul
+          (:li (:a (@ :href "#id-bar-3") "bar-3")))))))))
+  (should
+   (equal
+    (one-default--toc
+     '((:level 1 :title "foo" :id "id-foo")))
+    '(:ul (:li (:a (@ :href "#id-foo") "foo"))))))
+
+
 ;;; one provide
 
 (provide 'one)
