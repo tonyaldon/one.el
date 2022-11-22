@@ -571,6 +571,7 @@ the function ~one-default~ (see [[#/blog/page-2/]])
        (:div.container
         (:body
          (:div (@ :style "text-align: center;") ,(upcase title))
+         ,(one-default--toc (cdr headlines))
          ,content))))))
 
 (defun one-build-only-html ()
