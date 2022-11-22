@@ -296,7 +296,7 @@ Each page in the list is a plist with the following properties:
 - `:one-headlines': list in order of the headlines in the tree `:one-tree'.
   Each headline in that list is a plist with the following properties `:id',
   `:level' and `:title'."
-  (org-element-map (org-element-parse-buffer) 'headline
+  (org-element-map (one-parse-buffer) 'headline
     (lambda (elt)
       (when (and (= (org-element-property :level elt) 1)
                  (string= (org-element-property :ONE_IS_PAGE elt) "t"))
