@@ -254,6 +254,18 @@ INFO is a plist holding contextual information."
 
 (define-error 'one-path "CUSTOM_ID not defined")
 
+(defun one-internal-id (headline)
+  "Return a string id for HEADLINE to be used as :one-internal-id property.
+
+The id is built from CUSTOM_ID property of HEADLINE if set
+or generated a randomly."
+  (let* ((custom-id (org-element-property :CUSTOM_ID headline)))
+    (or (and custom-id
+             ;; we match "baz" in "/foo/bar/#baz"
+             (string-match "\\`\\(?:[^#]+\\S-\\)#\\(.+\\)" custom-id)
+             (match-string-no-properties 1 custom-id))
+        (format "one-%x" (random #x10000000000)))))
+
 (defun one-list-pages ()
   "Return a list of the pages in current buffer.
 

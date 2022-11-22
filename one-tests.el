@@ -433,6 +433,35 @@ A simple example
 
 ;;; pages
 
+(ert-deftest one-internal-id-test ()
+  (let ((get-headline
+         (lambda (rv tree)
+           (car (org-element-map tree 'headline
+                  (lambda (e)
+                    (when (string= (org-element-property :raw-value e) rv)
+                      e)))))))
+    (should
+     (string=
+      (org-test-with-parsed-data "* headline 1
+** headline 2
+:PROPERTIES:
+:CUSTOM_ID: /path/to/page/#id-test
+:END:"
+        (one-internal-id (funcall get-headline "headline 2" tree)))
+      "id-test"))
+    (should
+     (string-prefix-p "one-"
+                      (org-test-with-parsed-data "* headline 1
+:PROPERTIES:
+:CUSTOM_ID: /path/to/page/
+:END:"
+                        (one-internal-id (funcall get-headline "headline 1" tree)))))
+    (should
+     (string-prefix-p "one-"
+                      (org-test-with-parsed-data "* headline 1
+** headline 2"
+                        (one-internal-id (funcall get-headline "headline 2" tree)))))))
+
 (ert-deftest one-list-pages-test ()
   ;; list of headlines in pages
   (should
