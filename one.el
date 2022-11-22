@@ -266,6 +266,19 @@ or generated a randomly."
              (match-string-no-properties 1 custom-id))
         (format "one-%x" (random #x10000000000)))))
 
+(defun one-parse-buffer ()
+  "Parse current org buffer.
+
+The only difference with `org-element-parse-buffer' is that
+we add the property `:one-internal-id' to each headline."
+  (let ((tree (org-element-parse-buffer)))
+    ;; destructively add :one-internal-id property to headlines in `tree'
+    (org-element-map tree 'headline
+      (lambda (elt)
+        (org-element-put-property
+         elt :one-internal-id (one-internal-id elt))))
+    tree))
+
 (defun one-list-pages ()
   "Return a list of the pages in current buffer.
 
