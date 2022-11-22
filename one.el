@@ -222,8 +222,6 @@ Use `org-html-fontify-code'."
 
 (define-error 'one-link-broken "Unable to resolve link")
 
-(define-error 'one-options "Option not defined")
-
 (defun one-ox-link (link desc info)
   "Transcode a LINK object from Org to HTML.
 DESC is the description part of the link, or the empty string.
