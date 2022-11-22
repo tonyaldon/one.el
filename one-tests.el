@@ -55,37 +55,6 @@ variable, and communication channel under `info'."
   (should (string= (one-escape "regular text") "regular text"))
   (should (string= (one-escape "<...>...&...\"...'") "&lt;...&gt;...&amp;...&quot;...&apos;")))
 
-(ert-deftest one-headline-test ()
-  (let ((get-headline
-         (lambda (rv tree)
-           (car (org-element-map tree 'headline
-                  (lambda (e)
-                    (when (string= (org-element-property :raw-value e) rv)
-                      e)))))))
-    (should
-     (equal
-      (org-test-with-parsed-data "* headline 1
-** headline 2
-:PROPERTIES:
-:CUSTOM_ID: /path/to/page/#id-test
-:END:"
-        (one-headline (funcall get-headline "headline 2" tree)))
-      '(:id "id-test"
-        :level 2
-        :title "headline 2")))
-    (should
-     (string-prefix-p "one-"
-                      (org-test-with-parsed-data "* headline 1
-:PROPERTIES:
-:CUSTOM_ID: /path/to/page/
-:END:"
-                        (one-headline-id (funcall get-headline "headline 1" tree)))))
-    (should
-     (string-prefix-p "one-"
-                      (org-test-with-parsed-data "* headline 1
-** headline 2"
-                        (one-headline-id (funcall get-headline "headline 2" tree)))))))
-
 ;;; one-ox tests
 
 ;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "one-ox-section-markup-plain-list-test")))
@@ -101,20 +70,33 @@ variable, and communication channel under `info'."
                       e)))))))
     (should
      (string=
-      (org-test-with-parsed-data "* headline 1\n** headline 2
+      (org-test-with-temp-text "* headline 1\n** headline 2
 :PROPERTIES:
 :CUSTOM_ID: /path/to/page/#id-test
 :END:"
-        (one-ox-headline (funcall get-headline "headline 2" tree) "<div>contents<div>" info))
+        (let* ((tree (one-parse-buffer))
+               (headline (funcall get-headline "headline 2" tree)))
+          (one-ox-headline headline "<div>contents<div>" nil)))
       "<div><h2 id=\"id-test\">headline 2</h2><div>contents<div></div>"))
     (should
      (string=
-      (org-test-with-parsed-data "* headline 1\n** headline 2
+      (org-test-with-temp-text "* headline 1\n** headline 2
 :PROPERTIES:
 :CUSTOM_ID: /path/to/page/#id-test
 :END:"
-        (one-ox-headline (funcall get-headline "headline 2" tree) nil info))
-      "<div><h2 id=\"id-test\">headline 2</h2></div>"))))
+        (let* ((tree (one-parse-buffer))
+               (headline (funcall get-headline "headline 2" tree)))
+          (one-ox-headline headline nil nil)))
+      "<div><h2 id=\"id-test\">headline 2</h2></div>"))
+    (should
+     (string-match-p "id=\"one-.*\""
+                     (org-test-with-temp-text "* headline 1\n** headline 2
+:PROPERTIES:
+:no-custom-id: so a random :one-internal-id id is set by one-parse-buffer
+:END:"
+                       (let* ((tree (one-parse-buffer))
+                              (headline (funcall get-headline "headline 2" tree)))
+                         (one-ox-headline headline nil nil)))))))
 
 (ert-deftest one-ox-section-markup-plain-list-test ()
   ;; section, paragraph, plain-text, bold, italic, strike-through, underline

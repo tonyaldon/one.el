@@ -53,22 +53,6 @@
                  ("'"  "&apos;")))
    s))
 
-(defun one-headline (headline)
-  "Return a plist describing HEADLINE.
-
-The properties are `:id', `:level' and `:title'.
-The value of `:id' is built from CUSTOM_ID property of HEADLINE
-if it exists or generated randomly."
-  (let* ((custom-id (org-element-property :CUSTOM_ID headline))
-         (id (or (and custom-id
-                      ;; we match "baz" in "/foo/bar/#baz"
-                      (string-match "\\`\\(?:[^#]+\\S-\\)#\\(.+\\)" custom-id)
-                      (match-string-no-properties 1 custom-id))
-                 (format "one-%x" (random #x10000000000))))
-         (level (org-element-property :level headline))
-         (title (org-element-property :raw-value headline)))
-    (list :id id :level level :title title)))
-
 ;;; one-ox
 
 (require 'ox)
@@ -108,10 +92,13 @@ if it exists or generated randomly."
   ;; Note that markups and links are not exported if
   ;; used in headlines, only the raw value string.
   ;; So don't use them in headlines.
-  (let* ((headline-plist (one-headline headline))
-         (id (plist-get headline-plist :id))
-         (level (plist-get headline-plist :level))
-         (title (plist-get headline-plist :title))
+  (let* ((level (org-element-property :level headline))
+         (title (org-element-property :raw-value headline))
+         ;; the property `:one-internal-id' is set by `one'
+         ;; mechanism, spefically the the function `one-list-pages'.
+         ;; This allow to produce unified ids that can be
+         ;; use to build a TOC for each page.
+         (id (org-element-property :one-internal-id headline))
          (ct (if (null contents) "" contents)))
     (format "<div><h%s id=\"%s\">%s</h%s>%s</div>" level id title level ct)))
 
@@ -310,8 +297,12 @@ Each page in the list is a plist with the following properties:
                      (org-element-property :ONE_RENDER_PAGE_WITH elt)))
            (intern render-function))
          :one-tree elt
-         :one-headlines (org-element-map elt 'headline
-                          (lambda (elt) (one-headline elt))))))))
+         :one-headlines
+         (org-element-map elt 'headline
+           (lambda (elt)
+             `(:id ,(org-element-property :one-internal-id elt)
+               :level ,(org-element-property :level elt)
+               :title ,(org-element-property :raw-value elt)))))))))
 
 (defvar one-css
   "@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Signika:wght@300;400;500;600;700&display=swap');
