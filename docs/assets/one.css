@@ -109,7 +109,7 @@ a:hover {
 .one-hl-clojure-keyword { color: #457f8b}            /* clojure-keyword-face */
 .one-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
 
-.one-hl-tms-prompt-and-cmd {
+.one-hl-tms-cmd-line {                       /* tms-cmd-line-face */
   background: #d3b2a1;
   color: #313b52;
   font-weight: bold;
@@ -118,6 +118,9 @@ a:hover {
   margin: 0.4em 0em;
   padding: 0.2em 0.2em;
 }
+.one-hl-tms-ps1-user-host {color: #d7af87;}  /* tms-ps1-user-host-face */
+.one-hl-tms-ps1-directory {color: #ffd787;}  /* tms-ps1-directory-face */
+.one-hl-tms-ps1-git {color: #ff8700;}        /* tms-ps1-git-face */
 
 ::-webkit-scrollbar {
   width: 0.6em;
