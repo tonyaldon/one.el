@@ -604,6 +604,19 @@ See also `one-build'."
          (funcall (or render-page-with 'one-default)
                   tree headlines))))))
 
+(defun one-build ()
+  "Build `one' web site of the current buffer under subdirectory `./public/'.
+
+Also copy files in directory `./assets/' under the directory `./public/'.
+If you've already built the web site and you are just working
+on the content of the current buffer (meaning files in `./assets/'
+                                              don't change), you might prefer to use the command `one-build-only-html'
+which doesn't copy files from `./assets/' directory."
+  (interactive)
+  (delete-directory "./public/" t)
+  (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
+  (one-build-only-html))
+
 ;;; tree operation
 
 ;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "one-default--toc")))
