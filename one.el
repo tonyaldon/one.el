@@ -304,7 +304,7 @@ Each page in the list is a plist with the following properties:
                :level ,(org-element-property :level elt)
                :title ,(org-element-property :raw-value elt)))))))))
 
-(defvar one-css
+(defvar one-default-css
   "@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Signika:wght@300;400;500;600;700&display=swap');
 
 body {
@@ -433,12 +433,12 @@ a:hover {
   background-image: linear-gradient(to right top, #345157, #304c54, #2d4751, #2a424e, #283d4a);
 }
 "
-  "css file used by `one'.")
+  "Default CSS used by `one'.
 
-(defun one-new-project ()
-  ""
-  (interactive)
-  (let ((one-org "* Home
+See `one-default-new-project' and `one-default-add-css-file'.")
+
+(defvar one-default-org-content
+  "* Home
 :PROPERTIES:
 :ONE_IS_PAGE: t
 :ONE_RENDER_PAGE_WITH: one-default-home
@@ -510,11 +510,23 @@ bar
 As you can see, ~one-default~ doesn't add the table of content (TOC).
 If you don't want the table of content (TOC) to be added, you can use
 the function ~one-default~ (see [[#/blog/page-2/]])
-"))
-    (with-temp-file "one.org" (insert one-org))
-    (make-directory "assets" t)
-    (with-temp-file "./assets/one.css" (insert one-css))
-    (find-file "one.org")))
+"
+  "Default org file to start a new `one' project.
+
+See `one-default-new-project'.")
+
+(defun one-default-add-css-file ()
+  "Add default css file `./assets/one.css' with the content `one-default-css'."
+  (interactive)
+  (make-directory "assets" t)
+  (with-temp-file "./assets/one.css" (insert one-default-css)))
+
+(defun one-default-new-project ()
+  ""
+  (interactive)
+  (one-default-add-css-file)
+  (with-temp-file "one.org" (insert one-default-org-content))
+  (find-file "one.org"))
 
 (defun one-default-home (tree headlines &optional pages)
   ""
