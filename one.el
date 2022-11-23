@@ -37,6 +37,7 @@
 ;;; Code
 
 (require 'jack)
+(require 'ox)
 
 ;;; utils
 
@@ -54,9 +55,6 @@
    s))
 
 ;;; one-ox
-
-(require 'ox)
-
 ;;;; one backend
 
 (org-export-define-backend 'one
@@ -237,7 +235,7 @@ INFO is a plist holding contextual information."
                 (t raw-link))))
     (format "<a href=\"%s\">%s</a>" href (or (org-string-nw-p desc) href))))
 
-;;; pages
+;;; Commands to build `one' web sites
 
 (define-error 'one-path "CUSTOM_ID not defined")
 
@@ -303,6 +301,39 @@ Each page in the list is a plist with the following properties:
              `(:id ,(org-element-property :one-internal-id elt)
                :level ,(org-element-property :level elt)
                :title ,(org-element-property :raw-value elt)))))))))
+
+(defun one-build-only-html ()
+  "Build `one' web site of the current buffer under subdirectory `./public/'.
+
+Doesn't copy files from `./assets/' to `./public/'.
+See also `one-build'."
+  (interactive)
+  (dolist (page (one-list-pages))
+    (let* ((path (concat "./public" (plist-get page :one-path)))
+           (file (concat path "index.html"))
+           (render-page-with (plist-get page :one-render-page-with))
+           (tree (plist-get page :one-tree))
+           (headlines (plist-get page :one-headlines)))
+      (make-directory path t)
+      (with-temp-file file
+        (insert
+         (funcall (or render-page-with 'one-default)
+                  tree headlines))))))
+
+(defun one-build ()
+  "Build `one' web site of the current buffer under subdirectory `./public/'.
+
+Also copy files in directory `./assets/' under the directory `./public/'.
+If you've already built the web site and you are just working
+on the content of the current buffer (meaning files in `./assets/'
+                                              don't change), you might prefer to use the command `one-build-only-html'
+which doesn't copy files from `./assets/' directory."
+  (interactive)
+  (delete-directory "./public/" t)
+  (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
+  (one-build-only-html))
+
+;;; A default web site
 
 (defvar one-default-css
   "@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Signika:wght@300;400;500;600;700&display=swap');
@@ -585,41 +616,6 @@ See `one-default-new-project'.")
          (:div (@ :style "text-align: center;") ,(upcase title))
          ,(one-default--toc (cdr headlines))
          ,content))))))
-
-(defun one-build-only-html ()
-  "Build `one' web site of the current buffer under subdirectory `./public/'.
-
-Doesn't copy files from `./assets/' to `./public/'.
-See also `one-build'."
-  (interactive)
-  (dolist (page (one-list-pages))
-    (let* ((path (concat "./public" (plist-get page :one-path)))
-           (file (concat path "index.html"))
-           (render-page-with (plist-get page :one-render-page-with))
-           (tree (plist-get page :one-tree))
-           (headlines (plist-get page :one-headlines)))
-      (make-directory path t)
-      (with-temp-file file
-        (insert
-         (funcall (or render-page-with 'one-default)
-                  tree headlines))))))
-
-(defun one-build ()
-  "Build `one' web site of the current buffer under subdirectory `./public/'.
-
-Also copy files in directory `./assets/' under the directory `./public/'.
-If you've already built the web site and you are just working
-on the content of the current buffer (meaning files in `./assets/'
-                                              don't change), you might prefer to use the command `one-build-only-html'
-which doesn't copy files from `./assets/' directory."
-  (interactive)
-  (delete-directory "./public/" t)
-  (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
-  (one-build-only-html))
-
-;;; tree operation
-
-;; (global-set-key (kbd "C-<f1>") (lambda () (interactive)(ert "one-default--toc")))
 
 (defun one-default--toc (headlines)
   "Generate the TOC (a `jack' component) from the list HEADLINES of headlines.
