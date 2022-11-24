@@ -558,6 +558,21 @@ A simple example
   (should
    (equal
     (one-default--toc
+     '((:level 1 :title "bar-11" :id "id-bar-11")
+       (:level 2 :title "bar-21" :id "id-bar-21")
+       (:level 2 :title "bar-22" :id "id-bar-22")
+       (:level 2 :title "bar-23" :id "id-bar-23")
+       (:level 1 :title "bar-12" :id "id-bar-12")))
+    '(:ul
+      (:li (:a (@ :href "#id-bar-11") "bar-11")
+       (:ul
+        (:li (:a (@ :href "#id-bar-21") "bar-21"))
+        (:li (:a (@ :href "#id-bar-22") "bar-22"))
+        (:li (:a (@ :href "#id-bar-23") "bar-23"))))
+      (:li (:a (@ :href "#id-bar-12") "bar-12")))))
+  (should
+   (equal
+    (one-default--toc
      '((:level 1 :title "bar-1" :id "id-bar-1")
        (:level 2 :title "bar-2" :id "id-bar-2")
        (:level 3 :title "bar-3" :id "id-bar-3")))

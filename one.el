@@ -670,9 +670,13 @@ See `jack-html', `one-list-pages' and `one-default-with-toc'."
               (push
                `(:level ,level-1
                  :child
-                 (:ul
-                  (:li ,anchor-1 ,child-1)
-                  ,(if child-0 `(:li ,anchor-0 child-0) `(:li ,anchor-0))))
+                 ,(if child-0
+                      `(:ul
+                        ,(if child-1 `(:li ,anchor-1 ,child-1) `(:li ,anchor-1))
+                        ,@(cdr child-0))
+                    `(:ul
+                      ,(if child-1 `(:li ,anchor-1 ,child-1) `(:li ,anchor-1))
+                      (:li ,anchor-0))))
                stack))))))
     ;; pop the stack
     (while (>= (length stack) 2)
