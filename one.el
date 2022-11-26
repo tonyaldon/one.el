@@ -627,7 +627,8 @@ See `one-default-new-project'.")
            tree '(:with-sub-superscript nil)))
          (content (org-export-data-with-backend
                    (org-element-contents tree-without-sub/superscript)
-                   'one nil)))
+                   'one nil))
+         (-headlines (cdr (one-default-list-headlines tree))))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -638,12 +639,25 @@ See `one-default-new-project'.")
        (:div.container
         (:body
          (:div (@ :style "text-align: center;") ,(upcase title))
-         ,(one-default--toc (cdr headlines))
+         ,(one-default--toc -headlines)
          ,content))))))
+
+(defun one-default-list-headlines (data)
+  "Return the list in order of the headlines in the DATA.
+
+Each headline in that list is a plist with the following properties
+`:id',`:level' and `:title'.
+
+See `one-default--toc'."
+  (org-element-map data 'headline
+    (lambda (elt)
+      `(:id ,(org-element-property :one-internal-id elt)
+        :level ,(org-element-property :level elt)
+        :title ,(org-element-property :raw-value elt)))))
 
 (defun one-default--toc (headlines)
   "Generate the TOC (a `jack' component) from the list HEADLINES of headlines.
-See `jack-html', `one-list-pages' and `one-default-with-toc'."
+See `jack-html', `one-default-list-headlines' and `one-default-with-toc'."
   (let* ((-headlines (cdr headlines))
          (stack (list (car headlines)))
          headline

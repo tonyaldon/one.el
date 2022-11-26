@@ -554,6 +554,46 @@ A simple example
 
 ;;; default
 
+(ert-deftest one-default-list-headlines-test ()
+  (should
+   (equal
+    (org-test-with-temp-text "* page 1
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:CUSTOM_ID: /path/to/page-1/
+:END:
+** headline 1.1
+:PROPERTIES:
+:CUSTOM_ID: /path/to/page-1/#id-11
+:END:
+** headline 1.2
+*** headline 1.2.1
+** headline 1.3
+*** headline 1.3.1
+* page 2
+:PROPERTIES:
+:ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: render-function
+:CUSTOM_ID: /path/to/page-2/
+:END:
+** headline 2.1
+*** headline 2.1.1
+"
+      (let* ((tree (one-parse-buffer))
+             (headlines (one-default-list-headlines tree))
+             (headline-1 (car headlines))
+             (headline-2 (cadr headlines)))
+        (list (length headlines)
+              (substring-no-properties (plist-get headline-1 :id) 0 4)
+              (plist-get headline-1 :level)
+              (plist-get headline-1 :title)
+              (plist-get headline-2 :id)
+              (plist-get headline-2 :level)
+              (plist-get headline-2 :title))))
+    '(9
+      "one-" 1 "page 1"
+      "id-11" 2 "headline 1.1"))))
+
 (ert-deftest one-default--toc-test ()
   (should
    (equal
