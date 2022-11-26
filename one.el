@@ -572,7 +572,6 @@ See `one-default-new-project'.")
 (defun one-default-home (tree headlines &optional pages)
   ""
   (let ((org-export-with-sub-superscripts nil)
-        (org-export-use-babel nil)
         (title (org-element-property :raw-value tree))
         (content (org-export-data-with-backend
                   (org-element-contents tree) 'one nil)))
@@ -599,7 +598,6 @@ See `one-default-new-project'.")
 (defun one-default (tree headlines &optional pages)
   ""
   (let ((org-export-with-sub-superscripts nil)
-        (org-export-use-babel nil)
         (title (org-element-property :raw-value tree))
         (content (org-export-data-with-backend
                   (org-element-contents tree) 'one nil)))
@@ -618,7 +616,6 @@ See `one-default-new-project'.")
 (defun one-default-with-toc (tree headlines &optional pages)
   ""
   (let ((org-export-with-sub-superscripts nil)
-        (org-export-use-babel nil)
         (title (org-element-property :raw-value tree))
         (content (org-export-data-with-backend
                   (org-element-contents tree) 'one nil)))
