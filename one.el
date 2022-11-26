@@ -308,17 +308,18 @@ Each page in the list is a plist with the following properties:
 Doesn't copy files from `./assets/' to `./public/'.
 See also `one-build'."
   (interactive)
-  (dolist (page (one-list-pages))
-    (let* ((path (concat "./public" (plist-get page :one-path)))
-           (file (concat path "index.html"))
-           (render-page-with (plist-get page :one-render-page-with))
-           (tree (plist-get page :one-tree))
-           (headlines (plist-get page :one-headlines)))
-      (make-directory path t)
-      (with-temp-file file
-        (insert
-         (funcall (or render-page-with 'one-default)
-                  tree headlines))))))
+  (let ((pages (one-list-pages)))
+    (dolist (page pages)
+      (let* ((path (concat "./public" (plist-get page :one-path)))
+             (file (concat path "index.html"))
+             (render-page-with (plist-get page :one-render-page-with))
+             (tree (plist-get page :one-tree))
+             (headlines (plist-get page :one-headlines)))
+        (make-directory path t)
+        (with-temp-file file
+          (insert
+           (funcall (or render-page-with 'one-default)
+                    tree headlines pages)))))))
 
 (defun one-build ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
