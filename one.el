@@ -571,10 +571,13 @@ See `one-default-new-project'.")
 
 (defun one-default-home (tree headlines &optional pages)
   ""
-  (let ((org-export-with-sub-superscripts nil)
-        (title (org-element-property :raw-value tree))
-        (content (org-export-data-with-backend
-                  (org-element-contents tree) 'one nil)))
+  (let* ((title (org-element-property :raw-value tree))
+         (tree-without-sub/superscript
+          (org-export--remove-uninterpreted-data
+           tree '(:with-sub-superscript nil)))
+         (content (org-export-data-with-backend
+                   (org-element-contents tree-without-sub/superscript)
+                   'one nil)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -597,10 +600,13 @@ See `one-default-new-project'.")
             pages))))))))
 (defun one-default (tree headlines &optional pages)
   ""
-  (let ((org-export-with-sub-superscripts nil)
-        (title (org-element-property :raw-value tree))
-        (content (org-export-data-with-backend
-                  (org-element-contents tree) 'one nil)))
+  (let* ((title (org-element-property :raw-value tree))
+         (tree-without-sub/superscript
+          (org-export--remove-uninterpreted-data
+           tree '(:with-sub-superscript nil)))
+         (content (org-export-data-with-backend
+                   (org-element-contents tree-without-sub/superscript)
+                   'one nil)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -615,10 +621,13 @@ See `one-default-new-project'.")
 
 (defun one-default-with-toc (tree headlines &optional pages)
   ""
-  (let ((org-export-with-sub-superscripts nil)
-        (title (org-element-property :raw-value tree))
-        (content (org-export-data-with-backend
-                  (org-element-contents tree) 'one nil)))
+  (let* ((title (org-element-property :raw-value tree))
+         (tree-without-sub/superscript
+          (org-export--remove-uninterpreted-data
+           tree '(:with-sub-superscript nil)))
+         (content (org-export-data-with-backend
+                   (org-element-contents tree-without-sub/superscript)
+                   'one nil)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
