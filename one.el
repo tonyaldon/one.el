@@ -273,14 +273,10 @@ Each page in the list is a plist with the following properties:
 - `:one-render-page-with': symbol of the function to use to render
   the page.  This function takes three arguments:
   - TREE (corresponding to `:one-tree'),
-  - HEADLINES (corresponding to `:one-headlines') and
   - PAGES (corresponding to the list of all pages return by `
-    one-list-pages').  This argument is optional.
+    one-list-pages').
 - `:one-tree': tree (as produced by `org-element') containing the
-  content of the page.
-- `:one-headlines': list in order of the headlines in the tree `:one-tree'.
-  Each headline in that list is a plist with the following properties `:id',
-  `:level' and `:title'."
+  content of the page."
   (org-element-map (one-parse-buffer) 'headline
     (lambda (elt)
       (when (and (= (org-element-property :level elt) 1)
@@ -294,13 +290,7 @@ Each page in the list is a plist with the following properties:
          (when-let ((render-function
                      (org-element-property :ONE_RENDER_PAGE_WITH elt)))
            (intern render-function))
-         :one-tree elt
-         :one-headlines
-         (org-element-map elt 'headline
-           (lambda (elt)
-             `(:id ,(org-element-property :one-internal-id elt)
-               :level ,(org-element-property :level elt)
-               :title ,(org-element-property :raw-value elt)))))))))
+         :one-tree elt)))))
 
 (defun one-build-only-html ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
