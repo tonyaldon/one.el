@@ -1,6 +1,7 @@
 * Home page
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-home
 :CUSTOM_ID: /
 :END:
 
@@ -51,6 +52,7 @@ supported in the commentary section of the file ~one.el~
 * org elements not supported
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
 :CUSTOM_ID: /doc/org-elements-not-supported/
 :END:
 
@@ -68,6 +70,7 @@ Read more: [[#/why-one/][Why one?]].
 * headline
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
 :CUSTOM_ID: /doc/headline/
 :END:
 
@@ -79,6 +82,7 @@ So don't use them in headlines.
 * src-block
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
 :CUSTOM_ID: /doc/src-block/
 :END:
 ** code highlighting with 'htmlize.el'
@@ -387,6 +391,7 @@ and is rendered by ~one~ like this:
 * quote-block
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
 :CUSTOM_ID: /doc/quote-block/
 :END:
 
@@ -420,6 +425,7 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 * fixed-width and example-block
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
 :CUSTOM_ID: /doc/fixed-width-and-example-block/
 :END:
 ** description
@@ -524,6 +530,7 @@ This    is
 * links
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
 :CUSTOM_ID: /doc/links/
 :END:
 ** http, https, mailto links
@@ -835,6 +842,7 @@ we try to export the link with ~one~) an error like the following:
 * plain-list and item
 :PROPERTIES:
 :ONE_IS_PAGE: t
+:ONE_RENDER_PAGE_WITH: one-default-with-toc
 :CUSTOM_ID: /doc/plain-list-and-item/
 :END:
 
