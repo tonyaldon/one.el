@@ -318,7 +318,7 @@ See also `one-build'."
         (with-temp-file file
           (insert
            (funcall (or render-page-with 'one-default)
-                    tree 'headlines pages)))))))
+                    tree pages)))))))
 
 (defun one-build ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
@@ -568,7 +568,7 @@ See `one-default-new-project'.")
   (with-temp-file "one.org" (insert one-default-org-content))
   (find-file "one.org"))
 
-(defun one-default-home (tree headlines &optional pages)
+(defun one-default-home (tree pages)
   ""
   (let* ((title (org-element-property :raw-value tree))
          (tree-without-sub/superscript
@@ -597,7 +597,7 @@ See `one-default-new-project'.")
                 (when (not (string= href "/"))
                   `(:li (:a (@ :href ,href) ,title)))))
             pages))))))))
-(defun one-default (tree headlines &optional pages)
+(defun one-default (tree pages)
   ""
   (let* ((title (org-element-property :raw-value tree))
          (tree-without-sub/superscript
@@ -618,7 +618,7 @@ See `one-default-new-project'.")
          (:div (@ :style "text-align: center;") ,(upcase title))
          ,content))))))
 
-(defun one-default-with-toc (tree headlines &optional pages)
+(defun one-default-with-toc (tree pages)
   ""
   (let* ((title (org-element-property :raw-value tree))
          (tree-without-sub/superscript
