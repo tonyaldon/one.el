@@ -492,10 +492,6 @@ See `one-default-new-project' and `one-default-add-css-file'.")
 
 This text is inserted before we list the pages in our web site.
 
-- [[#/blog/page-1/]]
-- [[#/blog/page-2/]]
-- [[#/blog/page-3/]]
-
 * Page 1
 :PROPERTIES:
 :ONE_IS_PAGE: t
@@ -590,8 +586,16 @@ See `one-default-new-project'.")
        (:div.container
         (:body
          (:div (@ :style "text-align: center;") ,(upcase title))
-         ,content))))))
-
+         ,content
+         (:ul
+          ,(mapcar
+            (lambda (page)
+              (let ((href (plist-get page :one-path))
+                    (title (org-element-property
+                            :raw-value (plist-get page :one-tree))))
+                (when (not (string= href "/"))
+                  `(:li (:a (@ :href ,href) ,title)))))
+            pages))))))))
 (defun one-default (tree headlines &optional pages)
   ""
   (let ((org-export-with-sub-superscripts nil)
