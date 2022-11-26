@@ -313,13 +313,12 @@ See also `one-build'."
       (let* ((path (concat "./public" (plist-get page :one-path)))
              (file (concat path "index.html"))
              (render-page-with (plist-get page :one-render-page-with))
-             (tree (plist-get page :one-tree))
-             (headlines (plist-get page :one-headlines)))
+             (tree (plist-get page :one-tree)))
         (make-directory path t)
         (with-temp-file file
           (insert
            (funcall (or render-page-with 'one-default)
-                    tree headlines pages)))))))
+                    tree 'headlines pages)))))))
 
 (defun one-build ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
