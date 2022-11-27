@@ -539,7 +539,6 @@ A simple example
    (equal
     (org-test-with-temp-text "* page 1
 :PROPERTIES:
-:ONE_IS_PAGE: t
 :CUSTOM_ID: /path/to/page-1/
 :END:
 ** headline 1.1
@@ -552,8 +551,6 @@ A simple example
 *** headline 1.3.1
 * page 2
 :PROPERTIES:
-:ONE_IS_PAGE: t
-:ONE_RENDER_PAGE_WITH: render-function
 :CUSTOM_ID: /path/to/page-2/
 :END:
 ** headline 2.1
