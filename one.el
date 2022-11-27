@@ -148,12 +148,6 @@
 
 ;;;; blocks
 
-(defun one-ox-is-results-p (element)
-  "Return non-nil if ELEMENT is a result block.
-
-That means a block after the line `#+RESULTS:'."
-  (org-element-property :results element))
-
 (defun one-ox-fontify-code (code lang)
   "Color CODE with htmlize library.
 CODE is a string representing the source code to colorize.  LANG
@@ -208,21 +202,21 @@ If nil, the CSS class is `one-hl one-hl-block'."
   "Return SRC-BLOCK element htmlized using `htmlize.el'."
   (let* ((code (car (org-export-unravel-code src-block)))
          (lang (org-element-property :language src-block))
-         (is-results-p (one-ox-is-results-p src-block)))
+         (is-results-p (org-element-property :results src-block)))
     (one-ox-htmlize code lang is-results-p)))
 
 (defun one-ox-example-block (example-block _contents _info)
   "Return EXAMPLE-BLOCK element htmlized using `htmlize.el'."
   (let* ((code (car (org-export-unravel-code example-block)))
          (lang "text")
-         (is-results-p (one-ox-is-results-p example-block)))
+         (is-results-p (org-element-property :results example-block)))
     (one-ox-htmlize code lang is-results-p)))
 
 (defun one-ox-fixed-width (fixed-width _contents _info)
   "Return FIXED-WIDTH element htmlized using `htmlize.el'."
   (let* ((code (car (org-export-unravel-code fixed-width)))
          (lang "text")
-         (is-results-p (one-ox-is-results-p fixed-width)))
+         (is-results-p (org-element-property :results fixed-width)))
     (one-ox-htmlize code lang is-results-p)))
 
 (defun one-ox-quote-block (_quote-block contents _info)

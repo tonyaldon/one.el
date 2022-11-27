@@ -185,31 +185,6 @@ variable, and communication channel under `info'."
 ;;;; blocks
 
 (ert-deftest one-ox-blocks-test ()
-  ;; `one-ox-is-results-p'
-  (let ((src-block (org-test-with-temp-text "
-#+BEGIN_SRC bash
-echo \"Hello world!\"
-#+END_SRC<point>"
-                     (org-element-context)))
-        (example-block (org-test-with-temp-text "
-#+BEGIN_EXAMPLE
-A simple example
-#+END_EXAMPLE<point>"
-                         (org-element-context)))
-        (fixed-width (org-test-with-temp-text "
-: I'm a multiline fixed width
-: yes I am!<point>"
-                       (org-element-context)))
-        (fixed-width-results-1 (org-test-with-temp-text "
-#+RESULTS:
-: I'm a multiline fixed width
-: yes I am!<point>"
-                                 (org-element-context))))
-    (should-not (one-ox-is-results-p src-block))
-    (should-not (one-ox-is-results-p example-block))
-    (should-not (one-ox-is-results-p fixed-width))
-    (should (one-ox-is-results-p fixed-width-results-1)))
-
   ;; `one-ox-htmlize'
   ;; note that in `sh-mode', `echo' word has the face `font-lock-builtin-face',
   ;; and strings have the faces `font-lock-string-face'.
