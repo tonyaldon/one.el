@@ -269,6 +269,21 @@ we add the property `:one-internal-id' to each headline."
          elt :one-internal-id (one-internal-id elt))))
     tree))
 
+(defun one-is-page (headline)
+  "Return nil if HEADLINE element is not a `one' page.
+
+If HEADLINE is a page, return a plist with the properties:
+
+- `:one-path': the path of the page as a string,
+- `:one-render-page-with': the function to render the page as a symbol,
+- `:one-tree': the argument HEADLINE passed to `one-is-page'."
+  (when (= (org-element-property :level headline) 1)
+    (when-let ((path (org-element-property :CUSTOM_ID headline))
+               (render-page-with (org-element-property :ONE headline)))
+      `(:one-path ,path
+        :one-render-page-with ,(intern render-page-with)
+        :one-page-tree ,headline))))
+
 (defun one-list-pages ()
   "Return a list of the pages in current buffer.
 

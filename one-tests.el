@@ -468,6 +468,43 @@ A simple example
 ** headline 2"
                         (one-internal-id (funcall get-headline "headline 2" tree)))))))
 
+(ert-deftest one-is-page-test ()
+  (should
+   (let (headline)
+     (equal
+      (org-test-with-temp-text "* page 1
+:PROPERTIES:
+:ONE: render-function
+:CUSTOM_ID: /path/to/page-1/
+:END:"
+        (setq headline (org-element-context))
+        (one-is-page headline))
+      `(:one-path "/path/to/page-1/"
+        :one-render-page-with render-function
+        :one-page-tree ,headline))))
+  (should-not
+   (org-test-with-temp-text "** NOT A PAGE BECAUSE AT HEADLINE LEVEL > 1
+:PROPERTIES:
+:ONE: render-function
+:CUSTOM_ID: /path/to/page-1/
+:END:"
+     (let* ((headline (org-element-context)))
+       (one-is-page headline))))
+  (should-not
+   (org-test-with-temp-text "* NO PROPERTY ONE
+:PROPERTIES:
+:CUSTOM_ID: /path/to/page-1/
+:END:"
+     (let* ((headline (org-element-context)))
+       (one-is-page headline))))
+  (should-not
+   (org-test-with-temp-text "* NO PROPERTY CUSTOM_ID
+:PROPERTIES:
+:ONE: render-function
+:END:"
+     (let* ((headline (org-element-context)))
+       (one-is-page headline)))))
+
 (ert-deftest one-list-pages-test ()
   ;; list pages
   (should
