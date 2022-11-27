@@ -413,6 +413,30 @@ A simple example
         (org-export-as backend))
       "<a href=\"/images/one.png\">one image</a>\n"))))
 
+(ert-deftest one-ox-link--custom-type-test ()
+  ;; link type with an export function defined with `org-link-set-parameters'
+  (org-link-set-parameters
+   "foo"
+   :export (lambda (path desc backend info)
+             (when (eq backend 'one)
+               (format "<a href=\"%s\">%s</a>"
+                       (concat "foo::::" path)
+                       desc))))
+  (let ((backend
+         (org-export-create-backend
+          :name 'one
+          :transcoders
+          '((section . (lambda (_e c _i) c))
+            (paragraph . (lambda (_e c _i) c))
+            (link . one-ox-link)))))
+    (should
+     (string=
+      (org-test-with-temp-text "[[foo:bar][My foo type link]]"
+        (org-export-as backend))
+      "<a href=\"foo::::bar\">My foo type link</a>\n")))
+  ;; remove specific link added with `org-link-set-parameters'
+  (pop org-link-parameters))
+
 ;;; pages
 
 (ert-deftest one-internal-id-test ()

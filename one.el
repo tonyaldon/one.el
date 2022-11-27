@@ -214,6 +214,10 @@ INFO is a plist holding contextual information."
   (let* ((type (org-element-property :type link))
          (path (org-element-property :path link))
          (raw-link (org-element-property :raw-link link))
+         (custom-type-link
+          (let ((export-func (org-link-get-parameter type :export)))
+            (and (functionp export-func)
+                 (funcall export-func path desc 'one info))))
          (href (cond
                 ((string= type "custom-id") path)
                 ((string= type "fuzzy")
@@ -231,9 +235,10 @@ INFO is a plist holding contextual information."
                   (let ((beg (org-element-property :begin link)))
                     (signal 'one-link-broken
                             `(,raw-link ,(format "goto-char: %s" beg))))))
-
                 (t raw-link))))
-    (format "<a href=\"%s\">%s</a>" href (or (org-string-nw-p desc) href))))
+    (or custom-type-link
+        (format "<a href=\"%s\">%s</a>"
+                href (or (org-string-nw-p desc) href)))))
 
 ;;; Commands to build `one' web sites
 
