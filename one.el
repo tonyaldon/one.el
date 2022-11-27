@@ -38,6 +38,7 @@
 
 (require 'jack)
 (require 'ox)
+(require 'htmlize)
 
 ;;; utils
 
@@ -159,17 +160,45 @@ Blocks that are \"allowed\" to be result blocks are of the type:
   (or (org-element-property :results element)
       (org-element-property :attr_one_results element)))
 
+(defun one-ox-fontify-code (code lang)
+  "Color CODE with htmlize library.
+CODE is a string representing the source code to colorize.  LANG
+is the language used for CODE, as a string, or nil."
+  (when code
+    (let* ((lang (or (assoc-default lang org-src-lang-modes) lang))
+           (lang-mode (and lang (intern (format "%s-mode" lang)))))
+      (if (functionp lang-mode)
+          (let* ((code
+                  (let ((inhibit-read-only t))
+                    (with-temp-buffer
+                      (funcall lang-mode)
+                      (insert code)
+                      (org-font-lock-ensure)
+                      (org-src-mode)
+                      (set-buffer-modified-p nil)
+                      (let* ((htmlize-output-type 'css)
+                             (htmlize-css-name-prefix "one-hl-")
+                             (htmlbuf (htmlize-buffer)))
+                        (unwind-protect
+	                          (with-current-buffer htmlbuf
+	                            (buffer-substring
+                               (plist-get htmlize-buffer-places 'content-start)
+			                         (plist-get htmlize-buffer-places 'content-end)))
+                          (kill-buffer htmlbuf)))))))
+            ;; Strip any enclosing <pre></pre> tags.
+            (if-let ((beg (and (string-match "\\`<pre[^>]*>\n?" code) (match-end 0)))
+                     (end (string-match "</pre>\\'" code)))
+                (substring code beg end)
+              code))
+        (one-escape code)))))
+
 (defun one-ox-htmlize (code lang &optional is-results-p)
   "Return CODE string htmlized using `htmlize.el' in language LANG.
 
 If `is-results-p' is non-nil, CSS class of tag <code> in the returned
 string is \"one-hl one-hl-results\".
-If nil, the CSS class is `one-hl one-hl-block'.
-
-Use `org-html-fontify-code'."
-  (let* ((org-html-htmlize-font-prefix "one-hl-")
-         (org-html-htmlize-output-type 'css)
-         (class (if is-results-p
+If nil, the CSS class is `one-hl one-hl-block'."
+  (let* ((class (if is-results-p
                     "one-hl one-hl-results"
                   "one-hl one-hl-block")))
     (format "<pre><code class=\"%s\">%s</code></pre>"
@@ -177,7 +206,9 @@ Use `org-html-fontify-code'."
             (replace-regexp-in-string
              "<span class=\"one-hl-default\">\\([^<]*\\)</span>"
              "\\1"
-             (org-html-fontify-code code lang)))))
+             (if (null lang)
+                 (one-escape (or code "")) ; example blocks
+               (one-ox-fontify-code code lang))))))
 
 (defun one-ox-src-block (src-block _contents _info)
   "Return SRC-BLOCK element htmlized using `htmlize.el'."
