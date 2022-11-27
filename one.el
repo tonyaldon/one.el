@@ -287,30 +287,9 @@ If HEADLINE is a page, return a plist with the properties:
 (defun one-list-pages ()
   "Return a list of the pages in current buffer.
 
-Each page in the list is a plist with the following properties:
-
-- `:one-path': ...
-- `:one-render-page-with': symbol of the function to use to render
-  the page.  This function takes three arguments:
-  - TREE (corresponding to `:one-tree'),
-  - PAGES (corresponding to the list of all pages return by `
-    one-list-pages').
-- `:one-tree': tree (as produced by `org-element') containing the
-  content of the page."
+See `one-is-page'."
   (org-element-map (one-parse-buffer) 'headline
-    (lambda (elt)
-      (when (and (= (org-element-property :level elt) 1)
-                 (string= (org-element-property :ONE_IS_PAGE elt) "t"))
-        (list
-         :one-path
-         (or (org-element-property :CUSTOM_ID elt)
-             (let ((beg (org-element-property :begin elt)))
-               (signal 'one-path (list (format "goto-char: %s" beg)))))
-         :one-render-page-with
-         (when-let ((render-function
-                     (org-element-property :ONE_RENDER_PAGE_WITH elt)))
-           (intern render-function))
-         :one-tree elt)))))
+    (lambda (headline) (one-is-page headline))))
 
 (defun one-build-only-html ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
@@ -323,12 +302,10 @@ See also `one-build'."
       (let* ((path (concat "./public" (plist-get page :one-path)))
              (file (concat path "index.html"))
              (render-page-with (plist-get page :one-render-page-with))
-             (tree (plist-get page :one-tree)))
+             (page-tree (plist-get page :one-page-tree)))
         (make-directory path t)
         (with-temp-file file
-          (insert
-           (funcall (or render-page-with 'one-default)
-                    tree pages)))))))
+          (insert (funcall render-page-with page-tree pages)))))))
 
 (defun one-build ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
@@ -494,8 +471,7 @@ See `one-default-new-project' and `one-default-add-css-file'.")
 (defvar one-default-org-content
   "* Home
 :PROPERTIES:
-:ONE_IS_PAGE: t
-:ONE_RENDER_PAGE_WITH: one-default-home
+:ONE: one-default-home
 :CUSTOM_ID: /
 :END:
 
@@ -503,23 +479,12 @@ This text is inserted before we list the pages in our web site.
 
 * Page 1
 :PROPERTIES:
-:ONE_IS_PAGE: t
+:ONE: one-default
 :CUSTOM_ID: /blog/page-1/
 :END:
 
-When we don't specify a function to render a page with the org
-property ~ONE_RENDER_PAGE_WITH~, the function ~one-default~ is used
-by default.
-
-* Page 2
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:ONE_RENDER_PAGE_WITH: one-default
-:CUSTOM_ID: /blog/page-2/
-:END:
-
 This page is rendered with the function ~one-default~ specified in the
-org property ~ONE_RENDER_PAGE_WITH~.
+org property ~ONE~.
 
 ** headline 1
 *** headline 1.1
@@ -534,17 +499,16 @@ bar
 
 As you can see, ~one-default~ doesn't add the table of content (TOC).
 If you want a default function that adds the TOC to the page you can
-use the function ~one-default-with-toc~ (see [[#/blog/page-3/]])
+use the function ~one-default-with-toc~ (see [[#/blog/page-2/]])
 
-* Page 3
+* Page 2
 :PROPERTIES:
-:ONE_IS_PAGE: t
-:ONE_RENDER_PAGE_WITH: one-default-with-toc
-:CUSTOM_ID: /blog/page-3/
+:ONE: one-default-with-toc
+:CUSTOM_ID: /blog/page-2/
 :END:
 
 This page is rendered with the function ~one-default-with-toc~ specified
-in the org property ~ONE_RENDER_PAGE_WITH~.
+in the org property ~ONE~.
 
 ** headline 1
 *** headline 1.1
@@ -559,7 +523,7 @@ bar
 
 As you can see, ~one-default~ doesn't add the table of content (TOC).
 If you don't want the table of content (TOC) to be added, you can use
-the function ~one-default~ (see [[#/blog/page-2/]])
+the function ~one-default~ (see [[#/blog/page-1/]])
 "
   "Default org file to start a new `one' project.
 
@@ -578,12 +542,12 @@ See `one-default-new-project'.")
   (with-temp-file "one.org" (insert one-default-org-content))
   (find-file "one.org"))
 
-(defun one-default-home (tree pages)
+(defun one-default-home (page-tree pages)
   ""
-  (let* ((title (org-element-property :raw-value tree))
+  (let* ((title (org-element-property :raw-value page-tree))
          (tree-without-sub/superscript
           (org-export--remove-uninterpreted-data
-           tree '(:with-sub-superscript nil)))
+           page-tree '(:with-sub-superscript nil)))
          (content (org-export-data-with-backend
                    (org-element-contents tree-without-sub/superscript)
                    'one nil)))
@@ -603,16 +567,18 @@ See `one-default-new-project'.")
             (lambda (page)
               (let ((href (plist-get page :one-path))
                     (title (org-element-property
-                            :raw-value (plist-get page :one-tree))))
+                            :raw-value (plist-get page :one-page-tree))))
                 (when (not (string= href "/"))
                   `(:li (:a (@ :href ,href) ,title)))))
             pages))))))))
-(defun one-default (tree pages)
+
+                                                          (one-build-only-html))))
+(defun one-default (page-tree pages)
   ""
-  (let* ((title (org-element-property :raw-value tree))
+  (let* ((title (org-element-property :raw-value page-tree))
          (tree-without-sub/superscript
           (org-export--remove-uninterpreted-data
-           tree '(:with-sub-superscript nil)))
+           page-tree '(:with-sub-superscript nil)))
          (content (org-export-data-with-backend
                    (org-element-contents tree-without-sub/superscript)
                    'one nil)))
@@ -628,16 +594,16 @@ See `one-default-new-project'.")
          (:div (@ :style "text-align: center;") ,(upcase title))
          ,content))))))
 
-(defun one-default-with-toc (tree pages)
+(defun one-default-with-toc (page-tree pages)
   ""
-  (let* ((title (org-element-property :raw-value tree))
+  (let* ((title (org-element-property :raw-value page-tree))
          (tree-without-sub/superscript
           (org-export--remove-uninterpreted-data
-           tree '(:with-sub-superscript nil)))
+           page-tree '(:with-sub-superscript nil)))
          (content (org-export-data-with-backend
                    (org-element-contents tree-without-sub/superscript)
                    'one nil))
-         (-headlines (cdr (one-default-list-headlines tree))))
+         (headlines (cdr (one-default-list-headlines page-tree))))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -648,7 +614,7 @@ See `one-default-new-project'.")
        (:div.container
         (:body
          (:div (@ :style "text-align: center;") ,(upcase title))
-         ,(one-default--toc -headlines)
+         ,(one-default--toc headlines)
          ,content))))))
 
 (defun one-default-list-headlines (data)

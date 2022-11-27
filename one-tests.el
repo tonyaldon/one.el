@@ -511,20 +511,28 @@ A simple example
    (equal
     (org-test-with-temp-text "* page 1
 :PROPERTIES:
-:ONE_IS_PAGE: t
+:ONE: render-function-1
 :CUSTOM_ID: /path/to/page-1/
 :END:
 * NOT A PAGE
 * page 2
 :PROPERTIES:
-:ONE_IS_PAGE: t
-:ONE_RENDER_PAGE_WITH: render-function
+:ONE: render-function-2
 :CUSTOM_ID: /path/to/page-2/
 :END:
 * Headline level 1
-** NOT A PAGE (because at level headline level 2)
+** NOT A PAGE (because at headline level 2)
 :PROPERTIES:
-:ONE_IS_PAGE: t
+:ONE: render-function-3
+:CUSTOM_ID: /path/to/page-3/
+:END:
+* NO PROPERTY ONE
+:PROPERTIES:
+:CUSTOM_ID: /some/path/
+:END:
+* NO PROPERTY ONE
+:PROPERTIES:
+:ONE: render-function-4
 :END:"
       (let* ((pages (one-list-pages))
              (page-1 (car pages))
@@ -532,24 +540,24 @@ A simple example
         (list (length pages)
               (plist-get page-1 :one-path)
               (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-tree))
+              (car (plist-get page-1 :one-page-tree))
               (plist-get page-2 :one-path)
               (plist-get page-2 :one-render-page-with)
-              (car (plist-get page-2 :one-tree)))))
+              (car (plist-get page-2 :one-page-tree)))))
     '(2
-      "/path/to/page-1/" nil headline
-      "/path/to/page-2/" render-function headline)))
+      "/path/to/page-1/" render-function-1 headline
+      "/path/to/page-2/" render-function-2 headline)))
   ;; narrow to the first element
   (should
    (equal
     (org-test-with-temp-text "* page 1
 :PROPERTIES:
-:ONE_IS_PAGE: t
+:ONE: render-function-1
 :CUSTOM_ID: /path/to/page-1/
 :END:
 * page 2
 :PROPERTIES:
-:ONE_IS_PAGE: t
+:ONE: render-function-2
 :CUSTOM_ID: /path/to/page-2/
 :END:"
       (org-narrow-to-element)
@@ -558,16 +566,8 @@ A simple example
         (list (length pages)
               (plist-get page-1 :one-path)
               (plist-get page-1 :one-render-page-with)
-              (car (plist-get page-1 :one-tree)))))
-    '(1 "/path/to/page-1/" nil headline)))
-
-  ;; a page must have the property CUSTOM_ID defined
-  (should-error
-   (org-test-with-temp-text "* CUSTOM_ID PROPERTY IS NOT DEFINED
-:PROPERTIES:
-:ONE_IS_PAGE: t
-:END:"
-     (one-list-pages))))
+              (car (plist-get page-1 :one-page-tree)))))
+    '(1 "/path/to/page-1/" render-function-1 headline))))
 
 ;;; default
 
