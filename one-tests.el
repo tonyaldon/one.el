@@ -191,29 +191,11 @@ variable, and communication channel under `info'."
 echo \"Hello world!\"
 #+END_SRC<point>"
                      (org-element-context)))
-        (src-block-results (org-test-with-temp-text "
-#+ATTR_ONE_RESULTS:
-#+BEGIN_SRC bash
-echo \"Hello world!\"
-#+END_SRC<point>"
-                             (org-element-context)))
         (example-block (org-test-with-temp-text "
 #+BEGIN_EXAMPLE
 A simple example
 #+END_EXAMPLE<point>"
                          (org-element-context)))
-        (example-block-results-1 (org-test-with-temp-text "
-#+RESULTS:
-#+BEGIN_EXAMPLE
-A simple example
-#+END_EXAMPLE<point>"
-                                   (org-element-context)))
-        (example-block-results-2 (org-test-with-temp-text "
-#+ATTR_ONE_RESULTS:
-#+BEGIN_EXAMPLE
-A simple example
-#+END_EXAMPLE<point>"
-                                   (org-element-context)))
         (fixed-width (org-test-with-temp-text "
 : I'm a multiline fixed width
 : yes I am!<point>"
@@ -222,20 +204,11 @@ A simple example
 #+RESULTS:
 : I'm a multiline fixed width
 : yes I am!<point>"
-                                 (org-element-context)))
-        (fixed-width-results-2 (org-test-with-temp-text "
-#+ATTR_ONE_RESULTS:
-: I'm a multiline fixed width
-: yes I am!<point>"
                                  (org-element-context))))
     (should-not (one-ox-is-results-p src-block))
-    (should (one-ox-is-results-p src-block-results))
     (should-not (one-ox-is-results-p example-block))
-    (should (one-ox-is-results-p example-block-results-1))
-    (should (one-ox-is-results-p example-block-results-2))
     (should-not (one-ox-is-results-p fixed-width))
-    (should (one-ox-is-results-p fixed-width-results-1))
-    (should (one-ox-is-results-p fixed-width-results-2)))
+    (should (one-ox-is-results-p fixed-width-results-1)))
 
   ;; `one-ox-htmlize'
   ;; note that in `sh-mode', `echo' word has the face `font-lock-builtin-face',
@@ -258,20 +231,9 @@ A simple example
 #+BEGIN_SRC bash
 echo \"Hello world!\"
 #+END_SRC<point>"
-                     (org-element-context)))
-        (src-block-results (org-test-with-temp-text "
-#+ATTR_ONE_RESULTS:
-#+BEGIN_SRC bash
-echo \"Hello world!\"
-#+END_SRC<point>"
-                             (org-element-context))))
+                     (org-element-context))))
     (should (string= (one-ox-src-block src-block nil nil )
                      (concat "<pre><code class=\"one-hl one-hl-block\">"
-                             "<span class=\"one-hl-builtin\">echo</span> "
-                             "<span class=\"one-hl-string\">\"Hello world!\"</span>"
-                             "</code></pre>")))
-    (should (string= (one-ox-src-block src-block-results nil nil )
-                     (concat "<pre><code class=\"one-hl one-hl-results\">"
                              "<span class=\"one-hl-builtin\">echo</span> "
                              "<span class=\"one-hl-string\">\"Hello world!\"</span>"
                              "</code></pre>"))))
@@ -287,22 +249,12 @@ A simple example
 #+BEGIN_EXAMPLE
 A simple example
 #+END_EXAMPLE<point>"
-                                   (org-element-context)))
-        (example-block-results-2 (org-test-with-temp-text "
-#+ATTR_ONE_RESULTS:
-#+BEGIN_EXAMPLE
-A simple example
-#+END_EXAMPLE<point>"
                                    (org-element-context))))
     (should (string= (one-ox-example-block example-block nil nil)
                      (concat "<pre><code class=\"one-hl one-hl-block\">"
                              "A simple example"
                              "</code></pre>")))
     (should (string= (one-ox-example-block example-block-results-1 nil nil)
-                     (concat "<pre><code class=\"one-hl one-hl-results\">"
-                             "A simple example"
-                             "</code></pre>")))
-    (should (string= (one-ox-example-block example-block-results-2 nil nil)
                      (concat "<pre><code class=\"one-hl one-hl-results\">"
                              "A simple example"
                              "</code></pre>"))))
@@ -315,21 +267,12 @@ A simple example
 #+RESULTS:
 : I'm a multiline fixed width
 : yes I am!<point>"
-                                 (org-element-context)))
-        (fixed-width-results-2 (org-test-with-temp-text "
-#+ATTR_ONE_RESULTS:
-: I'm a multiline fixed width
-: yes I am!<point>"
                                  (org-element-context))))
     (should (string= (one-ox-fixed-width fixed-width nil nil)
                      (concat "<pre><code class=\"one-hl one-hl-block\">"
                              "I'm a multiline fixed width\nyes I am!"
                              "</code></pre>")))
     (should (string= (one-ox-fixed-width fixed-width-results-1 nil nil)
-                     (concat "<pre><code class=\"one-hl one-hl-results\">"
-                             "I'm a multiline fixed width\nyes I am!"
-                             "</code></pre>")))
-    (should (string= (one-ox-fixed-width fixed-width-results-2 nil nil)
                      (concat "<pre><code class=\"one-hl one-hl-results\">"
                              "I'm a multiline fixed width\nyes I am!"
                              "</code></pre>"))))

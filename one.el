@@ -149,16 +149,10 @@
 ;;;; blocks
 
 (defun one-ox-is-results-p (element)
-  "Return t if ELEMENT is considered to be a result block.
-In `org-mode', the following \"allowed\" blocks are result blocks:
-  - block after the line `#+RESULTS:',
-  - block after the line `#+ATTR_ONE_RESULTS:'.
-Blocks that are \"allowed\" to be result blocks are of the type:
-  - `src-block',
-  - `fixed-width',
-  - `example-block'."
-  (or (org-element-property :results element)
-      (org-element-property :attr_one_results element)))
+  "Return non-nil if ELEMENT is a result block.
+
+That means a block after the line `#+RESULTS:'."
+  (org-element-property :results element))
 
 (defun one-ox-fontify-code (code lang)
   "Color CODE with htmlize library.
