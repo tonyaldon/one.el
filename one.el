@@ -342,11 +342,11 @@ Elements in that list are plist with the following properties:
   in the `global' argument passed to the render functions.
 - `:one-global-function': a function that takes two arguments `pages'
   (list of pages, see `one-list-pages') and `tree'
-  (see `one-parse-buffer').  That function is called once and its
-  result is used as the value of the property `:one-global-property'
-  in the `global' argument passed to the render functions.
+  (see `one-parse-buffer').  That function is called once in
+  `one-build-only-html' and its result is used as the value of
+  the property `:one-global-property' in the `global' argument
+  passed to the render functions.")
 
-See `one-build-only-html'.")
 
 (defun one-build-only-html ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
