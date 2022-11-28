@@ -590,7 +590,6 @@ See `one-default-new-project'.")
                   `(:li (:a (@ :href ,href) ,title)))))
             pages))))))))
 
-                                                          (one-build-only-html))))
 (defun one-default (page-tree pages)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
