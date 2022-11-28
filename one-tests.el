@@ -452,7 +452,7 @@ A simple example
 :PROPERTIES:
 :ONE: render-function-4
 :END:"
-      (let* ((pages (one-list-pages))
+      (let* ((pages (one-list-pages (one-parse-buffer)))
              (page-1 (car pages))
              (page-2 (cadr pages)))
         (list (length pages)
@@ -479,7 +479,7 @@ A simple example
 :CUSTOM_ID: /path/to/page-2/
 :END:"
       (org-narrow-to-element)
-      (let* ((pages (one-list-pages))
+      (let* ((pages (one-list-pages (one-parse-buffer)))
              (page-1 (car pages)))
         (list (length pages)
               (plist-get page-1 :one-path)

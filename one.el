@@ -302,11 +302,13 @@ If HEADLINE is a page, return a plist with the properties:
         :one-render-page-with ,(intern render-page-with)
         :one-page-tree ,headline))))
 
-(defun one-list-pages ()
-  "Return a list of the pages in current buffer.
+(defun one-list-pages (tree)
+  "Return the list of the pages in TREE.
 
-See `one-is-page'."
-  (org-element-map (one-parse-buffer) 'headline
+TREE is a parsed org buffer as returned by `one-parse-buffer'.
+The function `one-is-page' determines which headlines in TREE
+are pages."
+  (org-element-map tree 'headline
     (lambda (headline) (one-is-page headline))))
 
 (defun one-build-only-html ()
@@ -315,7 +317,8 @@ See `one-is-page'."
 Doesn't copy files from `./assets/' to `./public/'.
 See also `one-build'."
   (interactive)
-  (let ((pages (one-list-pages)))
+  (let* ((tree (one-parse-buffer))
+         (pages (one-list-pages tree)))
     (dolist (page pages)
       (let* ((path (concat "./public" (plist-get page :one-path)))
              (file (concat path "index.html"))
