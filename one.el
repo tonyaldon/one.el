@@ -275,7 +275,7 @@ or generated a randomly."
         (format "one-%x" (random #x10000000000)))))
 
 (defun one-parse-buffer ()
-  "Parse current org buffer.
+  "Parse current org buffer and return structure.
 
 The only difference with `org-element-parse-buffer' is that
 we add the property `:one-internal-id' to each headline."
