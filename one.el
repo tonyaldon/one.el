@@ -93,10 +93,9 @@
   ;; So don't use them in headlines.
   (let* ((level (org-element-property :level headline))
          (title (org-element-property :raw-value headline))
-         ;; the property `:one-internal-id' is set by `one'
-         ;; mechanism, spefically the the function `one-list-pages'.
-         ;; This allow to produce unified ids that can be
-         ;; use to build a TOC for each page.
+         ;; the property `:one-internal-id' is set by
+         ;; `one-parse-buffer' This allow to produce unified
+         ;; ids that can be use to build a TOC for each page.
          (id (org-element-property :one-internal-id headline))
          (ct (if (null contents) "" contents)))
     (format "<div><h%s id=\"%s\">%s</h%s>%s</div>" level id title level ct)))
