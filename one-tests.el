@@ -487,6 +487,97 @@ A simple example
               (car (plist-get page-1 :one-page-tree)))))
     '(1 "/path/to/page-1/" render-function-1 headline))))
 
+(ert-deftest one-build-only-html-test ()
+  ;; test variable `one-add-to-global'
+  (flet ((render-function-1 (page-tree pages global)
+                            (org-element-property :raw-value
+                              (nth 2 (plist-get global :one-tree))))
+         (render-function-2 (page-tree pages global)
+                            (plist-get global :foo))
+         (render-function-3 (page-tree pages global)
+                            (plist-get global :bar))
+         (global-function (pages tree) "I'm BAR")
+         ;; create page ./public/tag1/index.html and ./public/tag2/index.html
+         (tag-hook (pages tree global)
+                   (let ((tag-table (make-hash-table :test 'equal)))
+                     (dolist (page pages)
+                       (let ((path (plist-get page :one-path))
+                             (tags (org-element-property
+                                    :tags
+                                    (plist-get page :one-page-tree))))
+                         (dolist (tag tags)
+                           (puthash (substring-no-properties tag)
+                                    (push path (gethash tag tag-table)) tag-table))))
+                     (maphash
+                      (lambda (tag page-paths)
+                        (let* ((path (concat "./public/" tag "/"))
+                               (file (concat path "index.html")))
+                          (make-directory path t)
+                          (with-temp-file file
+                            (insert (mapconcat #'identity (sort page-paths 'string<) "\n")))))
+                      tag-table))))
+    (let* ((temp-dir (file-name-as-directory
+                      (expand-file-name
+                       (make-temp-file "one-" 'dir))))
+           (default-directory temp-dir)
+           (one-add-to-global
+            '((:one-global-property :one-tree
+               :one-global-function (lambda (pages tree) tree))
+              (:one-global-property :foo
+               :one-global-function (lambda (pages tree)
+                                      (org-element-map tree 'headline
+                                        (lambda (elt) (org-element-property :FOO elt))
+                                        nil t)))
+              (:one-global-property :bar
+               :one-global-function global-function)))
+           (one-hook '(tag-hook)))
+      (org-test-with-temp-text "* Some global information
+:PROPERTIES:
+:FOO: FOO
+:END:
+* Page 1                  :tag1:
+:PROPERTIES:
+:ONE: render-function-1
+:CUSTOM_ID: /page-1/
+:END:
+* Page 2                  :tag2:
+:PROPERTIES:
+:ONE: render-function-2
+:CUSTOM_ID: /page-2/
+:END:
+* Page 3                  :tag1:tag2:
+:PROPERTIES:
+:ONE: render-function-3
+:CUSTOM_ID: /page-3/
+:END:"
+        (one-build-only-html))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/page-1/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "Some global information"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/page-2/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "FOO"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/page-3/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "I'm BAR"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/tag1/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "/page-1/\n/page-3/"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/tag2/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "/page-2/\n/page-3/"))
+      (delete-directory temp-dir t))))
+
 ;;; default
 
 (ert-deftest one-default-list-headlines-test ()
