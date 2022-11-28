@@ -347,6 +347,17 @@ Elements in that list are plist with the following properties:
   the property `:one-global-property' in the `global' argument
   passed to the render functions.")
 
+(defvar one-hook nil
+  "List of functions called once in `one-build-only-html'.
+
+Those functions take three arguments:
+
+- `pages': list of pages, see `one-list-pages',
+- `tree': see `one-parse-buffer',
+- `global': see `one-add-to-global'.
+
+As those functions take `global' argument they are called after
+that argument has been let binded using `one-add-to-global'.")
 
 (defun one-build-only-html ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
@@ -363,6 +374,7 @@ See also `one-build'."
                     global)
               (push (plist-get glob :one-global-property) global))
             global)))
+    (dolist (hook one-hook) (funcall hook pages tree global))
     (dolist (page pages)
       (let* ((path (concat "./public" (plist-get page :one-path)))
              (file (concat path "index.html"))
@@ -381,7 +393,26 @@ See also `one-build'."
                             (plist-get global :foo))
          (render-function-3 (page-tree pages global)
                             (plist-get global :bar))
-         (global-function (pages tree) "I'm BAR"))
+         (global-function (pages tree) "I'm BAR")
+         ;; create page ./public/tag1/index.html and ./public/tag2/index.html
+         (tag-hook (pages tree global)
+                   (let ((tag-table (make-hash-table :test 'equal)))
+                     (dolist (page pages)
+                       (let ((path (plist-get page :one-path))
+                             (tags (org-element-property
+                                    :tags
+                                    (plist-get page :one-page-tree))))
+                         (dolist (tag tags)
+                           (puthash (substring-no-properties tag)
+                                    (push path (gethash tag tag-table)) tag-table))))
+                     (maphash
+                      (lambda (tag page-paths)
+                        (let* ((path (concat "./public/" tag "/"))
+                               (file (concat path "index.html")))
+                          (make-directory path t)
+                          (with-temp-file file
+                            (insert (mapconcat #'identity (sort page-paths 'string<) "\n")))))
+                      tag-table))))
     (let* ((temp-dir (file-name-as-directory
                       (expand-file-name
                        (make-temp-file "one-" 'dir))))
@@ -395,22 +426,23 @@ See also `one-build'."
                                         (lambda (elt) (org-element-property :FOO elt))
                                         nil t)))
               (:one-global-property :bar
-               :one-global-function global-function))))
+               :one-global-function global-function)))
+           (one-hook '(tag-hook)))
       (org-test-with-temp-text "* Some global information
 :PROPERTIES:
 :FOO: FOO
 :END:
-* Page 1
+* Page 1                  :tag1:
 :PROPERTIES:
 :ONE: render-function-1
 :CUSTOM_ID: /page-1/
 :END:
-* Page 2
+* Page 2                  :tag2:
 :PROPERTIES:
 :ONE: render-function-2
 :CUSTOM_ID: /page-2/
 :END:
-* Page 3
+* Page 3                  :tag1:tag2:
 :PROPERTIES:
 :ONE: render-function-3
 :CUSTOM_ID: /page-3/
@@ -431,6 +463,16 @@ See also `one-build'."
         (with-current-buffer (find-file-noselect "public/page-3/index.html")
           (buffer-substring-no-properties (point-min) (point-max)))
         "I'm BAR"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/tag1/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "/page-1/\n/page-3/"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/tag2/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "/page-2/\n/page-3/"))
       (delete-directory temp-dir t))))
 
 (defun one-build ()
