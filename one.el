@@ -331,6 +331,23 @@ are pages."
   (org-element-map tree 'headline
     (lambda (headline) (one-is-page headline))))
 
+(defvar one-add-to-global
+  '((:one-global-property :one-tree
+     :one-global-function (lambda (pages tree) tree)))
+  "List used to set the `global' argument passed to render functions.
+
+Elements in that list are plist with the following properties:
+
+- `:one-global-property': a keyword that is used as proprety
+  in the `global' argument passed to the render functions.
+- `:one-global-function': a function that takes two arguments `pages'
+  (list of pages, see `one-list-pages') and `tree'
+  (see `one-parse-buffer').  That function is called once and its
+  result is used as the value of the property `:one-global-property'
+  in the `global' argument passed to the render functions.
+
+See `one-build-only-html'.")
+
 (defun one-build-only-html ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
 
@@ -339,7 +356,13 @@ See also `one-build'."
   (interactive)
   (let* ((tree (one-parse-buffer))
          (pages (one-list-pages tree))
-         (global `(:one-tree ,tree)))
+         (global
+          (let (global)
+            (dolist (glob one-add-to-global)
+              (push (funcall (plist-get glob :one-global-function) pages tree)
+                    global)
+              (push (plist-get glob :one-global-property) global))
+            global)))
     (dolist (page pages)
       (let* ((path (concat "./public" (plist-get page :one-path)))
              (file (concat path "index.html"))
@@ -348,6 +371,67 @@ See also `one-build'."
         (make-directory path t)
         (with-temp-file file
           (insert (funcall render-page-with page-tree pages global)))))))
+
+(ert-deftest one-build-only-html-test ()
+  ;; test variable `one-add-to-global'
+  (flet ((render-function-1 (page-tree pages global)
+                            (org-element-property :raw-value
+                              (nth 2 (plist-get global :one-tree))))
+         (render-function-2 (page-tree pages global)
+                            (plist-get global :foo))
+         (render-function-3 (page-tree pages global)
+                            (plist-get global :bar))
+         (global-function (pages tree) "I'm BAR"))
+    (let* ((temp-dir (file-name-as-directory
+                      (expand-file-name
+                       (make-temp-file "one-" 'dir))))
+           (default-directory temp-dir)
+           (one-add-to-global
+            '((:one-global-property :one-tree
+               :one-global-function (lambda (pages tree) tree))
+              (:one-global-property :foo
+               :one-global-function (lambda (pages tree)
+                                      (org-element-map tree 'headline
+                                        (lambda (elt) (org-element-property :FOO elt))
+                                        nil t)))
+              (:one-global-property :bar
+               :one-global-function global-function))))
+      (org-test-with-temp-text "* Some global information
+:PROPERTIES:
+:FOO: FOO
+:END:
+* Page 1
+:PROPERTIES:
+:ONE: render-function-1
+:CUSTOM_ID: /page-1/
+:END:
+* Page 2
+:PROPERTIES:
+:ONE: render-function-2
+:CUSTOM_ID: /page-2/
+:END:
+* Page 3
+:PROPERTIES:
+:ONE: render-function-3
+:CUSTOM_ID: /page-3/
+:END:"
+        (one-build-only-html))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/page-1/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "Some global information"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/page-2/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "FOO"))
+      (should
+       (string=
+        (with-current-buffer (find-file-noselect "public/page-3/index.html")
+          (buffer-substring-no-properties (point-min) (point-max)))
+        "I'm BAR"))
+      (delete-directory temp-dir t))))
 
 (defun one-build ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
