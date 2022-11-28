@@ -293,8 +293,28 @@ we add the property `:one-internal-id' to each headline."
 If HEADLINE is a page, return a plist with the properties:
 
 - `:one-path': the path of the page as a string,
-- `:one-render-page-with': the function to render the page as a symbol,
-- `:one-tree': the argument HEADLINE passed to `one-is-page'."
+- `:one-render-page-with': the function to render the page as
+  a symbol.  This function is declared in the org buffer for
+  each page using the org property ONE.
+
+  This function takes 3 arguments:
+
+  - `page-tree:' which correspond to the data in `:one-page-tree',
+  - `pages:' list of pages,
+  - `global:' a plist of global informations that are computed once
+    when `one' website is built (before rendering the pages), see
+    `one-build-only-html' and `one-build'.  This argument can be
+    modified by the user at build time.  That means that if your
+    render function needs extra information you can tell `one' to
+    compute those informations and to add them to `global'.
+
+  You can see how to implement render functions looking at the
+  default render functions `one-default-home', `one-default' and
+  `one-default-with-toc'.
+
+- `:one-page-tree': the argument HEADLINE passed to `one-is-page'.
+
+See `one-list-pages'."
   (when (= (org-element-property :level headline) 1)
     (when-let ((path (org-element-property :CUSTOM_ID headline))
                (render-page-with (org-element-property :ONE headline)))
@@ -318,7 +338,8 @@ Doesn't copy files from `./assets/' to `./public/'.
 See also `one-build'."
   (interactive)
   (let* ((tree (one-parse-buffer))
-         (pages (one-list-pages tree)))
+         (pages (one-list-pages tree))
+         (global `(:one-tree ,tree)))
     (dolist (page pages)
       (let* ((path (concat "./public" (plist-get page :one-path)))
              (file (concat path "index.html"))
@@ -326,7 +347,7 @@ See also `one-build'."
              (page-tree (plist-get page :one-page-tree)))
         (make-directory path t)
         (with-temp-file file
-          (insert (funcall render-page-with page-tree pages)))))))
+          (insert (funcall render-page-with page-tree pages global)))))))
 
 (defun one-build ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
@@ -563,7 +584,7 @@ See `one-default-new-project'.")
   (with-temp-file "one.org" (insert one-default-org-content))
   (find-file "one.org"))
 
-(defun one-default-home (page-tree pages)
+(defun one-default-home (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (tree-without-sub/superscript
@@ -593,7 +614,7 @@ See `one-default-new-project'.")
                   `(:li (:a (@ :href ,href) ,title)))))
             pages))))))))
 
-(defun one-default (page-tree pages)
+(defun one-default (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (tree-without-sub/superscript
@@ -614,7 +635,7 @@ See `one-default-new-project'.")
          (:div (@ :style "text-align: center;") ,(upcase title))
          ,content))))))
 
-(defun one-default-with-toc (page-tree pages)
+(defun one-default-with-toc (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (tree-without-sub/superscript
