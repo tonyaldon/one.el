@@ -635,8 +635,8 @@ See `one-default-new-project'.")
         (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1"))
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
-       (:div.container
-        (:body
+       (:body
+        (:div.container
          (:div (@ :style "text-align: center;") ,(upcase title))
          ,content
          (:ul
@@ -665,8 +665,8 @@ See `one-default-new-project'.")
         (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1"))
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
-       (:div.container
-        (:body
+       (:body
+        (:div.container
          (:div (@ :style "text-align: center;") ,(upcase title))
          ,content))))))
 
@@ -687,8 +687,8 @@ See `one-default-new-project'.")
         (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1"))
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
-       (:div.container
-        (:body
+       (:body
+        (:div.container
          (:div (@ :style "text-align: center;") ,(upcase title))
          ,(one-default--toc headlines)
          ,content))))))
