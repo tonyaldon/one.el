@@ -389,9 +389,9 @@ See also `one-build'."
 
 Also copy files in directory `./assets/' under the directory `./public/'.
 If you've already built the web site and you are just working
-on the content of the current buffer (meaning files in `./assets/'
-                                              don't change), you might prefer to use the command `one-build-only-html'
-which doesn't copy files from `./assets/' directory."
+on the content of the current buffer (meaning files in `./assets/'don't change),
+you might prefer to use the command `one-build-only-html'which doesn't copy files
+from `./assets/' directory."
   (interactive)
   (delete-directory "./public/" t)
   (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
