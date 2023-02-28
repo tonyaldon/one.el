@@ -397,6 +397,12 @@ from `./assets/' directory."
   (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
   (one-build-only-html))
 
+(defun one-build-dev ()
+  "FIXME"
+  (interactive)
+  (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
+  (one-build-only-html))
+
 ;;; A default web site
 
 (defvar one-default-css
