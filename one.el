@@ -297,20 +297,20 @@ If HEADLINE is a page, return a plist with the properties:
   a symbol.  This function is declared in the org buffer for
   each page using the org property ONE.
 
-  This function takes 3 arguments:
+This function takes 3 arguments:
 
-  - `page-tree:' which correspond to the data in `:one-page-tree',
-  - `pages:' list of pages,
-  - `global:' a plist of global informations that are computed once
-    when `one' website is built (before rendering the pages), see
-    `one-build-only-html' and `one-build'.  This argument can be
-    modified by the user at build time.  That means that if your
-    render function needs extra information you can tell `one' to
-    compute those informations and to add them to `global'.
+- `page-tree:' which correspond to the data in `:one-page-tree',
+- `pages:' list of pages,
+- `global:' a plist of global informations that are computed once
+  when `one' website is built (before rendering the pages), see
+  `one-build-only-html' and `one-build'.  This argument can be
+  modified by the user at build time.  That means that if your
+  render function needs extra information you can tell `one' to
+  compute those informations and to add them to `global'.
 
-  You can see how to implement render functions looking at the
-  default render functions `one-default-home', `one-default' and
-  `one-default-with-toc'.
+You can see how to implement render functions looking at the
+default render functions `one-default-home', `one-default' and
+`one-default-with-toc'.
 
 - `:one-page-tree': the argument HEADLINE passed to `one-is-page'.
 
