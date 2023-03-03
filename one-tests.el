@@ -399,7 +399,7 @@ A simple example
         (setq headline (org-element-context))
         (one-is-page headline))
       `(:one-path "/path/to/page-1/"
-        :one-render-page-with render-function
+        :one-render-page-function render-function
         :one-page-tree ,headline))))
   (should-not
    (org-test-with-temp-text "** NOT A PAGE BECAUSE AT HEADLINE LEVEL > 1
@@ -458,10 +458,10 @@ A simple example
              (page-2 (cadr pages)))
         (list (length pages)
               (plist-get page-1 :one-path)
-              (plist-get page-1 :one-render-page-with)
+              (plist-get page-1 :one-render-page-function)
               (car (plist-get page-1 :one-page-tree))
               (plist-get page-2 :one-path)
-              (plist-get page-2 :one-render-page-with)
+              (plist-get page-2 :one-render-page-function)
               (car (plist-get page-2 :one-page-tree)))))
     '(2
       "/path/to/page-1/" render-function-1 headline
@@ -484,7 +484,7 @@ A simple example
              (page-1 (car pages)))
         (list (length pages)
               (plist-get page-1 :one-path)
-              (plist-get page-1 :one-render-page-with)
+              (plist-get page-1 :one-render-page-function)
               (car (plist-get page-1 :one-page-tree)))))
     '(1 "/path/to/page-1/" render-function-1 headline))))
 

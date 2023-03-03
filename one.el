@@ -293,7 +293,7 @@ we add the property `:one-internal-id' to each headline."
 If HEADLINE is a page, return a plist with the properties:
 
 - `:one-path': the path of the page as a string,
-- `:one-render-page-with': the function to render the page as
+- `:one-render-page-function': the function to render the page as
   a symbol.  This function is declared in the org buffer for
   each page using the org property ONE.
 
@@ -317,9 +317,9 @@ default render functions `one-default-home', `one-default' and
 See `one-list-pages'."
   (when (= (org-element-property :level headline) 1)
     (when-let ((path (org-element-property :CUSTOM_ID headline))
-               (render-page-with (org-element-property :ONE headline)))
+               (render-page-function (org-element-property :ONE headline)))
       `(:one-path ,path
-        :one-render-page-with ,(intern render-page-with)
+        :one-render-page-function ,(intern render-page-function)
         :one-page-tree ,headline))))
 
 (defun one-list-pages (tree)
@@ -378,11 +378,11 @@ See also `one-build'."
     (dolist (page pages)
       (let* ((path (concat "./public" (plist-get page :one-path)))
              (file (concat path "index.html"))
-             (render-page-with (plist-get page :one-render-page-with))
+             (render-page-function (plist-get page :one-render-page-function))
              (page-tree (plist-get page :one-page-tree)))
         (make-directory path t)
         (with-temp-file file
-          (insert (funcall render-page-with page-tree pages global)))))))
+          (insert (funcall render-page-function page-tree pages global)))))))
 
 (defun one-build ()
   "Build `one' web site of the current buffer under subdirectory `./public/'.
