@@ -290,27 +290,30 @@ we add the property `:one-internal-id' to each headline."
 (defun one-is-page (headline)
   "Return nil if HEADLINE element is not a `one' page.
 
-If HEADLINE is a page, return a plist with the properties:
+If HEADLINE is a page, return a plist with the properties
+`:one-title', `:one-path', `:one-render-page-function' and
+`:one-page-tree' defined like this:
 
+- `:one-title': the raw value of the first headline of HEADLINE,
 - `:one-path': the path of the page as a string,
 - `:one-render-page-function': the function to render the page as
   a symbol.  This function is declared in the org buffer for
   each page using the org property ONE.
 
-This function takes 3 arguments:
+  This function takes 3 arguments:
 
-- `page-tree:' which correspond to the data in `:one-page-tree',
-- `pages:' list of pages,
-- `global:' a plist of global informations that are computed once
-  when `one' website is built (before rendering the pages), see
-  `one-build-only-html' and `one-build'.  This argument can be
-  modified by the user at build time.  That means that if your
-  render function needs extra information you can tell `one' to
-  compute those informations and to add them to `global'.
+  - `page-tree:' which correspond to the data in `:one-page-tree',
+  - `pages:' list of pages,
+  - `global:' a plist of global informations that are computed once
+    when `one' website is built (before rendering the pages), see
+    `one-build-only-html' and `one-build'.  This argument can be
+    modified by the user at build time.  That means that if your
+    render function needs extra information you can tell `one' to
+    compute those informations and to add them to `global'.
 
-You can see how to implement render functions looking at the
-default render functions `one-default-home', `one-default' and
-`one-default-with-toc'.
+  You can see how to implement render functions looking at the
+  default render functions `one-default-home', `one-default' and
+  `one-default-with-toc'.
 
 - `:one-page-tree': the argument HEADLINE passed to `one-is-page'.
 
@@ -318,7 +321,8 @@ See `one-list-pages'."
   (when (= (org-element-property :level headline) 1)
     (when-let ((path (org-element-property :CUSTOM_ID headline))
                (render-page-function (org-element-property :ONE headline)))
-      `(:one-path ,path
+      `(:one-title ,(org-element-property :raw-value headline)
+        :one-path ,path
         :one-render-page-function ,(intern render-page-function)
         :one-page-tree ,headline))))
 

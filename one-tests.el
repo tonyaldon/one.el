@@ -398,7 +398,8 @@ A simple example
 :END:"
         (setq headline (org-element-context))
         (one-is-page headline))
-      `(:one-path "/path/to/page-1/"
+      `(:one-title "page 1"
+        :one-path "/path/to/page-1/"
         :one-render-page-function render-function
         :one-page-tree ,headline))))
   (should-not
