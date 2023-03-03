@@ -1,6 +1,7 @@
 ;;; require
 
 (require 'ert)
+(require 'cl) ; flet
 
 ;;; macro from org-mode repository
 
