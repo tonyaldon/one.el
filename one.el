@@ -626,11 +626,8 @@ See `one-default-new-project'.")
 (defun one-default-home (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
-         (tree-without-sub/superscript
-          (org-export--remove-uninterpreted-data
-           page-tree '(:with-sub-superscript nil)))
          (content (org-export-data-with-backend
-                   (org-element-contents tree-without-sub/superscript)
+                   (org-element-contents page-tree)
                    'one nil)))
     (jack-html
      "<!DOCTYPE html>"
@@ -656,11 +653,8 @@ See `one-default-new-project'.")
 (defun one-default (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
-         (tree-without-sub/superscript
-          (org-export--remove-uninterpreted-data
-           page-tree '(:with-sub-superscript nil)))
          (content (org-export-data-with-backend
-                   (org-element-contents tree-without-sub/superscript)
+                   (org-element-contents page-tree)
                    'one nil)))
     (jack-html
      "<!DOCTYPE html>"
@@ -677,11 +671,8 @@ See `one-default-new-project'.")
 (defun one-default-with-toc (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
-         (tree-without-sub/superscript
-          (org-export--remove-uninterpreted-data
-           page-tree '(:with-sub-superscript nil)))
          (content (org-export-data-with-backend
-                   (org-element-contents tree-without-sub/superscript)
+                   (org-element-contents page-tree)
                    'one nil))
          (headlines (cdr (one-default-list-headlines page-tree))))
     (jack-html
