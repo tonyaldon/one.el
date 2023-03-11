@@ -85,6 +85,10 @@
 
     (link . one-ox-link)))
 
+(org-export-define-derived-backend 'one-no-sub/superscript 'one
+  :translate-alist '((subscript . one-ox-no-subscript)
+                     (superscript . one-ox-no-superscript)))
+
 ;;;; headline, section, paragraph, etc.
 
 (defun one-ox-headline (headline contents info)
@@ -144,6 +148,12 @@
 
 (defun one-ox-superscript (_superscript contents _info)
   (format "<sup>%s</sup>" contents))
+
+(defun one-ox-no-subscript (_subscript contents _info)
+  (concat "_" contents))
+
+(defun one-ox-no-superscript (_superscript contents _info)
+  (concat "^" contents))
 
 ;;;; blocks
 
