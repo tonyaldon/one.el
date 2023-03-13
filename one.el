@@ -681,9 +681,16 @@ See `one-default-new-project'.")
 (defun one-default-with-toc (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
+         (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
                    'one nil))
+         (website-name
+          (seq-some
+           (lambda (page)
+             (when (string= (plist-get page :one-path) "/")
+               (plist-get page :one-title)))
+           pages))
          (headlines (cdr (one-default-list-headlines page-tree))))
     (jack-html
      "<!DOCTYPE html>"
@@ -693,10 +700,17 @@ See `one-default-new-project'.")
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
+        (:div/header (:a (@ :href "/") ,website-name))
         (:div.container
-         (:div (@ :style "text-align: center;") ,(upcase title))
-         ,(one-default--toc headlines)
-         ,content))))))
+         (:div/page-title (:h1 ,title))
+         ,(when headlines
+            `(:div/toc
+              (:div
+               (:div "Table of content")
+               (:div ,(one-default--toc headlines)))))
+         ,content
+         ,(one-default-nav path pages)))))))
+
 (defun one-default-nav (path pages)
   "Return nav component for the default render functions."
   (let* ((pages-no-home
