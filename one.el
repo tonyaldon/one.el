@@ -650,6 +650,18 @@ See `one-default-new-project'.")
                   `(:a (@ :href ,href) (:div ,title)))))
             pages))))))))
 
+;; FIXME: add a test
+(defun one-default-website-name (pages)
+  "Return the website's name of from PAGES.
+
+This corresponds to the title of the page in PAGES
+whose path is \"/\" (the home page)."
+  (seq-some
+   (lambda (page)
+     (when (string= (plist-get page :one-path) "/")
+       (plist-get page :one-title)))
+   pages))
+
 (defun one-default (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
