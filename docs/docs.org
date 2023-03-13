@@ -8,7 +8,7 @@ I'm the home page.
 
 * Why one?
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/why-one/
 :END:
 
@@ -33,7 +33,7 @@ supported in the commentary section of the file ~one.el~
 
 * one-ox org backend | org elements not supported
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/org-elements-not-supported/
 :END:
 
@@ -50,7 +50,7 @@ Read more: [[#/why-one/][Why one?]].
 
 * one-ox org backend | headline
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/headline/
 :END:
 
@@ -61,7 +61,7 @@ So don't use them in headlines.
 
 * one-ox org backend | src-block
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/src-block/
 :END:
 ** Code highlighting with 'htmlize.el'
@@ -261,7 +261,7 @@ and is rendered by ~one~ like this:
 
 * one-ox org backend | quote-block
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/quote-block/
 :END:
 
@@ -293,7 +293,7 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 
 * one-ox org backend | fixed-width and example-block
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/fixed-width-and-example-block/
 :END:
 ** Description
@@ -394,7 +394,7 @@ This    is
 
 * one-ox org backend | links
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/links/
 :END:
 ** http, https, mailto links
@@ -695,7 +695,7 @@ we try to export the link with ~one~) an error like the following:
 
 * one-ox org backend | plain-list and item
 :PROPERTIES:
-:ONE: one-default-with-toc
+:ONE: one-default-doc
 :CUSTOM_ID: /docs/plain-list-and-item/
 :END:
 
