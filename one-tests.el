@@ -668,10 +668,10 @@ A simple example
       "one-" 1 "page 1"
       "id-11" 2 "headline 1.1"))))
 
-(ert-deftest one-default--toc-test ()
+(ert-deftest one-default-toc-test ()
   (should
    (equal
-    (one-default--toc
+    (one-default-toc
      '((:level 1 :title "bar-11" :id "id-bar-11")
        (:level 2 :title "bar-21" :id "id-bar-21")
        (:level 2 :title "bar-22" :id "id-bar-22")
@@ -686,7 +686,7 @@ A simple example
       (:li (:a (@ :href "#id-bar-12") "bar-12")))))
   (should
    (equal
-    (one-default--toc
+    (one-default-toc
      '((:level 1 :title "bar-1" :id "id-bar-1")
        (:level 2 :title "bar-2" :id "id-bar-2")
        (:level 3 :title "bar-3" :id "id-bar-3")))
@@ -698,7 +698,7 @@ A simple example
           (:li (:a (@ :href "#id-bar-3") "bar-3")))))))))
   (should
    (equal
-    (one-default--toc
+    (one-default-toc
      '((:level 1 :title "foo" :id "id-foo")
        (:level 1 :title "bar-1" :id "id-bar-1")
        (:level 2 :title "bar-2" :id "id-bar-2")
@@ -716,7 +716,7 @@ A simple example
       (:li (:a (@ :href "#id-baz") "baz")))))
   (should
    (equal
-    (one-default--toc
+    (one-default-toc
      '((:level 1 :title "foo" :id "id-foo")
        (:level 1 :title "bar-1" :id "id-bar-1")
        (:level 2 :title "bar-2" :id "id-bar-2")
@@ -732,7 +732,7 @@ A simple example
       (:li (:a (@ :href "#id-baz") "baz")))))
   (should
    (equal
-    (one-default--toc
+    (one-default-toc
      '((:level 2 :title "foo" :id "id-foo")
        (:level 2 :title "bar-1" :id "id-bar-1")
        (:level 3 :title "bar-2" :id "id-bar-2")
@@ -746,6 +746,6 @@ A simple example
           (:li (:a (@ :href "#id-bar-3") "bar-3")))))))))
   (should
    (equal
-    (one-default--toc
+    (one-default-toc
      '((:level 1 :title "foo" :id "id-foo")))
     '(:ul (:li (:a (@ :href "#id-foo") "foo"))))))

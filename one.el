@@ -696,7 +696,7 @@ See `one-default-new-project'.")
             `(:div/toc
               (:div
                (:div "Table of content")
-               (:div ,(one-default--toc headlines)))))
+               (:div ,(one-default-toc headlines)))))
          ,content
          ,(one-default-nav path pages)))))))
 
@@ -743,7 +743,7 @@ See `one-default-new-project'.")
              `(:div/toc
                (:div
                 (:div "Table of content")
-                (:div ,(one-default--toc headlines)))))
+                (:div ,(one-default-toc headlines)))))
           ,content
           ,(one-default-nav path pages))))
        (:script "
@@ -804,14 +804,14 @@ Return nil if the home page is not part of PAGES."
 Each headline in that list is a plist with the following properties
 `:id',`:level' and `:title'.
 
-See `one-default--toc'."
+See `one-default-toc'."
   (org-element-map data 'headline
     (lambda (elt)
       `(:id ,(org-element-property :one-internal-id elt)
         :level ,(org-element-property :level elt)
         :title ,(org-element-property :raw-value elt)))))
 
-(defun one-default--toc (headlines)
+(defun one-default-toc (headlines)
   "Generate the TOC (a `jack' component) from the list HEADLINES of headlines.
 See `jack-html', `one-default-list-headlines' and `one-default-with-toc'."
   (let* ((-headlines (cdr headlines))
