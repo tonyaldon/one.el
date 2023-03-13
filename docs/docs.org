@@ -1,4 +1,4 @@
-* Home page
+* ONE
 :PROPERTIES:
 :ONE: one-default-home
 :CUSTOM_ID: /
@@ -6,26 +6,10 @@
 
 I'm the home page.
 
-* About page
-:PROPERTIES:
-:ONE: one-default-home
-:CUSTOM_ID: /about/
-:END:
-
-I'm the about page.
-
-* 404
-:PROPERTIES:
-:ONE: one-default-home
-:CUSTOM_ID: /404/
-:END:
-
-I'm the 404 page.
-
 * Why one?
 :PROPERTIES:
-:ONE: one-default-home
-:CUSTOM_ID: /why-one/
+:ONE: one-default-with-toc
+:CUSTOM_ID: /docs/why-one/
 :END:
 
 I wrote ~one~ to do *tech* blogging.
@@ -47,11 +31,10 @@ As a result, I left out many org elements:
 You can find the complete list of the org elements that are not
 supported in the commentary section of the file ~one.el~
 
-* ----- Documentation -----
-* org elements not supported
+* one-ox org backend | org elements not supported
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /doc/org-elements-not-supported/
+:CUSTOM_ID: /docs/org-elements-not-supported/
 :END:
 
 I left out many org elements:
@@ -65,10 +48,10 @@ supported in the commentary section of the file ~one.el~
 
 Read more: [[#/why-one/][Why one?]].
 
-* headline
+* one-ox org backend | headline
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /doc/headline/
+:CUSTOM_ID: /docs/headline/
 :END:
 
 Note that markups and links are not exported if used in headlines, only
@@ -76,13 +59,13 @@ the raw value string.
 
 So don't use them in headlines.
 
-* src-block
+* one-ox org backend | src-block
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /doc/src-block/
+:CUSTOM_ID: /docs/src-block/
 :END:
-** code highlighting with 'htmlize.el'
-*** description
+** Code highlighting with 'htmlize.el'
+*** Description
 
 ~one~ highlights code via the function ~one-ox-htmlize~ that uses
 ~htmlize.el~ to do the work.
@@ -102,7 +85,6 @@ For instance, in ~sh-mode~, the word ~echo~ is highlighted with the face
 ~font-lock-builtin-face~.  So, the word ~echo~ in a piece of Shell (or
 Bash) code will be transformed into:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <span class="one-hl-builtin">echo</span>
 #+END_SRC
@@ -110,23 +92,21 @@ Bash) code will be transformed into:
 The whole piece of code ~X~, once the previously described operations
 have been done, is wrapped:
 
-1) for a /normal/ block by the component:
+1) for a normal block by the component:
 
-   #+ATTR_ONE_RESULTS:
    #+BEGIN_SRC html
    <pre><code class="one-hl one-hl-block">...</code></pre>
    #+END_SRC
 
-2) for a /result/ block by the component:
+2) for a result block by the component:
 
-   #+ATTR_ONE_RESULTS:
    #+BEGIN_SRC html
    <pre><code class="one-hl one-hl-results">...</code></pre>
    #+END_SRC
 
-See section [[#/doc/src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS and ATTR_ONE_RESULTS]].
+See section [[#/docs/src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS and ATTR_ONE_RESULTS]].
 
-*** example with Bash code
+*** Example with Bash code
 
 For instance, the following org src-block, containing some ~bash~ code:
 
@@ -141,7 +121,6 @@ done
 
 is exported as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <pre><code class="one-hl one-hl-block"><span class="one-hl-builtin">echo</span> <span class="one-hl-string">"list file's extensions in current dir:"</span>
 <span class="one-hl-keyword">for</span> f<span class="one-hl-keyword"> in</span> <span class="one-hl-sh-quoted-exec">`ls`</span>; <span class="one-hl-keyword">do</span>
@@ -183,83 +162,25 @@ specific faces used by each prog mode (except the ones I use often).
 You can add the CSS classes specific to the prog modes you use as you
 go and need them.
 
-*** Bash, Clojure and Elisp chunks of code
-
-Bash, Clojure and Elisp languages are the ones I want to talk about.
-And I'm sure they will appear in my tech writing.  So here they are:
-
-Bash code:
-
-#+BEGIN_SRC bash
-echo "list file's extensions in current dir:"
-for f in `ls`; do
-    echo ${f##*.}
-done
-#+END_SRC
-
-Clojure code:
-
-#+BEGIN_SRC clojure
-(defn str
-  "With no args, returns the empty string. With one arg x, returns
-  x.toString().  (str nil) returns the empty string. With more than
-  one arg, returns the concatenation of the str values of the args."
-  {:tag String
-   :added "1.0"
-   :static true}
-  (^String [] "")
-  (^String [^Object x]
-   (if (nil? x) "" (. x (toString))))
-  (^String [x & ys]
-     ((fn [^StringBuilder sb more]
-          (if more
-            (recur (. sb  (append (str (first more)))) (next more))
-            (str sb)))
-      (new StringBuilder (str x)) ys)))
-#+END_SRC
-
-Elisp code:
-
-#+BEGIN_SRC emacs-lisp
-(defconst clojure-font-lock-keywords
-  (eval-when-compile
-    `( ;; Top-level variable definition
-      (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("def" "defonce"))
-                ;; variable declarations
-                "\\)\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
-       (2 font-lock-variable-name-face nil t))
-      ;; ...
-      )))
-#+END_SRC
-
-** org keywords 'RESULTS' and 'ATTR_ONE_RESULTS'
+** Org keywords 'RESULTS'
 :PROPERTIES:
-:CUSTOM_ID: /doc/src-block/#org-keywords-results-and-attr_one_results
+:CUSTOM_ID: /docs/src-block/#org-keywords-results-and-attr_one_results
 :END:
 
-A *block* is considered to be a /result/ block:
+Result blocks are preceded by line starting by ~#+RESULTS:~.
 
-1) if it is preceded by a line starting by ~#+RESULTS:~ or,
-2) if it is preceded by a line starting by ~#+ATTR_ONE_RESULTS:~.
+Blocks that are not result blocks are normal blocks.
 
-Blocks that are not /result/ blocks are /normal/ blocks.
-
-When exported, /normal/ blocks and /result/ blocks differ only by their
+When exported, normal blocks and result blocks differ only by their
 CSS classes:
-- ~one-hl one-hl-block~ for /normal/ blocks,
-- ~one-hl one-hl-results~ for /result/ blocks.
 
-This way /result/ blocks can be rendered with a different style
-than /normal/ blocks as we can see in the following 2 examples.
+- ~one-hl one-hl-block~ for normal blocks,
+- ~one-hl one-hl-results~ for result blocks.
 
-*** example using org keyword 'RESULTS'
+This way result blocks can be rendered with a different style
+than normal blocks as we can see in the following 2 examples.
+
+*** Example using org keyword 'RESULTS'
 
 The following org snippet:
 
@@ -277,7 +198,6 @@ ls
 
 is exported by ~one~ as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <pre><code class="one-hl one-hl-block">ls</code></pre>
 <pre><code class="one-hl one-hl-results">content.org
@@ -286,8 +206,8 @@ one.el
 README.org</code></pre>
 #+END_SRC
 
-and is rendered by ~one~ with the first block (/normal/ block) having a
-different style from second block (/result/ block):
+and is rendered by ~one~ with the first block (normal block) having a
+different style from second block (result block):
 
 #+BEGIN_SRC bash :results output
 ls
@@ -299,51 +219,7 @@ ls
 : one.el
 : README.org
 
-*** example using org keyword 'ATTR_ONE_RESULTS'
-
-The following org snippet:
-
-#+BEGIN_SRC text
-After evaluating this code block:
-
-,#+BEGIN_SRC emacs-lisp
-(plist-get '(:a "aaa" :b (:c "ccc" :d "ddd")) :b)
-,#+END_SRC
-
-we get:
-
-,#+ATTR_ONE_RESULTS:
-,#+BEGIN_SRC emacs-lisp
-(:c "ccc" :d "ddd")
-,#+END_SRC
-#+END_SRC
-
-is exported by ~one~ as follow:
-
-#+ATTR_ONE_RESULTS:
-#+BEGIN_SRC html
-<p>After evaluating this code block:</p>
-<pre><code class="one-hl one-hl-block">(plist-get '(<span class="one-hl-builtin">:a</span> <span class="one-hl-string">"aaa"</span> <span class="one-hl-builtin">:b</span> (<span class="one-hl-builtin">:c</span> <span class="one-hl-string">"ccc"</span> <span class="one-hl-builtin">:d</span> <span class="one-hl-string">"ddd"</span>)) <span class="one-hl-builtin">:b</span>)</code></pre>
-<p>we get:</p>
-<pre><code class="one-hl one-hl-results">(<span class="one-hl-builtin">:c</span> <span class="one-hl-string">"ccc"</span> <span class="one-hl-builtin">:d</span> <span class="one-hl-string">"ddd"</span>)</code></pre>
-#+END_SRC
-
-and is rendered by ~one~ like this:
-
-After evaluating this code block:
-
-#+BEGIN_SRC emacs-lisp
-(plist-get '(:a "aaa" :b (:c "ccc" :d "ddd")) :b)
-#+END_SRC
-
-we get:
-
-#+ATTR_ONE_RESULTS:
-#+BEGIN_SRC emacs-lisp
-(:c "ccc" :d "ddd")
-#+END_SRC
-
-** code blocks inside list
+** Code blocks inside list
 
 Lists can contain src-block as we can see in the following org
 snippet:
@@ -361,7 +237,6 @@ snippet:
 
 that is exported by ~one~ as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <ol>
   <li>
@@ -384,10 +259,10 @@ and is rendered by ~one~ like this:
 2. item 2
 3. item 3
 
-* quote-block
+* one-ox org backend | quote-block
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /doc/quote-block/
+:CUSTOM_ID: /docs/quote-block/
 :END:
 
 Blocks defined with ~#+BEGIN_QUOTE ... #+END_QUOTE~ pattern are
@@ -406,9 +281,8 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 
 defines a quote and is exported by ~one~ as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<blockquote class="one-blockquote">A quitter never wins and a winner never quits. —Napoleon Hill</blockquote>
+<blockquote class="one-blockquote"><p>A quitter never wins and a winner never quits. —Napoleon Hill</p></blockquote>
 #+END_SRC
 
 and look like this:
@@ -417,12 +291,12 @@ and look like this:
 A quitter never wins and a winner never quits. —Napoleon Hill
 #+END_QUOTE
 
-* fixed-width and example-block
+* one-ox org backend | fixed-width and example-block
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /doc/fixed-width-and-example-block/
+:CUSTOM_ID: /docs/fixed-width-and-example-block/
 :END:
-** description
+** Description
 
 A line starting with a colon ~:~ followed by a space defined a
 fixed-width element.  A fixed-width element can span several
@@ -433,16 +307,16 @@ fixed-width elements are blocks.
 Blocks defined with ~#+BEGIN_EXAMPLE ... #+END_EXAMPLE~ pattern are
 example-block elements.
 
-Both fixed-width and example-block blocks are treated as [[#/doc/src-block/][src-block]] in
+Both fixed-width and example-block blocks are treated as [[#/docs/src-block/][src-block]] in
 ~text-mode~.  So:
 
 1) they are highlighted as ~text-mode~ would do,
 2) they are rendered in a ~<pre><code>...</code></pre>~ component
    (indentation and newlines are respected),
-3) they are /normal/ blocks (with CSS classes ~one-hl one-hl-block~) *OR*
-   /result/ blocks (with CSS classes ~one-hl one-hl-results~).
+3) they are normal blocks (with CSS classes ~one-hl one-hl-block~) *OR*
+   result blocks (with CSS classes ~one-hl one-hl-results~).
 
-** example
+** Example
 
 The following org snippet:
 
@@ -456,7 +330,6 @@ fixed-width elements can also be used within lists:
 - item 1
   : fixed-width element
 - item 2
-  ,#+ATTR_ONE_RESULTS:
   : multiline fixed-width element
   : that is also a result block,
   : so has a different style.
@@ -471,7 +344,6 @@ This    is
 
 is exported by ~one~ as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <p>Here is a fixed-width element (one line):</p>
 
@@ -486,7 +358,7 @@ is exported by ~one~ as follow:
   </li>
   <li>
     <p>item 2</p>
-    <pre><code class="one-hl one-hl-results">multiline fixed-width element
+    <pre><code class="one-hl one-hl-block">multiline fixed-width element
 that is also a result block,
 so has a different style.</code></pre>
   </li>
@@ -509,7 +381,6 @@ fixed-width elements can also be used within lists:
 - item 1
   : fixed-width element
 - item 2
-  #+ATTR_ONE_RESULTS:
   : multiline fixed-width element
   : that is also a result block,
   : so has a different style.
@@ -521,10 +392,10 @@ This    is
         an    example!
 #+END_EXAMPLE
 
-* links
+* one-ox org backend | links
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /doc/links/
+:CUSTOM_ID: /docs/links/
 :END:
 ** http, https, mailto links
 
@@ -543,7 +414,6 @@ http://tonyaldon.com
 
 is exported as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="http://tonyaldon.com">http://tonyaldon.com</a>
 #+END_SRC
@@ -556,7 +426,6 @@ and this following link with a description:
 
 is exported as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="https://tonyaldon.com">Tony Aldon (https)</a>
 #+END_SRC
@@ -569,17 +438,16 @@ and this ~mailto~ link:
 
 is exported as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="mailto:aldon.tony.adm@gmail.com">send me an email</a>
 #+END_SRC
 
-** custom-id links
+** Custom ID links
 
-- [[#/doc/plain-list-and-item/][page about plain-list]],
-- [[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]].
+- [[#/docs/plain-list-and-item/][page about plain-list]],
+- [[#/docs/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]].
 
-*** description
+*** Description
 
 In ~one~, ~CUSTOM_ID~ properties are:
 
@@ -635,51 +503,48 @@ Precisely, the following link to the ~custom-id~ equal to ~/blog/page-1/~:
 
 is exported as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="/blog/page-1/">Page 1</a>
 #+END_SRC
 
-*** example (link to a page)
+*** Example (link to a page)
 
 The following link to the headline with ~CUSTOM_ID~ equal to
-~/doc/plain-list-and-item/~ (that is also an ~one~ page):
+~/docs/plain-list-and-item/~ (that is also an ~one~ page):
 
 #+BEGIN_SRC text
-[[#/doc/plain-list-and-item/][page about plain-list]]
+[[#/docs/plain-list-and-item/][page about plain-list]]
 #+END_SRC
 
-is exported to this anchor tag that links to the page ~/doc/plain-list-and-item/~:
+is exported to this anchor tag that links to the page ~/docs/plain-list-and-item/~:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<a href="/doc/plain-list-and-item/">page about plain-list</a>
+<a href="/docs/plain-list-and-item/">page about plain-list</a>
 #+END_SRC
 
-and is rendered like this: [[#/doc/plain-list-and-item/][page about plain-list]].
+and is rendered like this: [[#/docs/plain-list-and-item/][page about plain-list]].
 
-*** example (link to a headline in a page)
+*** Example (link to a headline in a page)
 
 The following link to the headline with ~CUSTOM_ID~ equal to
-~/doc/plain-list-and-item/#unordered-lists~ (that must be a subsection of the
-~one~ page ~/doc/plain-list-and-item/~):
+~/docs/plain-list-and-item/#unordered-lists~ (that must be a subsection of the
+~one~ page ~/docs/plain-list-and-item/~):
 
 #+BEGIN_SRC text
-[[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]]
+[[#/docs/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]]
 #+END_SRC
 
 is exported to this anchor tag that links to the heading with the ~id~
-set to ~unordered-lists~ on the page ~/doc/plain-list-and-item/~:
+set to ~unordered-lists~ on the page ~/docs/plain-list-and-item/~:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<a href="/doc/plain-list-and-item/#unordered-lists">unordered lists heading in the page about plain-list</a>
+<a href="/docs/plain-list-and-item/#unordered-lists">unordered lists heading in the page about plain-list</a>
 #+END_SRC
 
-and is rendered like this: [[#/doc/plain-list-and-item/#unordered-lists][unordered lists heading in the page about
+and is rendered like this: [[#/docs/plain-list-and-item/#unordered-lists][unordered lists heading in the page about
 plain-list]].
 
-** fuzzy links
+** Fuzzy links
 
 # uncomment the last line of this comment (fuzzy search link),
 # narrow the buffer to this subsection, and export the narrowed
@@ -703,20 +568,19 @@ For instance, the following ~fuzzy~ link:
 
 raise an error like the following:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC text
 (one-link-broken "fuzzy search" "fuzzy links not supported" "goto-char: 5523")
 #+END_SRC
 
-** file links
-*** links to local files in the 'public' directory
+** File links
+*** Links to local files in the 'public' directory
 :PROPERTIES:
-:CUSTOM_ID: /doc/links/#local-files-in-public-dir
+:CUSTOM_ID: /docs/links/#local-files-in-public-dir
 :END:
 
-- [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]]
+- [[./public/docs/plain-list-and-item.md][page about plain-list in markdown format]]
 
-**** description
+**** Description
 
 One might want to generate at build time files that are going to be
 available in the ~public~ (root of the website) directory.
@@ -734,34 +598,33 @@ the ~./public~ part of the path making them accessible via web url.
 It's convenient, because this way, after the build of the website,
 those links stop being broken in this org file.
 
-**** example
+**** Example
 
 For instance, assuming the build of the website produces the markdown
-file ~./public/doc/plain-list-and-item.md~ that is a markdown
-version of the page ~/doc/plain-list-and-item/~, we can link
+file ~./public/docs/plain-list-and-item.md~ that is a markdown
+version of the page ~/docs/plain-list-and-item/~, we can link
 to that markdown file in this org file as follow:
 
 #+BEGIN_SRC text
-[[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]]
+[[./public/docs/plain-list-and-item.md][page about plain-list in markdown format]]
 #+END_SRC
 
 This previous link is exported as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
-<a href="/doc/plain-list-and-item.md">page about plain-list in markdown format</a>
+<a href="/docs/plain-list-and-item.md">page about plain-list in markdown format</a>
 #+END_SRC
 
-and is rendered like this: [[./public/doc/plain-list-and-item.md][page about plain-list in markdown format]].
+and is rendered like this: [[./public/docs/plain-list-and-item.md][page about plain-list in markdown format]].
 
-*** links to local files in the 'assets' directory
+*** Links to local files in the 'assets' directory
 :PROPERTIES:
-:CUSTOM_ID: /doc/links/#local-files-in-assets-dir
+:CUSTOM_ID: /docs/links/#local-files-in-assets-dir
 :END:
 
 - [[./assets/images/one.png][one image]]
 
-**** description
+**** Description
 
 Files in the directory ~assets~  are copied into the directory
 ~public~ (root of the website) when the website is built.
@@ -776,7 +639,7 @@ It's convenient, because this way:
 1) we can "clean" the ~public~ directory whenever we need it and,
 2) local file links in this org file are never broken.
 
-**** example
+**** Example
 
 For instance the following link:
 
@@ -786,15 +649,14 @@ For instance the following link:
 
 is exported as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <a href="/images/one.png">one image</a>
 #+END_SRC
 
 and is rendered like this: [[./assets/images/one.png][one image]].
 
-*** local file links that raise an error ('one-link-broken')
-**** description
+*** Local file links that raise an error ('one-link-broken')
+**** Description
 
 # uncomment the last line of this comment (unresolved file link),
 # narrow the buffer to this subsection, and export the narrowed
@@ -810,12 +672,12 @@ and is rendered like this: [[./assets/images/one.png][one image]].
 
 Any file link that is not one of the following links:
 
-1) [[#/doc/links/#local-files-in-public-dir][link to a local file in the public directory]],
-2) [[#/doc/links/#local-files-in-assets-dir][link to a local file in the assets directory]],
+1) [[#/docs/links/#local-files-in-public-dir][link to a local file in the public directory]],
+2) [[#/docs/links/#local-files-in-assets-dir][link to a local file in the assets directory]],
 
 raises an ~one-link-broken~ error when ~one~ try to export it.
 
-**** example
+**** Example
 
 Assuming we haven't declared an ~ONE_LINK~ mapping between the
 directory ~/tmp/~ and any web url, the org file link:
@@ -827,22 +689,21 @@ directory ~/tmp/~ and any web url, the org file link:
 that is not in the ~public~ nor in the ~assets~ directory will raise (when
 we try to export the link with ~one~) an error like the following:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC text
 (one-link-broken "/tmp/" "goto-char: 26308")
 #+END_SRC
 
-* plain-list and item
+* one-ox org backend | plain-list and item
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /doc/plain-list-and-item/
+:CUSTOM_ID: /docs/plain-list-and-item/
 :END:
 
-Only /unordered/ and /ordered/ lists are supported.
+Only unordered and ordered lists are supported.
 
-** unordered lists
+** Unordered lists
 :PROPERTIES:
-:CUSTOM_ID: /doc/plain-list-and-item/#unordered-lists
+:CUSTOM_ID: /docs/plain-list-and-item/#unordered-lists
 :END:
 
 The following org snippet (unordered list):
@@ -855,7 +716,6 @@ The following org snippet (unordered list):
 
 is exported by ~one~ as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <ul>
   <li>
@@ -876,7 +736,7 @@ and is rendered like this:
 - another thing,
 - and the last one.
 
-** ordered list
+** Ordered list
 
 The following org snippet (unordered list):
 
@@ -888,7 +748,6 @@ The following org snippet (unordered list):
 
 is exported by ~one~ as follow:
 
-#+ATTR_ONE_RESULTS:
 #+BEGIN_SRC html
 <ol>
   <li>
