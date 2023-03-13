@@ -496,5 +496,8 @@ article {
   #header-doc {
     justify-content: left;
   }
-
+  article {
+    padding: 0;
+    width: 100%;
+  }
 }
