@@ -637,17 +637,17 @@ See `one-default-new-project'.")
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
+        (:div/header ,title)
         (:div.container
-         (:div (@ :style "text-align: center;") ,(upcase title))
-         ,content
-         (:ul
+         (:div/home ,content)
+         (:div/pages
           ,(mapcar
             (lambda (page)
               (let ((href (plist-get page :one-path))
                     (title (org-element-property
                             :raw-value (plist-get page :one-page-tree))))
                 (when (not (string= href "/"))
-                  `(:li (:a (@ :href ,href) ,title)))))
+                  `(:a (@ :href ,href) (:div ,title)))))
             pages))))))))
 
 (defun one-default (page-tree pages global)

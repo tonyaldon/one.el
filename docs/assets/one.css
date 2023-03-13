@@ -284,6 +284,28 @@ a:visited {
   }
 }
 
+#home {
+  margin: 5rem 0 1.5rem 0;
+  text-align: center;
+}
+
+#pages a > div {
+  line-height: 1.2em;
+  font-size: 1.2em;
+  color: #dedede;
+  border-bottom: 1px solid #363636;
+  padding: 1em 0.2em;
+}
+
+#pages a:hover {
+  text-decoration: none;
+}
+
+#pages a > div:hover {
+  background: #31424a;
+  color: #ffffff;
+}
+
 /* BEGIN - Specific to my configuration (Tony Aldon) */
 
 /* (defface ta-colon-keyword-face nil */
