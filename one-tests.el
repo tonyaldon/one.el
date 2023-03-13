@@ -582,6 +582,42 @@ A simple example
 
 ;;; default
 
+(ert-deftest one-default-nav-test ()
+  ;; Two pages different from the home page are expected
+  (should-not
+   (one-default-nav
+    "/foo-1/"
+    '((:one-path "/")
+      (:one-path "/foo-1/"))))
+  (should
+   (equal
+    (one-default-nav
+     "/foo-1/"
+     '((:one-path "/")
+       (:one-path "/foo-1/")
+       (:one-path "/foo-2/")))
+    '(:div/nav nil nil (:a (@ :href "/foo-2/") (:div "NEXT")))))
+  (should
+   (equal
+    (one-default-nav
+     "/foo-2/"
+     '((:one-path "/")
+       (:one-path "/foo-1/")
+       (:one-path "/foo-2/")))
+    '(:div/nav (:a (@ :href "/foo-1/") (:div "PREV")) nil nil)))
+  (let* ((nav (one-default-nav
+               "/foo-2/"
+               '((:one-path "/")
+                 (:one-path "/foo-1/")
+                 (:one-path "/foo-2/")
+                 (:one-path "/foo-3/")
+                 (:one-path "/foo-4/"))))
+         (random (nth 2 nav)))
+    (should (equal (nth 1 nav) '(:a (@ :href "/foo-1/") (:div "PREV"))))
+    (should (equal (nth 3 nav) '(:a (@ :href "/foo-3/") (:div "NEXT"))))
+    (should (member (nth 2 (nth 1 random)) '("/foo-1/" "/foo-3/" "/foo-4/")))
+    (should (equal (nth 2 random) '(:div "RANDOM")))))
+
 (ert-deftest one-default-list-headlines-test ()
   (should
    (equal
