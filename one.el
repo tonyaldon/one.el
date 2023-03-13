@@ -85,10 +85,6 @@
 
     (link . one-ox-link)))
 
-(org-export-define-derived-backend 'one-no-sub/superscript 'one
-  :translate-alist '((subscript . one-ox-no-subscript)
-                     (superscript . one-ox-no-superscript)))
-
 ;;;; headline, section, paragraph, etc.
 
 (defun one-ox-headline (headline contents info)
