@@ -457,7 +457,7 @@ In ~one~, ~CUSTOM_ID~ properties are:
   #+BEGIN_SRC text
   ,* Page 1
   :PROPERTIES:
-  :ONE_IS_PAGE: t
+  :ONE: t
   :CUSTOM_ID: /blog/page-1/
   :END:
   #+END_SRC
@@ -468,7 +468,7 @@ In ~one~, ~CUSTOM_ID~ properties are:
   #+BEGIN_SRC text
   ,* Page 1
   :PROPERTIES:
-  :ONE_IS_PAGE: t
+  :ONE: t
   :CUSTOM_ID: /blog/page-1/
   :END:
   ,** headline 1 in page Page 1
