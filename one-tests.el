@@ -609,7 +609,7 @@ A simple example
      '((:one-path "/")
        (:one-path "/foo-1/")
        (:one-path "/foo-2/")))
-    '(:div/nav nil nil (:a (@ :href "/foo-2/") (:div "NEXT")))))
+    '(:div/nav nil nil (:a (@ :href "/foo-2/") "NEXT"))))
   (should
    (equal
     (one-default-nav
@@ -617,7 +617,7 @@ A simple example
      '((:one-path "/")
        (:one-path "/foo-1/")
        (:one-path "/foo-2/")))
-    '(:div/nav (:a (@ :href "/foo-1/") (:div "PREV")) nil nil)))
+    '(:div/nav (:a (@ :href "/foo-1/") "PREV") nil nil)))
   (let* ((nav (one-default-nav
                "/foo-2/"
                '((:one-path "/")
@@ -626,10 +626,10 @@ A simple example
                  (:one-path "/foo-3/")
                  (:one-path "/foo-4/"))))
          (random (nth 2 nav)))
-    (should (equal (nth 1 nav) '(:a (@ :href "/foo-1/") (:div "PREV"))))
-    (should (equal (nth 3 nav) '(:a (@ :href "/foo-3/") (:div "NEXT"))))
+    (should (equal (nth 1 nav) '(:a (@ :href "/foo-1/") "PREV")))
+    (should (equal (nth 3 nav) '(:a (@ :href "/foo-3/") "NEXT")))
     (should (member (nth 2 (nth 1 random)) '("/foo-1/" "/foo-3/" "/foo-4/")))
-    (should (equal (nth 2 random) '(:div "RANDOM")))))
+    (should (equal (nth 2 random) "RANDOM"))))
 
 (ert-deftest one-default-list-headlines-test ()
   (should

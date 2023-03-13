@@ -792,11 +792,11 @@ Return nil if the home page is not part of PAGES."
           (setq prev (car tail))
           (setq tail (cdr tail)))
         `(:div/nav
-          ,(when prev `(:a (@ :href ,(plist-get prev :one-path)) (:div "PREV")))
+          ,(when prev `(:a (@ :href ,(plist-get prev :one-path)) "PREV"))
           ,(when (<= 3 (length pages-no-home))
-             `(:a (@ :href ,(plist-get random :one-path)) (:div "RANDOM")))
+             `(:a (@ :href ,(plist-get random :one-path)) "RANDOM"))
           ,(when-let ((next (plist-get (cadr tail) :one-path)))
-             `(:a (@ :href ,next) (:div "NEXT"))))))))
+             `(:a (@ :href ,next) "NEXT")))))))
 
 (defun one-default-list-headlines (data)
   "Return the list in order of the headlines in the DATA.

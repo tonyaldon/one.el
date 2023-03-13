@@ -264,6 +264,7 @@ a:visited {
   color: inherit;
 }
 
+
 #nav {
   border-top: 1px solid #c5c5c5;
   margin-top: 3em;
@@ -274,11 +275,8 @@ a:visited {
   font-weight: bold;
 }
 
-#nav > a {
-  display: contents;
-}
-
-#nav div {
+#nav a {
+  display: block;
   background: #dedede;
   border-radius: 6px;
   padding: 0.2em 0.8em;
@@ -288,7 +286,7 @@ a:visited {
 }
 
 @media (max-width:600px) {
-  #nav div {
+  #nav a {
     width: auto;
   }
 }
