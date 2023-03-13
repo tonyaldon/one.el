@@ -712,6 +712,44 @@ whose path is \"/\" (the home page)."
          ,content
          ,(one-default-nav path pages)))))))
 
+(defun one-default-doc (page-tree pages global)
+  ""
+  (let* ((title (org-element-property :raw-value page-tree))
+         (path (org-element-property :CUSTOM_ID page-tree))
+         (content (org-export-data-with-backend
+                   (org-element-contents page-tree)
+                   'one nil))
+         (website-name (one-default-website-name pages))
+         (headlines (cdr (one-default-list-headlines page-tree))))
+    (jack-html
+     "<!DOCTYPE html>"
+     `(:html
+       (:head
+        (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1"))
+        (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
+        (:title ,title))
+       (:body
+        (:div/header (:a (@ :href "/") ,website-name))
+        (:div.container-doc
+         (:div/sidebar
+          (:ul ,(mapcar
+                 (lambda (page)
+                   (let ((href (plist-get page :one-path))
+                         (title (org-element-property
+                                 :raw-value (plist-get page :one-page-tree))))
+                     (when (not (string= href "/"))
+                       `(:li (:a (@ :href ,href) ,title)))))
+                 pages)))
+         (:article
+          (:div/page-title (:h1 ,title))
+          ,(when headlines
+             `(:div/toc
+               (:div
+                (:div "Table of content")
+                (:div ,(one-default--toc headlines)))))
+          ,content
+          ,(one-default-nav path pages))))))))
+
 (defun one-default-nav (path pages)
   "Return nav component for the default render functions."
   (let* ((pages-no-home
