@@ -31,6 +31,10 @@ h6 {
   box-sizing: border-box;
 }
 
+html {
+  scroll-padding-top: 4rem; /* because we use a sticky header */
+}
+
 ul {
   padding-left: 2em;
   list-style: disc;
