@@ -665,9 +665,11 @@ whose path is \"/\" (the home page)."
 (defun one-default (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
+         (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil)))
+                   'one nil))
+         (website-name (one-default-website-name pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -676,9 +678,11 @@ whose path is \"/\" (the home page)."
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
+        (:div/header (:a (@ :href "/") ,website-name))
         (:div.container
-         (:div (@ :style "text-align: center;") ,(upcase title))
-         ,content))))))
+         (:div/page-title (:h1 ,title))
+         ,content
+         ,(one-default-nav path pages)))))))
 
 (defun one-default-with-toc (page-tree pages global)
   ""
