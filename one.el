@@ -72,8 +72,8 @@
     (code . one-ox-code)
     (verbatim . one-ox-verbatim)
 
-    (subscript . one-ox-subscript)
-    (superscript . one-ox-superscript)
+    (subscript . one-ox-no-subscript)
+    (superscript . one-ox-no-superscript)
 
     (plain-list . one-ox-plain-list)
     (item . one-ox-item)
@@ -138,12 +138,6 @@
 
 (defun one-ox-item (_item contents _info)
   (format "<li>%s</li>" contents))
-
-(defun one-ox-subscript (_subscript contents _info)
-  (format "<sub>%s</sub>" contents))
-
-(defun one-ox-superscript (_superscript contents _info)
-  (format "<sup>%s</sup>" contents))
 
 (defun one-ox-no-subscript (_subscript contents _info)
   (concat "_" contents))
