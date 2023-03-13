@@ -720,7 +720,16 @@ whose path is \"/\" (the home page)."
                    (org-element-contents page-tree)
                    'one nil))
          (website-name (one-default-website-name pages))
-         (headlines (cdr (one-default-list-headlines page-tree))))
+         (headlines (cdr (one-default-list-headlines page-tree)))
+         (pages-list
+          `(:ul ,(mapcar
+                  (lambda (page)
+                    (let ((href (plist-get page :one-path))
+                          (title (org-element-property
+                                  :raw-value (plist-get page :one-page-tree))))
+                      (when (not (string= href "/"))
+                        `(:li (:a (@ :href ,href) ,title)))))
+                  pages))))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -729,17 +738,17 @@ whose path is \"/\" (the home page)."
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div/header (:a (@ :href "/") ,website-name))
+        (:div/sidebar-mobile
+         (:div/sidebar-left (@ :onclick "followSidebarLink()")
+          (:div (:div/lnroom ,website-name))
+          ,pages-list)
+         (:div/sidebar-main))
+        (:div/header-doc
+         (:svg/hamburger (@ :viewBox "0 0 24 24" :onclick "sidebarShow()")
+          (:path (@ :d "M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z")))
+         (:a (@ :href "/") ,website-name))
         (:div.container-doc
-         (:div/sidebar
-          (:ul ,(mapcar
-                 (lambda (page)
-                   (let ((href (plist-get page :one-path))
-                         (title (org-element-property
-                                 :raw-value (plist-get page :one-page-tree))))
-                     (when (not (string= href "/"))
-                       `(:li (:a (@ :href ,href) ,title)))))
-                 pages)))
+         (:div/sidebar ,pages-list)
          (:article
           (:div/page-title (:h1 ,title))
           ,(when headlines
@@ -748,7 +757,22 @@ whose path is \"/\" (the home page)."
                 (:div "Table of content")
                 (:div ,(one-default--toc headlines)))))
           ,content
-          ,(one-default-nav path pages))))))))
+          ,(one-default-nav path pages))))
+       (:script "
+function sidebarShow() {
+  if (window.innerWidth < 481)
+    document.getElementById('sidebar-left').style.width = '75vw';
+  else {
+    document.getElementById('sidebar-left').style.width = 'min(300px, 34vw)';
+  }
+  document.getElementById('sidebar-main').setAttribute('onclick', 'sidebarHide()');
+  document.getElementById('sidebar-main').style.display = 'block';
+}
+function sidebarHide() {
+  document.getElementById('sidebar-left').style.width = '0';
+  document.getElementById('sidebar-main').style.display = 'none';
+}
+")))))
 
 (defun one-default-nav (path pages)
   "Return nav component for the default render functions."

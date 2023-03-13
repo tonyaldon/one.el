@@ -350,6 +350,7 @@ a:visited {
 
 #sidebar {
   border-right: 1px solid #363636;
+  /* border-right: 1px solid #31424a; */
   top: 4.5rem;
   position: sticky;
   width: 250px;
@@ -382,4 +383,118 @@ a:visited {
 article {
   padding: 0 1.5em;
   max-width: 640px;
+}
+
+
+/* ----- */
+
+#sidebar-left {
+  width: 0;
+  height: 100%;
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  transition: 0.25s;
+	background: #2c444f;
+  overflow: hidden; /* to make the children disappear when width is 0 */
+  overflow-y: auto;
+}
+
+#sidebar-left > div:first-child {
+  height: 3.5rem;
+  font-size: 2em;
+  font-weight: bold;
+  border-bottom: 1px solid #b8b8b8;
+  padding-left: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+#sidebar-left > ul {
+  padding: 0 16px 0 16px;
+}
+
+#sidebar-left > ul ul {
+  padding-left: 0.8em;
+  margin-left: 3px;
+  border-left: 1px solid #b8b8b8;
+}
+
+#sidebar-left a {
+  color: #dedede;
+  text-decoration: none;
+}
+
+#sidebar-left li {
+  list-style-type: none;
+}
+
+#sidebar-main {
+  display: none;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: #080808;
+  opacity: 0.80;
+  z-index: 2;
+}
+
+#hamburger {
+  cursor: pointer;
+  height: 1em;
+  fill: #dedede;
+  display: none;
+  font-weight: normal;
+  margin-right: 0.3em;
+}
+
+#header-doc {
+  color: #ffffff;
+  font-size: 2em;
+  font-weight: bold;
+  padding: 0 16px 0 16px;
+  background: #151515;
+  width: 100%;
+  height: 3.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-bottom: 1px solid #363636;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#header-doc > a {
+  display: contents;
+}
+
+#header-doc > a {
+  color: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+#header-doc > a:visited {
+  color: inherit;
+}
+
+@media (max-width: 840px) {
+  #hamburger {
+    display: block;
+  }
+  #sidebar {
+    display: none;
+  }
+  .container-doc {
+    justify-content: center;
+  }
+  #header-doc {
+    justify-content: left;
+  }
+
 }
