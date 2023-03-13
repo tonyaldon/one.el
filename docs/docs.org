@@ -31,7 +31,7 @@ As a result, I left out many org elements:
 You can find the complete list of the org elements that are not
 supported in the commentary section of the file ~one.el~
 
-* one-ox org backend | org elements not supported
+* one-ox | org elements not supported
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/org-elements-not-supported/
@@ -48,7 +48,7 @@ supported in the commentary section of the file ~one.el~
 
 Read more: [[#/why-one/][Why one?]].
 
-* one-ox org backend | headline
+* one-ox | headline
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/headline/
@@ -59,7 +59,7 @@ the raw value string.
 
 So don't use them in headlines.
 
-* one-ox org backend | src-block
+* one-ox | src-block
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/src-block/
@@ -259,7 +259,7 @@ and is rendered by ~one~ like this:
 2. item 2
 3. item 3
 
-* one-ox org backend | quote-block
+* one-ox | quote-block
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/quote-block/
@@ -291,7 +291,7 @@ and look like this:
 A quitter never wins and a winner never quits. —Napoleon Hill
 #+END_QUOTE
 
-* one-ox org backend | fixed-width and example-block
+* one-ox | fixed-width and example-block
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/fixed-width-and-example-block/
@@ -392,7 +392,7 @@ This    is
         an    example!
 #+END_EXAMPLE
 
-* one-ox org backend | links
+* one-ox | links
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/links/
@@ -693,7 +693,7 @@ we try to export the link with ~one~) an error like the following:
 (one-link-broken "/tmp/" "goto-char: 26308")
 #+END_SRC
 
-* one-ox org backend | plain-list and item
+* one-ox | plain-list and item
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/plain-list-and-item/
