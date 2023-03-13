@@ -296,19 +296,22 @@ a:visited {
   text-align: center;
 }
 
-#pages a > div {
+#pages ul {
+  padding: 0;
+  list-style: none;
+}
+
+#pages a {
+  display: block;
   line-height: 1.2em;
   font-size: 1.2em;
   color: #dedede;
   border-bottom: 1px solid #1d272b;
-  padding: 1em 0.2em;
+  padding: 1em 0.3em;
 }
 
 #pages a:hover {
   text-decoration: none;
-}
-
-#pages a > div:hover {
   background: #31424a;
   color: #ffffff;
 }

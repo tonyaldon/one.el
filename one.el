@@ -641,14 +641,14 @@ See `one-default-new-project'.")
         (:div.container
          (:div/home ,content)
          (:div/pages
-          ,(mapcar
-            (lambda (page)
-              (let ((href (plist-get page :one-path))
-                    (title (org-element-property
-                            :raw-value (plist-get page :one-page-tree))))
-                (when (not (string= href "/"))
-                  `(:a (@ :href ,href) (:div ,title)))))
-            pages))))))))
+          (:ul ,(mapcar
+                 (lambda (page)
+                   (let ((href (plist-get page :one-path))
+                         (title (org-element-property
+                                 :raw-value (plist-get page :one-page-tree))))
+                     (when (not (string= href "/"))
+                       `(:li (:a (@ :href ,href) ,title)))))
+                 pages)))))))))
 
 (defun one-default (page-tree pages global)
   ""
