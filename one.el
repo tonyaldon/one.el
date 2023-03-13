@@ -644,8 +644,7 @@ See `one-default-new-project'.")
           (:ul ,(mapcar
                  (lambda (page)
                    (let ((href (plist-get page :one-path))
-                         (title (org-element-property
-                                 :raw-value (plist-get page :one-page-tree))))
+                         (title (plist-get page :one-title)))
                      (when (not (string= href "/"))
                        `(:li (:a (@ :href ,href) ,title)))))
                  pages)))))))))
@@ -713,8 +712,7 @@ See `one-default-new-project'.")
           `(:ul ,(mapcar
                   (lambda (page)
                     (let ((href (plist-get page :one-path))
-                          (title (org-element-property
-                                  :raw-value (plist-get page :one-page-tree))))
+                          (title (plist-get page :one-title)))
                       (when (not (string= href "/"))
                         `(:li (:a (@ :href ,href) ,title)))))
                   pages))))
