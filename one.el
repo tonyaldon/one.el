@@ -687,12 +687,7 @@ whose path is \"/\" (the home page)."
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
                    'one nil))
-         (website-name
-          (seq-some
-           (lambda (page)
-             (when (string= (plist-get page :one-path) "/")
-               (plist-get page :one-title)))
-           pages))
+         (website-name (one-default-website-name pages))
          (headlines (cdr (one-default-list-headlines page-tree))))
     (jack-html
      "<!DOCTYPE html>"
