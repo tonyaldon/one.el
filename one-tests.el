@@ -582,6 +582,19 @@ A simple example
 
 ;;; default
 
+(ert-deftest one-default-website-name-test ()
+  (should
+   (string=
+    (one-default-website-name
+     '((:one-title "HOME" :one-path "/")
+       (:one-title "FOO-1" :one-path "/foo-1/")
+       (:one-title "FOO-2" :one-path "/foo-2/")))
+    "HOME"))
+  (should-not
+   (one-default-website-name
+    '((:one-title "FOO-1" :one-path "/foo-1/")
+      (:one-title "FOO-2" :one-path "/foo-2/")))))
+
 (ert-deftest one-default-nav-test ()
   ;; Two pages different from the home page are expected
   (should-not

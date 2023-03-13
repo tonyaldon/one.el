@@ -762,12 +762,12 @@ function sidebarHide() {
 }
 ")))))
 
-;; FIXME: add a test
 (defun one-default-website-name (pages)
-  "Return the website's name of from PAGES.
+  "Return the website's name.
 
 This corresponds to the title of the page in PAGES
-whose path is \"/\" (the home page)."
+whose path is \"/\" (the home page).
+Return nil if the home page is not part of PAGES."
   (seq-some
    (lambda (page)
      (when (string= (plist-get page :one-path) "/")
