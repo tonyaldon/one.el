@@ -748,7 +748,7 @@ function sidebarHide() {
 ")))))
 
 (defun one-default-pages (pages)
-  "Return the list of PAGES as a `jack' component excluding the home page.
+  "Return the list of PAGES as a `jack-html' component excluding the home page.
 
 Evaluating the following forms
 
@@ -776,9 +776,12 @@ returns:
 (defun one-default-website-name (pages)
   "Return the website's name.
 
-This corresponds to the title of the page in PAGES
-whose path is \"/\" (the home page).
-Return nil if the home page is not part of PAGES."
+This corresponds to the title (value of the property `:one-title')
+of the page in PAGES whose path is \"/\" (the home page).
+Return nil if the home page is not part of PAGES.
+
+See `one-default-home',`one-default',`one-default-with-toc'
+and `one-default-doc'."
   (seq-some
    (lambda (page)
      (when (string= (plist-get page :one-path) "/")
