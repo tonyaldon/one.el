@@ -751,7 +751,7 @@ function sidebarHide() {
 (defun one-default-pages (pages)
   "Return the list of PAGES as a `jack-html' component excluding the home page.
 
-Evaluating the following forms
+Evaluating the following form
 
     (one-default-pages
        '((:one-title \"HOME\" :one-path \"/\")
