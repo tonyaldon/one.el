@@ -582,6 +582,19 @@ A simple example
 
 ;;; default
 
+(ert-deftest one-default-pages-test ()
+  (should
+   (equal
+    (one-default-pages
+     '((:one-title "HOME" :one-path "/")
+       (:one-title "FOO-1" :one-path "/foo-1/")
+       (:one-title "FOO-2" :one-path "/foo-2/")))
+    '(:ul
+      (:li (:a (@ :href "/foo-1/") "FOO-1"))
+      (:li (:a (@ :href "/foo-2/") "FOO-2")))))
+  (should-not
+   (one-default-pages '((:one-title "HOME" :one-path "/")))))
+
 (ert-deftest one-default-website-name-test ()
   (should
    (string=
