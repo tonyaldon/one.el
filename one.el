@@ -628,7 +628,8 @@ See `one-default-new-project'.")
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil)))
+                   'one nil))
+         (pages-list (one-default-pages pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -640,14 +641,7 @@ See `one-default-new-project'.")
         (:div/header ,title)
         (:div.container
          (:div/home ,content)
-         (:div/pages
-          (:ul ,(mapcar
-                 (lambda (page)
-                   (let ((href (plist-get page :one-path))
-                         (title (plist-get page :one-title)))
-                     (when (not (string= href "/"))
-                       `(:li (:a (@ :href ,href) ,title)))))
-                 pages)))))))))
+         (:div/pages ,pages-list)))))))
 
 (defun one-default (page-tree pages global)
   ""
@@ -708,14 +702,7 @@ See `one-default-new-project'.")
                    'one nil))
          (website-name (one-default-website-name pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
-         (pages-list
-          `(:ul ,(mapcar
-                  (lambda (page)
-                    (let ((href (plist-get page :one-path))
-                          (title (plist-get page :one-title)))
-                      (when (not (string= href "/"))
-                        `(:li (:a (@ :href ,href) ,title)))))
-                  pages))))
+         (pages-list (one-default-pages pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
