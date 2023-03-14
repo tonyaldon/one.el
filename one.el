@@ -713,7 +713,7 @@ See `one-default-new-project'.")
        (:body
         (:div/sidebar-mobile
          (:div/sidebar-left (@ :onclick "followSidebarLink()")
-          (:div (:div/lnroom ,website-name))
+          (:div (:div ,website-name))
           ,pages-list)
          (:div/sidebar-main))
         (:div/header-doc
