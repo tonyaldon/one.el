@@ -790,7 +790,38 @@ and `one-default-doc'."
    pages))
 
 (defun one-default-nav (path pages)
-  "Return nav component for the default render functions."
+  "Return `jack-html' navigation component.
+
+The component is composed of 3 links:
+
+- \"PREV\": link to the page before the page whose `:one-path' is
+  equal to PATH in PAGES,
+- \"RANDOM\": link to a random page picked in PAGES whose `:one-path'
+  is not equal to PATH,
+- \"NEXT\": link to the page after the page whose `:one-path' is
+  equal to PATH in PAGES.
+
+In any cases the home page (`:one-page' equal to \"/\") is excluded.
+Return nil, if PAGES contains only one page which is not the home page.
+
+For instance, evaluating the following form
+
+    (one-default-nav \"/foo-2/\"
+                     \\='((:one-path \"/\")
+                       (:one-path \"/foo-1/\")
+                       (:one-path \"/foo-2/\")
+                       (:one-path \"/foo-3/\")
+                       (:one-path \"/foo-4/\")))
+
+returns (the \"RANDOM\" link could have been \"foo-1\" or \"foo-3\")
+
+    (:div/nav
+     (:a (@ :href \"/foo-1/\") \"PREV\")
+     (:a (@ :href \"/foo-4/\") \"RANDOM\")
+     (:a (@ :href \"/foo-3/\") \"NEXT\"))
+
+See `one-default',`one-default-with-toc' and `one-default-doc'."
+
   (let* ((pages-no-home
           (seq-remove
            (lambda (page) (string= (plist-get page :one-path) "/"))
