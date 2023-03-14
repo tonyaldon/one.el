@@ -629,7 +629,8 @@ See `one-default-new-project'.")
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
                    'one nil))
-         (pages-list (one-default-pages pages)))
+         (pages-list (one-default-pages pages))
+         (website-name (one-default-website-name pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -638,7 +639,7 @@ See `one-default-new-project'.")
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div/header ,title)
+        (:div/header ,website-name)
         (:div.container
          (:div/home ,content)
          (:div/pages ,pages-list)))))))
