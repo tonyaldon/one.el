@@ -844,14 +844,20 @@ See `one-default',`one-default-with-toc' and `one-default-doc'."
           ,(when-let ((next (plist-get (cadr tail) :one-path)))
              `(:a (@ :href ,next) "NEXT")))))))
 
-(defun one-default-list-headlines (data)
-  "Return the list in order of the headlines in the DATA.
+(defun one-default-list-headlines (tree)
+  "Return the list in order of the headlines in TREE.
 
-Each headline in that list is a plist with the following properties
-`:id',`:level' and `:title'.
+TREE is meant to be the parsed tree of an org buffer of a website
+we want to build.  See `one-parse-buffer'.
 
-See `one-default-toc'."
-  (org-element-map data 'headline
+Each headline in the returned list is a plist with the following
+properties `:id',`:level' and `:title'.
+
+We can use the list returned by `one-default-list-headlines' to build
+a table of content of TREE using `one-default-toc'.
+
+See `one-default-with-toc' and `one-default-doc'."
+  (org-element-map tree 'headline
     (lambda (elt)
       `(:id ,(org-element-property :one-internal-id elt)
         :level ,(org-element-property :level elt)
