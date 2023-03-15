@@ -629,8 +629,8 @@ See `one-default-new-project'.")
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
                    'one nil))
-         (pages-list (one-default-pages pages))
-         (website-name (one-default-website-name pages)))
+         (website-name (one-default-website-name pages))
+         (pages-list (one-default-pages pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
