@@ -406,7 +406,7 @@ property and the path specified in `CUSTOM_ID' org property.
 For instance, with the above buffer, assuming the render
 functions `render-function-0' and `render-function-2'
 are well defined and assuming the render function
-`render-function-1'is defined like this
+`render-function-1' is defined like this
 
     (defun render-function-1 (page-tree pages global)
       \"<h1>Hello world!</h1>\")
