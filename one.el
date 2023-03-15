@@ -392,16 +392,55 @@ The current buffer should look like this.
     :END:
 
     Content of page 2
+
+    * I'm not a Page and I won't be rendered
     ---------- Buffer ----------
 
-The values `render-function-0', `render-function-1' and
-`render-function-2' of the org property `ONE' should be
-symbols of render functions.  Those function takes three
-argument and returns
+Each level 1 headline with the org properties `ONE' and
+`CUSTOM_ID' set is a page.  See `one-is-page'.
 
+How those pages are rendered and where they are rendered
+depends on the render functions specified in `ONE' org
+property and the path specified in `CUSTOM_ID' org property.
 
-Doesn't copy files from `./assets/' to `./public/'.
-See also `one-build'."
+For instance, with the above buffer, assuming the render
+functions `render-function-0' and `render-function-2'
+are well defined and assuming the render function
+`render-function-1'is defined like this
+
+    (defun render-function-1 (page-tree pages global)
+      \"<h1>Hello world!</h1>\")
+
+calling the command `one-build-only-html' produces
+the following files
+
+    .
+    ├── public
+    │   ├── blog
+    │   │   ├── page-1
+    │   │   │   └── index.html
+    │   │   └── page-2
+    │   │       └── index.html
+    │   ├── index.html
+
+and the content of the file `./public/blog/page-1/index.html' is
+
+    ---------- File: ./public/blog/page-1/index.html ----------
+    <h1>Hello world!</h1>
+    ---------- File: ./public/blog/page-1/index.html ----------
+
+Therefore if you serve the website in `./public/' directory at
+`http://localhost:3000' you can access the \"Hello word!\" page
+at `http://localhost:3000/blog/page-1/'.
+
+You can see how to implement render functions looking at the
+default render functions `one-default-home', `one-default',
+`one-default-with-toc' and `one-default-doc'.
+
+Note that `one-build-only-html' doesn't copy files from
+`./assets/' directory to `./public/' directory.
+
+See `one-build'."
   (interactive)
   (let* ((tree (one-parse-buffer))
          (pages (one-list-pages tree))
