@@ -1,4 +1,4 @@
-/* reset */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Noto+Sans:wght@400;700&display=swap');
 
 html,
 body,
@@ -27,12 +27,14 @@ h6 {
   padding: 0;
 }
 
-*, *::before, *::after{
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-html {
-  scroll-padding-top: 4rem; /* because we use a sticky header */
+p, blockquote, ul, ol, code,
+dl, table, pre, details {
+  margin-bottom: 16px;
+  margin-top: 0;
 }
 
 ul {
@@ -58,13 +60,9 @@ li {
   margin-top: 0.25em;
 }
 
-p, blockquote, ul, ol, code,
-dl, table, pre, details {
-  margin-bottom: 16px;
-  margin-top: 0;
+html {
+  scroll-padding-top: 4rem; /* because we use a sticky header */
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Noto+Sans:wght@400;700&display=swap');
 
 body {
   background: #151515;
@@ -74,7 +72,6 @@ body {
   line-height: 1.5;
   word-wrap: break-word;
 }
-
 
 h1 {
   font-size: 2em;
@@ -199,7 +196,7 @@ a:visited {
 
 /* ------ */
 
-#page-title {
+#title {
   text-align: center;
   padding: 1.8rem 0;
 }

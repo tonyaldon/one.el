@@ -776,7 +776,7 @@ See `one-build-only-html'."
        (:body
         (:div/header (:a (@ :href "/") ,website-name))
         (:div.container
-         (:div/page-title (:h1 ,title))
+         (:div/title (:h1 ,title))
          ,content
          ,nav))))))
 
@@ -805,7 +805,7 @@ See `one-build-only-html'."
        (:body
         (:div/header (:a (@ :href "/") ,website-name))
         (:div.container
-         (:div/page-title (:h1 ,title))
+         (:div/title (:h1 ,title))
          ,toc
          ,content
          ,nav))))))
@@ -846,7 +846,7 @@ See `one-build-only-html'."
         (:div.container-doc
          (:div/sidebar ,pages-list)
          (:article
-          (:div/page-title (:h1 ,title))
+          (:div/title (:h1 ,title))
           ,toc
           ,content
           ,nav)))
