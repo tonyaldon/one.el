@@ -1,28 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Noto+Sans:wght@400;700&display=swap');
 
-html,
-body,
-p,
-ol,
-ul,
-li,
-dl,
-dt,
-dd,
-blockquote,
-figure,
-fieldset,
-legend,
-textarea,
-pre,
-iframe,
-hr,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+html, body, p, ol, ul, li, dl, dt, dd,
+blockquote, figure, fieldset, legend, textarea,
+pre, iframe, hr, h1, h2, h3, h4, h5, h6 {
   margin: 0;
   padding: 0;
 }
@@ -180,8 +160,6 @@ a:visited {
 
 .one-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
 
-/* ------------------------------------------------------ */
-
 /* -------- scrollbar -------- */
 
 ::-webkit-scrollbar {
@@ -201,9 +179,6 @@ a:visited {
 ::-webkit-scrollbar-thumb:hover {
   background: #31424a;
 }
-
-/* --------------------------- */
-
 
 /* -------- specific to the default render functions -------- */
 
@@ -246,7 +221,6 @@ a:visited {
   padding: 1.8rem 0;
 }
 
-
 /* -------- one-default-home -------- */
 
 #home {
@@ -273,9 +247,6 @@ a:visited {
   background: #31424a;
   color: #ffffff;
 }
-
-/* ---------------------------------- */
-
 
 /* -------- one-default, one-default-with-toc, one-default-doc -------- */
 
@@ -305,9 +276,6 @@ a:visited {
   }
 }
 
-/* ---------------------------------------------------------------------*/
-
-
 /* -------- one-default-with-toc, one-default-doc -------- */
 
 #toc {
@@ -332,9 +300,43 @@ a:visited {
   margin-bottom: 16px;
 }
 
-/* ------------------------------------------------------- */
+/* --------- one-default-doc --------- */
 
+#header-doc {
+  color: #ffffff;
+  font-size: 2em;
+  font-weight: bold;
+  padding: 0 16px 0 16px;
+  background: #151515;
+  width: 100%;
+  height: 3.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-bottom: 1px solid #1d272b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+#header-doc > a {
+  color: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+#header-doc > a:visited {
+  color: inherit;
+}
+
+#hamburger {
+  cursor: pointer;
+  height: 1em;
+  fill: #dedede;
+  display: none;
+  font-weight: normal;
+  margin-right: 0.3em;
+}
 
 #content-doc {
   margin: 3.5rem auto;
@@ -436,42 +438,6 @@ article {
   background: #080808;
   opacity: 0.80;
   z-index: 2;
-}
-
-#hamburger {
-  cursor: pointer;
-  height: 1em;
-  fill: #dedede;
-  display: none;
-  font-weight: normal;
-  margin-right: 0.3em;
-}
-
-#header-doc {
-  color: #ffffff;
-  font-size: 2em;
-  font-weight: bold;
-  padding: 0 16px 0 16px;
-  background: #151515;
-  width: 100%;
-  height: 3.5rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  border-bottom: 1px solid #1d272b;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#header-doc > a {
-  color: none;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-#header-doc > a:visited {
-  color: inherit;
 }
 
 @media (max-width: 840px) {
