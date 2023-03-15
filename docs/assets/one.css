@@ -206,18 +206,6 @@ a:visited {
 
 /* ------ */
 
-#title {
-  text-align: center;
-  padding: 1.8rem 0;
-}
-
-#content {
-  margin: 3.5rem auto;
-  padding-top: 1.8rem;
-  max-width: 740px;
-  padding: 0 16px;
-}
-
 #header {
   color: #ffffff;
   font-size: 2em;
@@ -233,6 +221,32 @@ a:visited {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#header > a {
+  display: contents;
+}
+
+#header > a {
+  color: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+#header > a:visited {
+  color: inherit;
+}
+
+#content {
+  margin: 3.5rem auto;
+  padding-top: 1.8rem;
+  max-width: 740px;
+  padding: 0 16px;
+}
+
+#title {
+  text-align: center;
+  padding: 1.8rem 0;
 }
 
 #toc {
@@ -256,21 +270,6 @@ a:visited {
   font-size: 1.2em;
   margin-bottom: 16px;
 }
-
-#header > a {
-  display: contents;
-}
-
-#header > a {
-  color: none;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-#header > a:visited {
-  color: inherit;
-}
-
 
 #nav {
   border-top: 1px solid #c5c5c5;
@@ -322,34 +321,6 @@ a:visited {
   background: #31424a;
   color: #ffffff;
 }
-
-/* BEGIN - Specific to my configuration (Tony Aldon) */
-
-/* (defface ta-colon-keyword-face nil */
-/*   "Face used to font-lock colon keywords (:something).") */
-/*  */
-/* (font-lock-add-keywords */
-/*  'emacs-lisp-mode */
-/*  `((,(concat "\\_<:" lisp-mode-symbol-regexp "\\_>") */
-/*     (0 'ta-colon-keyword-face)))) */
-.one-hl-ta-colon-keyword {color: #62b5e0;}   /* ta-colon-keyword-face */
-
-/* For my mode tms-mode */
-.one-hl-tms-cmd-line {                       /* tms-cmd-line-face */
-  background: #31424a;
-  color: #dedede;
-  font-weight: bold;
-	display: inline-block;
-  margin: 0.2em 0em;
-  border-radius: 6px;
-  padding: 0.2em 0.4em;
-}
-.one-hl-tms-ps1-user-host {color: #d7af87;}  /* tms-ps1-user-host-face */
-.one-hl-tms-ps1-directory {color: #ffd787;}  /* tms-ps1-directory-face */
-.one-hl-tms-ps1-git {color: #ff8700;}        /* tms-ps1-git-face */
-
-/* END - Specific to my configuration (Tony Aldon) */
-
 
 .container-doc {
   margin: 3.5rem auto;
@@ -513,3 +484,30 @@ article {
     padding: 0;
   }
 }
+
+/* BEGIN - Specific to my configuration (Tony Aldon) */
+
+/* (defface ta-colon-keyword-face nil */
+/*   "Face used to font-lock colon keywords (:something).") */
+/*  */
+/* (font-lock-add-keywords */
+/*  'emacs-lisp-mode */
+/*  `((,(concat "\\_<:" lisp-mode-symbol-regexp "\\_>") */
+/*     (0 'ta-colon-keyword-face)))) */
+.one-hl-ta-colon-keyword {color: #62b5e0;}   /* ta-colon-keyword-face */
+
+/* For my mode tms-mode */
+.one-hl-tms-cmd-line {                       /* tms-cmd-line-face */
+  background: #31424a;
+  color: #dedede;
+  font-weight: bold;
+	display: inline-block;
+  margin: 0.2em 0em;
+  border-radius: 6px;
+  padding: 0.2em 0.4em;
+}
+.one-hl-tms-ps1-user-host {color: #d7af87;}  /* tms-ps1-user-host-face */
+.one-hl-tms-ps1-directory {color: #ffd787;}  /* tms-ps1-directory-face */
+.one-hl-tms-ps1-git {color: #ff8700;}        /* tms-ps1-git-face */
+
+/* END - Specific to my configuration (Tony Aldon) */
