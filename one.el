@@ -864,8 +864,36 @@ See `one-default-with-toc' and `one-default-doc'."
         :title ,(org-element-property :raw-value elt)))))
 
 (defun one-default-toc (headlines)
-  "Generate the TOC (a `jack' component) from the list HEADLINES of headlines.
-See `jack-html', `one-default-list-headlines' and `one-default-with-toc'."
+  "Return `jack-html' table of content (TOC) component.
+
+The TOC returned (a nested list) is computed from the ordered
+flat list of headlines in HEADLINES where the level of each
+headline is given by the property `:level'.
+See `one-default-list-headlines'.
+
+For instance, evaluating the following form
+
+    (one-default-toc
+     \\='((:level 1 :title \"foo\"    :id \"id-foo\")
+       (:level 1 :title \"bar-1\"  :id \"id-bar-1\")
+       (:level 2 :title \"bar-2\"  :id \"id-bar-2\")
+       (:level 3 :title \"bar-3\"  :id \"id-bar-3\")
+       (:level 2 :title \"bar-22\" :id \"id-bar-22\")
+       (:level 1 :title \"baz\"    :id \"id-baz\")))
+
+returns
+
+    (:ul
+      (:li (:a (@ :href \"#id-foo\") \"foo\"))
+      (:li (:a (@ :href \"#id-bar-1\") \"bar-1\")
+       (:ul
+        (:li (:a (@ :href \"#id-bar-2\") \"bar-2\")
+         (:ul
+          (:li (:a (@ :href \"#id-bar-3\") \"bar-3\"))))
+        (:li (:a (@ :href \"#id-bar-22\") \"bar-22\"))))
+      (:li (:a (@ :href \"#id-baz\") \"baz\")))
+
+See `one-default-with-toc' and `one-default-doc'."
   (let* ((-headlines (cdr headlines))
          (stack (list (car headlines)))
          headline
