@@ -225,10 +225,6 @@ a:visited {
 }
 
 #header > a {
-  display: contents;
-}
-
-#header > a {
   color: none;
   cursor: pointer;
   text-decoration: none;
@@ -466,10 +462,6 @@ article {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-#header-doc > a {
-  display: contents;
 }
 
 #header-doc > a {
