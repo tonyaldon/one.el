@@ -211,7 +211,7 @@ a:visited {
   padding: 1.8rem 0;
 }
 
-.container {
+#content {
   margin: 3.5rem auto;
   padding-top: 1.8rem;
   max-width: 740px;
