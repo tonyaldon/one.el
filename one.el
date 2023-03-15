@@ -302,9 +302,9 @@ If HEADLINE is a page, return a plist with the properties
 
   This function takes 3 arguments:
 
-  - `page-tree:' which correspond to the data in `:one-page-tree',
-  - `pages:' list of pages,
-  - `global:' a plist of global informations that are computed once
+  - `page-tree' which correspond to the data in `:one-page-tree',
+  - `pages' list of pages,
+  - `global' a plist of global informations that are computed once
     when `one' website is built (before rendering the pages), see
     `one-build-only-html' and `one-build'.  This argument can be
     modified by the user at build time.  That means that if your
@@ -312,8 +312,8 @@ If HEADLINE is a page, return a plist with the properties
     compute those informations and to add them to `global'.
 
   You can see how to implement render functions looking at the
-  default render functions `one-default-home', `one-default' and
-  `one-default-with-toc'.
+  default render functions `one-default-home', `one-default',
+  `one-default-with-toc' and `one-default-doc'.
 
 - `:one-page-tree': the argument HEADLINE passed to `one-is-page'.
 
@@ -364,7 +364,41 @@ As those functions take `global' argument they are called after
 that argument has been let binded using `one-add-to-global'.")
 
 (defun one-build-only-html ()
-  "Build `one' web site of the current buffer under subdirectory `./public/'.
+  "Build website of the current buffer under `./public/' subdirectory.
+
+The current buffer should look like this.
+
+    ---------- Buffer ----------
+    * Home
+    :PROPERTIES:
+    :ONE: render-function-0
+    :CUSTOM_ID: /
+    :END:
+
+    Content of the home page
+
+    * Page 1
+    :PROPERTIES:
+    :ONE: render-function-1
+    :CUSTOM_ID: /blog/page-1/
+    :END:
+
+    Content of page 1
+
+    * Page 2
+    :PROPERTIES:
+    :ONE: render-function-2
+    :CUSTOM_ID: /blog/page-2/
+    :END:
+
+    Content of page 2
+    ---------- Buffer ----------
+
+The values `render-function-0', `render-function-1' and
+`render-function-2' of the org property `ONE' should be
+symbols of render functions.  Those function takes three
+argument and returns
+
 
 Doesn't copy files from `./assets/' to `./public/'.
 See also `one-build'."
@@ -389,7 +423,7 @@ See also `one-build'."
           (insert (funcall render-page-function page-tree pages global)))))))
 
 (defun one-build ()
-  "Build `one' web site of the current buffer under subdirectory `./public/'.
+  "Build website for the current buffer under `./public/' subdirectory.
 
 Also copy files in directory `./assets/' under the directory `./public/'.
 If you've already built the web site and you are just working
