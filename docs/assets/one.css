@@ -113,6 +113,8 @@ a:visited {
   color: #ff87af;
 }
 
+/* ------- '.one' classes used by 'one' org backend ------- */
+
 .one-hl {
 	font-family: 'Fira Mono', monospace;
   font-size: 80%;
@@ -176,8 +178,11 @@ a:visited {
 .one-hl-regexp-grouping-construct { color: #aa86ee}  /* font-lock-regexp-grouping-construct */
 .one-hl-number { color: #eedc82}                     /* font-lock-number-face */
 
-.one-hl-clojure-keyword { color: #457f8b}            /* clojure-keyword-face */
 .one-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
+
+/* ------------------------------------------------------ */
+
+/* -------- scrollbar -------- */
 
 ::-webkit-scrollbar {
   width: 1em;
@@ -197,6 +202,7 @@ a:visited {
   background: #31424a;
 }
 
+/* --------------------------- */
 
 /* ------ */
 
