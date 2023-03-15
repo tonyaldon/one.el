@@ -204,7 +204,8 @@ a:visited {
 
 /* --------------------------- */
 
-/* ------ */
+
+/* -------- specific to the default render functions -------- */
 
 #header {
   color: #ffffff;
@@ -249,27 +250,38 @@ a:visited {
   padding: 1.8rem 0;
 }
 
-#toc {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 32px;
-  color: #d1d1d1;
-}
 
-#toc > div {
-  padding: 1em;
-}
+/* -------- one-default-home -------- */
 
-#toc a {
-  color: #d1d1d1;
-}
-
-#toc > div > div:first-child {
-  text-decoration: underline 1px;
+#home {
+  margin: 5rem 0 1.5rem 0;
   text-align: center;
-  font-size: 1.2em;
-  margin-bottom: 16px;
 }
+
+#pages ul {
+  padding: 0;
+  list-style: none;
+}
+
+#pages a {
+  display: block;
+  line-height: 1.2em;
+  font-size: 1.2em;
+  color: #dedede;
+  border-bottom: 1px solid #1d272b;
+  padding: 1em 0.3em;
+}
+
+#pages a:hover {
+  text-decoration: none;
+  background: #31424a;
+  color: #ffffff;
+}
+
+/* ---------------------------------- */
+
+
+/* -------- one-default, one-default-with-toc, one-default-doc -------- */
 
 #nav {
   border-top: 1px solid #c5c5c5;
@@ -297,30 +309,36 @@ a:visited {
   }
 }
 
-#home {
-  margin: 5rem 0 1.5rem 0;
+/* ---------------------------------------------------------------------*/
+
+
+/* -------- one-default-with-toc, one-default-doc -------- */
+
+#toc {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+  color: #d1d1d1;
+}
+
+#toc > div {
+  padding: 1em;
+}
+
+#toc a {
+  color: #d1d1d1;
+}
+
+#toc > div > div:first-child {
+  text-decoration: underline 1px;
   text-align: center;
-}
-
-#pages ul {
-  padding: 0;
-  list-style: none;
-}
-
-#pages a {
-  display: block;
-  line-height: 1.2em;
   font-size: 1.2em;
-  color: #dedede;
-  border-bottom: 1px solid #1d272b;
-  padding: 1em 0.3em;
+  margin-bottom: 16px;
 }
 
-#pages a:hover {
-  text-decoration: none;
-  background: #31424a;
-  color: #ffffff;
-}
+/* ------------------------------------------------------- */
+
+
 
 #content-doc {
   margin: 3.5rem auto;
@@ -368,9 +386,6 @@ article {
   max-width: 640px;
   width: 100%;
 }
-
-
-/* ----- */
 
 #sidebar-left {
   width: 0;
