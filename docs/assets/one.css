@@ -52,12 +52,16 @@ ol {
   list-style: decimal;
 }
 
-li p {
+li p:first-of-type {
   margin: 0;
 }
 
-li {
-  margin-top: 0.25em;
+li p {
+  margin: 16px 0;
+}
+
+li code {
+  margin: 16px 0;
 }
 
 html {
