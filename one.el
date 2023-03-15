@@ -466,12 +466,17 @@ See `one-build'."
 
 Specifically:
 
-1) the directory `./public/' is removed,
-2) files in directory `./assets/' are copied under
-   the directory `./public/' and
-3) `one-build-only-html' is called once."
+1) clean `./public/' directory (if it exists),
+2) copy `./assets/' files into `./public/' directory and
+3) call `one-build-only-html' once.
+
+See `one-build-only-html'."
   (interactive)
-  (delete-directory "./public/" t)
+  (when (file-exists-p "./public/")
+    (dolist (file (cddr (directory-files "./public/" 'full)))
+      (if (file-directory-p file)
+          (delete-directory file t)
+        (delete-file file))))
   (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
   (one-build-only-html))
 
