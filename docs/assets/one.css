@@ -489,7 +489,7 @@ article {
   #sidebar {
     display: none;
   }
-  .container-doc {
+  #content-doc {
     justify-content: center;
   }
   #header-doc {
