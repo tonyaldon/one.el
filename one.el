@@ -676,6 +676,11 @@ See `one-default-new-project'.")
                    'one nil))
          (website-name (one-default-website-name pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
+         (toc (when headlines
+                `(:div/toc
+                  (:div
+                   (:div "Table of content")
+                   (:div ,(one-default-toc headlines))))))
          (nav (one-default-nav path pages)))
     (jack-html
      "<!DOCTYPE html>"
@@ -688,11 +693,7 @@ See `one-default-new-project'.")
         (:div/header (:a (@ :href "/") ,website-name))
         (:div.container
          (:div/page-title (:h1 ,title))
-         ,(when headlines
-            `(:div/toc
-              (:div
-               (:div "Table of content")
-               (:div ,(one-default-toc headlines)))))
+         ,toc
          ,content
          ,nav))))))
 
@@ -704,8 +705,13 @@ See `one-default-new-project'.")
                    (org-element-contents page-tree)
                    'one nil))
          (website-name (one-default-website-name pages))
-         (headlines (cdr (one-default-list-headlines page-tree)))
          (pages-list (one-default-pages pages))
+         (headlines (cdr (one-default-list-headlines page-tree)))
+         (toc (when headlines
+                `(:div/toc
+                  (:div
+                   (:div "Table of content")
+                   (:div ,(one-default-toc headlines))))))
          (nav (one-default-nav path pages)))
     (jack-html
      "<!DOCTYPE html>"
@@ -728,11 +734,7 @@ See `one-default-new-project'.")
          (:div/sidebar ,pages-list)
          (:article
           (:div/page-title (:h1 ,title))
-          ,(when headlines
-             `(:div/toc
-               (:div
-                (:div "Table of content")
-                (:div ,(one-default-toc headlines)))))
+          ,toc
           ,content
           ,nav)))
        (:script "
