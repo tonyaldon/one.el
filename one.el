@@ -834,11 +834,11 @@ See `one-build-only-html'."
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div/sidebar-mobile
-         (:div/sidebar-left (@ :onclick "followSidebarLink()")
-          (:div (:div ,website-name))
-          ,pages-list)
-         (:div/sidebar-main))
+        ;; sidebar-left and sidebar-main are for small devices
+        (:div/sidebar-left (@ :onclick "followSidebarLink()")
+         (:div (:div ,website-name))
+         ,pages-list)
+        (:div/sidebar-main)
         (:div/header-doc
          (:svg/hamburger (@ :viewBox "0 0 24 24" :onclick "sidebarShow()")
           (:path (@ :d "M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z")))
