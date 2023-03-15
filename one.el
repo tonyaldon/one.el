@@ -462,13 +462,14 @@ See `one-build'."
           (insert (funcall render-page-function page-tree pages global)))))))
 
 (defun one-build ()
-  "Build website for the current buffer under `./public/' subdirectory.
+  "Build website of the current buffer under `./public/' subdirectory.
 
-Also copy files in directory `./assets/' under the directory `./public/'.
-If you've already built the web site and you are just working
-on the content of the current buffer (meaning files in `./assets/'don't change),
-you might prefer to use the command `one-build-only-html'which doesn't copy files
-from `./assets/' directory."
+Specifically:
+
+1) the directory `./public/' is removed,
+2) files in directory `./assets/' are copied under
+   the directory `./public/' and
+3) `one-build-only-html' is called once."
   (interactive)
   (delete-directory "./public/" t)
   (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
