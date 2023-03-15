@@ -434,13 +434,23 @@ Therefore if you serve the website in `./public/' directory at
 at `http://localhost:3000/blog/page-1/'.
 
 You can see how to implement render functions looking at the
-default render functions `one-default-home', `one-default',
-`one-default-with-toc' and `one-default-doc'.
+implementation of the default render functions `one-default-home',
+`one-default', `one-default-with-toc' and `one-default-doc'.
 
 Note that `one-build-only-html' doesn't copy files from
 `./assets/' directory to `./public/' directory.
 
-See `one-build'."
+See `one-build'.
+
+If you want to start a new `one' project with the default style
+see `one-default-new-project' command.
+
+Note: I use https://browsersync.io to serve the website in `./public/'
+directory.  Once you have it installed, to start a web server with
+live reloading, you can run the following commands (in a terminal):
+
+    $ cd public
+    $ browser-sync start -s -w --files \"*\""
   (interactive)
   (let* ((tree (one-parse-buffer))
          (pages (one-list-pages tree))
@@ -466,8 +476,8 @@ See `one-build'."
 
 Specifically:
 
-1) clean `./public/' directory (if it exists),
-2) copy `./assets/' files into `./public/' directory and
+1) clean `./public/' subdirectory (if it exists),
+2) copy `./assets/' files into `./public/' subdirectory and
 3) call `one-build-only-html' once.
 
 See `one-build-only-html'."
@@ -624,7 +634,10 @@ a:hover {
   background-image: linear-gradient(to right top, #345157, #304c54, #2d4751, #2a424e, #283d4a);
 }
 "
-  "Default CSS used by `one'.
+  "Default CSS style sheet.
+
+This style sheet is meant to be used with the default render functions
+`one-default-home',`one-default',`one-default-with-toc',`one-default-doc'.
 
 See `one-default-new-project' and `one-default-add-css-file'.")
 
@@ -690,13 +703,34 @@ the function ~one-default~ (see [[#/blog/page-1/]])
 See `one-default-new-project'.")
 
 (defun one-default-add-css-file ()
-  "Add default css file `./assets/one.css' with the content `one-default-css'."
+  "Add default css file `./assets/one.css' with the content `one-default-css'.
+
+See `one-default-new-project'.
+
+See the default render functions `one-default-home',`one-default',
+`one-default-with-toc',`one-default-doc'."
   (interactive)
   (make-directory "assets" t)
   (with-temp-file "./assets/one.css" (insert one-default-css)))
 
 (defun one-default-new-project ()
-  ""
+  "Initialize a new `one' project in the current directory with the default style.
+
+It is structured like this:
+
+    .
+    ├── assets
+    │   └── one.css
+    └── one.org
+
+The content of the file `./assets/one.css' is `one-default-css'.
+The content of the file `./one.org' is `one-default-org-content'.
+
+Once you've initialized this new `one' project, you can build it
+calling `one-build' command while visiting the file `./one.org'.
+This results in producing the website under the subdirectory `./public/'.
+
+See `one-build-only-html'."
   (interactive)
   (one-default-add-css-file)
   (with-temp-file "one.org" (insert one-default-org-content))
