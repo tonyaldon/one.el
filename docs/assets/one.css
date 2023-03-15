@@ -322,7 +322,7 @@ a:visited {
   color: #ffffff;
 }
 
-.container-doc {
+#content-doc {
   margin: 3.5rem auto;
   display: flex;
   margin-left: auto;

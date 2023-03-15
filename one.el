@@ -843,7 +843,7 @@ See `one-build-only-html'."
          (:svg/hamburger (@ :viewBox "0 0 24 24" :onclick "sidebarShow()")
           (:path (@ :d "M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z")))
          (:a (@ :href "/") ,website-name))
-        (:div.container-doc
+        (:div/content-doc
          (:div/sidebar ,pages-list)
          (:article
           (:div/title (:h1 ,title))
