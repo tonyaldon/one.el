@@ -651,7 +651,8 @@ See `one-default-new-project'.")
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
                    'one nil))
-         (website-name (one-default-website-name pages)))
+         (website-name (one-default-website-name pages))
+         (nav (one-default-nav path pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -664,7 +665,7 @@ See `one-default-new-project'.")
         (:div.container
          (:div/page-title (:h1 ,title))
          ,content
-         ,(one-default-nav path pages)))))))
+         ,nav))))))
 
 (defun one-default-with-toc (page-tree pages global)
   ""
@@ -674,7 +675,8 @@ See `one-default-new-project'.")
                    (org-element-contents page-tree)
                    'one nil))
          (website-name (one-default-website-name pages))
-         (headlines (cdr (one-default-list-headlines page-tree))))
+         (headlines (cdr (one-default-list-headlines page-tree)))
+         (nav (one-default-nav path pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -692,7 +694,7 @@ See `one-default-new-project'.")
                (:div "Table of content")
                (:div ,(one-default-toc headlines)))))
          ,content
-         ,(one-default-nav path pages)))))))
+         ,nav))))))
 
 (defun one-default-doc (page-tree pages global)
   ""
@@ -703,7 +705,8 @@ See `one-default-new-project'.")
                    'one nil))
          (website-name (one-default-website-name pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
-         (pages-list (one-default-pages pages)))
+         (pages-list (one-default-pages pages))
+         (nav (one-default-nav path pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -731,7 +734,7 @@ See `one-default-new-project'.")
                 (:div "Table of content")
                 (:div ,(one-default-toc headlines)))))
           ,content
-          ,(one-default-nav path pages))))
+          ,nav)))
        (:script "
 function sidebarShow() {
   if (window.innerWidth < 481)
