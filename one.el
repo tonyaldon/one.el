@@ -1011,19 +1011,55 @@ Emacs is the same as in your browsers once the website has been built.
 
 ** Why does one-default render links in this way?
 
+This is because ~one-default~ render function uses ~one~ org export
+backend internally to convert the parsed tree of this page (org entry)
+into an HTML string.  And ~one~ backend is designed to do the right thing
+for links, code blocks and headlines in the context of ~one~.
+
+To convert the parsed tree of this page into an HTML string,
+~one-default~ uses the function ~org-export-data-with-backend~ like this
+
+#+BEGIN_SRC emacs-lisp
+(org-export-data-with-backend
+ (org-element-contents page-tree)
+ 'one nil)
+#+END_SRC
+
+where ~page-tree~ is the parsed tree of the entry of this page given as
+the first argument of ~one-default~.
+
 # TO BE CONTINUED...
 
-~one-default~ is a render function ... that uses ~one~ org export backend
-like we can see ...
+#+BEGIN_SRC emacs-lisp
+(defun one-default (page-tree pages global)
+  \"\"
+  (let* ((title (org-element-property :raw-value page-tree))
+         (path (org-element-property :CUSTOM_ID page-tree))
+         (content (org-export-data-with-backend
+                   (org-element-contents page-tree)
+                   'one nil))
+         (website-name (one-default-website-name pages))
+         (nav (one-default-nav path pages)))
+    (jack-html
+     \"<!DOCTYPE html>\"
+     `(:html
+       (:head
+        (:meta (@ :name \"viewport\" :content \"width=device-width,initial-scale=1\"))
+        (:link (@ :rel \"stylesheet\" :type \"text/css\" :href \"/one.css\"))
+        (:title ,title))
+       (:body
+        (:div/header (:a (@ :href \"/\") ,website-name))
+        (:div/content
+         (:div/title (:h1 ,title))
+         ,content
+         ,nav))))))
+#+END_SRC
 
-and ~one~ backend is defined ...
+** But what is a render function?
 
-~one~ backend is thought to do the right thing for links, code block and
-headlines in the context of ~one~.  Easy css styling of code blocks,
-table of content with ~one-default-toc~ helper function, and links to
-pages.
+# TO BE CONTINUED...
 
-Render function don't have to use ~one~ org backend, they are just
+Render functions don't have to use ~one~ org backend, they are just
 function that takes three arguments (all the information available to
 build the website - see the hook ~one-hook~ if you need the render
 functions to get access to more information) and return an HTML
@@ -1050,7 +1086,7 @@ several things happen:
 This page is rendered with the render function ~one-default-with-toc~
 specified in the org property ~ONE~.
 
-** Do you want sidebar?
+** Do you want a sidebar?
 
 Perhaps you want a sidebar listing all the pages on your website, as
 many modern documentation sites do.  If so, you can use the default
