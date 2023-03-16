@@ -415,13 +415,13 @@ calling the command `one-build-only-html' produces
 the following files
 
     .
-    ├── public
-    │   ├── blog
-    │   │   ├── page-1
-    │   │   │   └── index.html
-    │   │   └── page-2
-    │   │       └── index.html
-    │   ├── index.html
+    └── public
+        ├── blog
+        │   ├── page-1
+        │   │   └── index.html
+        │   └── page-2
+        │       └── index.html
+        └── index.html
 
 and the content of the file `./public/blog/page-1/index.html' is
 
