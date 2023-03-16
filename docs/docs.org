@@ -481,7 +481,7 @@ Those paths define valid web urls starting at the root of the website
 if you respect (you must):
 
 1) url-encoded characters,
-2) start them with a ~/~,
+2) start them with a ~/~ and end them with ~/~,
 3) use ~#~ character to start the last part of the path when you're
    targeting a heading tag with its ~id~ being the last part after the ~#~
    character.
