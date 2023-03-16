@@ -969,37 +969,101 @@ See `one-default-new-project' and `one-default-add-css-file'.")
 
 This text is inserted before we list the pages in our web site.
 
-* Page 1
+* The default page
 :PROPERTIES:
 :ONE: one-default
-:CUSTOM_ID: /blog/page-1/
+:CUSTOM_ID: /blog/default/
 :END:
 
-This page is rendered with the function ~one-default~ specified in the
-org property ~ONE~.
+This page is rendered with the default render function ~one-default~
+specified in ~ONE~ org property.
 
-** headline 1
-*** headline 1.1
+The path of the page is specified in ~CUSTOM_ID~ org property.  Notice
+that it starts with a slash ~/~ and end with a slash ~/~.
 
-foo
+** Do you want a table of content?
 
-*** headline 1.2
+As you can see, ~one-default~ doesn't add a table of content (TOC).
 
-bar
+If you want a default render function that adds the TOC to the page
+you can use the render function ~one-default-with-toc~ presented in
+[[#/blog/one-default-with-toc/][The default page with a TOC]].
 
-** headline 2
+** Links to pages
 
-As you can see, ~one-default~ doesn't add the table of content (TOC).
-If you want a default function that adds the TOC to the page you can
-use the function ~one-default-with-toc~ (see [[#/blog/page-2/]])
+Note that the previous links is written in the org file like this
 
-* Page 2
+#+BEGIN_SRC text
+[[#/blog/one-default-with-toc/][The default page with a TOC]]
+#+END_SRC
+
+making it an internal org link that targets the entry in the same file
+with the ~CUSTOM_ID~ property set to ~/blog/one-default-with-toc/~ and the
+render function ~one-default~ renders it like this:
+
+#+BEGIN_SRC html
+<a href=\"/blog/one-default-with-toc/\">The default page with a TOC</a>
+#+END_SRC
+
+The advantage of doing this is that the navigation between pages
+(level 1 headlines with ~ONE~ and ~CUSTOM_ID~ org properties set) inside
+Emacs is the same as in your browsers once the website has been built.
+
+** Why does one-default render links in this way?
+
+# TO BE CONTINUED...
+
+~one-default~ is a render function ... that uses ~one~ org export backend
+like we can see ...
+
+and ~one~ backend is defined ...
+
+~one~ backend is thought to do the right thing for links, code block and
+headlines in the context of ~one~.  Easy css styling of code blocks,
+table of content with ~one-default-toc~ helper function, and links to
+pages.
+
+Render function don't have to use ~one~ org backend, they are just
+function that takes three arguments (all the information available to
+build the website - see the hook ~one-hook~ if you need the render
+functions to get access to more information) and return an HTML
+strings that is use to produce the pages.
+
+** But how is the website built?
+
+# TO BE CONTINUED...
+
+Good question!
+
+When you call ~one-build~ or ~one-build-only-html~ to build the website
+several things happen:
+
+1) the org buffer is parsed with ~one-parse-buffer~,
+2) ...
+
+* The default page with a TOC
 :PROPERTIES:
 :ONE: one-default-with-toc
-:CUSTOM_ID: /blog/page-2/
+:CUSTOM_ID: /blog/one-default-with-toc/
 :END:
 
-This page is rendered with the function ~one-default-with-toc~ specified
+This page is rendered with the render function ~one-default-with-toc~
+specified in the org property ~ONE~.
+
+** Do you want sidebar?
+
+Perhaps you want a sidebar listing all the pages on your website, as
+many modern documentation sites do.  If so, you can use the default
+render function ~one-default-doc~ presented in [[#/blog/one-default-doc/][The default page with TOC
+and sidebar]].
+
+* The default page with TOC and sidebar
+:PROPERTIES:
+:ONE: one-default-doc
+:CUSTOM_ID: /blog/one-default-doc/
+:END:
+
+This page is rendered with the function ~one-default-doc~ specified
 in the org property ~ONE~.
 
 ** headline 1
@@ -1012,10 +1076,6 @@ foo
 bar
 
 ** headline 2
-
-As you can see, ~one-default~ doesn't add the table of content (TOC).
-If you don't want the table of content (TOC) to be added, you can use
-the function ~one-default~ (see [[#/blog/page-1/]])
 "
   "Default org file to start a new `one' project.
 
