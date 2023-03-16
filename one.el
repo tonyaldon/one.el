@@ -1028,11 +1028,71 @@ To convert the parsed tree of this page into an HTML string,
 where ~page-tree~ is the parsed tree of the entry of this page given as
 the first argument of ~one-default~.
 
-# TO BE CONTINUED...
+** But what is a render function?
+
+A render function is a regular Elisp function that takes 3 arguments
+
+- ~page-tree~: corresponding to the parsed tree of the org entry defining
+  the page,
+- ~pages~: list of pages,
+- ~global~: a plist of global informations that are computed once
+  in ~one-build-only-html~ (see ~one-hook~) before rendering the pages
+
+and which returns an HTML string.
+
+For instance, the following ~hello-world~ function
+
+#+BEGIN_SRC emacs-lisp
+(defun hello-world (page-tree pages global)
+      \"<h1>Hello world!</h1>\")
+#+END_SRC
+
+defined a valid render function.  We can use it to build a website
+like this.  In an empty directory, we create a file named ~one.org~ with
+the following content:
+
+#+BEGIN_SRC org
+,* The home page
+:PROPERTIES:
+:ONE: hello-world
+:CUSTOM_ID: /
+:END:
+,* Blog post 1
+:PROPERTIES:
+:ONE: hello-world
+:CUSTOM_ID: /blog/page-1/
+:END:
+#+END_SRC
+
+We visit that file and call ~one-build~ command.  It produces the following files
+
+#+BEGIN_SRC text
+.
+├── one.org
+└── public
+    ├── blog
+    │   └── page-1
+    │       └── index.html
+    └── index.html
+#+END_SRC
+
+and the content of the files ~./public/blog/page-1/index.html~ and
+~./public/index.html~ is
+
+#+BEGIN_SRC html
+<h1>Hello world!</h1>
+#+END_SRC
+
+Therefore if we serve the website in ~./public/~ directory at
+~http://localhost:3000~ we can access the 2 \"Hello world!\" pages
+at ~http://localhost:3000/blog/page-1/~ and ~http://localhost:3000~.
+
+To facilitate the generation of the HTML strings in render functions
+we can use the package [[https://jack.tonyaldon.com][Jack]] as in ~one-default~ function:
 
 #+BEGIN_SRC emacs-lisp
 (defun one-default (page-tree pages global)
-  \"\"
+  \"...\"
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
@@ -1054,16 +1114,6 @@ the first argument of ~one-default~.
          ,content
          ,nav))))))
 #+END_SRC
-
-** But what is a render function?
-
-# TO BE CONTINUED...
-
-Render functions don't have to use ~one~ org backend, they are just
-function that takes three arguments (all the information available to
-build the website - see the hook ~one-hook~ if you need the render
-functions to get access to more information) and return an HTML
-strings that is use to produce the pages.
 
 ** But how is the website built?
 
