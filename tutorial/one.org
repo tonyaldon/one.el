@@ -1,0 +1,314 @@
+* Tutorial - ONE
+:PROPERTIES:
+:ONE: one-default-home
+:CUSTOM_ID: /
+:END:
+
+Hi, I'm Tony Aldon and I'm glad that you're giving a try to ~one~, a
+simple static site generator for Emacs Lisp programmers.  I hope its
+design fits your workflow.
+
+* Getting started
+:PROPERTIES:
+:ONE: one-default
+:CUSTOM_ID: /blog/getting-started/
+:END:
+
+If you're reading this from Emacs, that means you've already called
+~one-default-new-project~ command and produced a ~one~ project with
+the following structure:
+
+#+BEGIN_SRC text
+.
+├── assets
+│   └── one.css
+└── one.org
+#+END_SRC
+
+If you didn't, start Emacs and in a new empty directory call
+~one-default-new-project~ command.  Now you are in the org buffer
+visiting the file ~one.org~ and you can go through this tutorial.
+
+Let's build the website under the directory ~./public/~ by calling
+~one-build~ command.  Our project's structure is now:
+
+#+BEGIN_SRC text
+.
+├── assets
+│   └── one.css
+├── one.org
+└── public
+    ├── blog
+    │   ├── default
+    │   │   └── index.html
+    │   ├── getting-started
+    │   │   └── index.html
+    │   ├── one-default-doc
+    │   │   └── index.html
+    │   └── one-default-with-toc
+    │       └── index.html
+    ├── index.html
+    └── one.css
+#+END_SRC
+
+To get our website up and running, we serve the files in ~./public/~
+subdirectory using [[https://browsersync.io][brower-sync]] (any webserver serving files is OK).
+Once we have it installed, to start a webserver with live reloading,
+we run the following commands (in a terminal):
+
+#+BEGIN_SRC text
+$ cd public
+$ browser-sync start -s -w --files "*"
+#+END_SRC
+
+If the port ~3000~ isn't used we should have our website served at
+~http://localhost:3000~.
+
+Finally:
+
+1) after this paragraph we write 'Hello world!',
+2) we call ~one-build~ command (or ~one-build-only-html~) and
+3) we watch the changes live in our browser.
+
+Cool, right?
+
+* The default page
+:PROPERTIES:
+:ONE: one-default
+:CUSTOM_ID: /blog/default/
+:END:
+
+This page is rendered with the default render function ~one-default~
+specified in ~ONE~ org property.  The path of the page is specified in
+~CUSTOM_ID~ org property.  Notice that it starts with a slash ~/~ and end
+with a slash ~/~.
+
+** Do you want a table of content?
+
+As we can see, ~one-default~ doesn't add a table of content (TOC). If we
+want a default render function that adds the TOC to the page we can
+use the render function ~one-default-with-toc~ presented in [[#/blog/one-default-with-toc/][The default
+page with a TOC]].
+
+** Links to pages
+
+Note that the previous links is written in the org file like this
+
+#+BEGIN_SRC text
+[[#/blog/one-default-with-toc/][The default page with a TOC]]
+#+END_SRC
+
+making it an internal org link that targets the entry in the same file
+with the ~CUSTOM_ID~ property set to ~/blog/one-default-with-toc/~ and the
+render function ~one-default~ renders it like this:
+
+#+BEGIN_SRC html
+<a href="/blog/one-default-with-toc/">The default page with a TOC</a>
+#+END_SRC
+
+The advantage of doing this is that the navigation between pages
+(level 1 headlines with ~ONE~ and ~CUSTOM_ID~ org properties set) inside
+Emacs is the same as in the browser once the website has been built.
+
+** Why does one-default render links in this way?
+
+This is because ~one-default~ render function uses ~one~ org export
+backend internally to convert the parsed tree of this page into an
+HTML string.  And ~one~ backend is designed to do the right thing for
+links, code blocks and headlines in the context of ~one~.
+
+To convert the parsed tree of this page into an HTML string,
+~one-default~ uses the function ~org-export-data-with-backend~ like this
+
+#+BEGIN_SRC emacs-lisp
+(org-export-data-with-backend
+ (org-element-contents page-tree)
+ 'one nil)
+#+END_SRC
+
+where ~page-tree~ is the parsed tree of the entry of this page given as
+the first argument of ~one-default~.
+
+** But what is a render function?
+
+A render function is a regular Elisp function that takes 3 arguments
+
+- ~page-tree~: corresponding to the parsed tree of the org entry defining
+  the page,
+- ~pages~: list of pages,
+- ~global~: a plist of global informations that are computed once
+  in ~one-build-only-html~ (see ~one-add-to-global~) before rendering the
+  pages
+
+and returns an HTML string.
+
+For instance, the following ~hello-world~ function
+
+#+BEGIN_SRC emacs-lisp
+(defun hello-world (page-tree pages global)
+      "<h1>Hello world!</h1>")
+#+END_SRC
+
+defined a valid render function.  We can use it to build a website
+like this.  In an empty directory, we create a file named ~one.org~ with
+the following content:
+
+#+BEGIN_SRC org
+,* The home page
+:PROPERTIES:
+:ONE: hello-world
+:CUSTOM_ID: /
+:END:
+,* Blog post 1
+:PROPERTIES:
+:ONE: hello-world
+:CUSTOM_ID: /blog/page-1/
+:END:
+#+END_SRC
+
+We visit that file and call ~one-build~ command.  It produces the following files
+
+#+BEGIN_SRC text
+.
+├── one.org (already there)
+└── public
+    ├── blog
+    │   └── page-1
+    │       └── index.html
+    └── index.html
+#+END_SRC
+
+and the content of the files ~./public/blog/page-1/index.html~ and
+~./public/index.html~ is
+
+#+BEGIN_SRC html
+<h1>Hello world!</h1>
+#+END_SRC
+
+Therefore if we serve the website in ~./public/~ directory at
+~http://localhost:3000~ we can access the two "Hello world!" pages
+at ~http://localhost:3000/blog/page-1/~ and ~http://localhost:3000~.
+
+To facilitate the generation of the HTML strings in render functions
+we can use the package [[https://jack.tonyaldon.com][Jack]] as in ~one-default~ function:
+
+#+BEGIN_SRC emacs-lisp
+(defun one-default (page-tree pages global)
+  "..."
+  (let* ((title (org-element-property :raw-value page-tree))
+         (path (org-element-property :CUSTOM_ID page-tree))
+         (content (org-export-data-with-backend
+                   (org-element-contents page-tree)
+                   'one nil))
+         (website-name (one-default-website-name pages))
+         (nav (one-default-nav path pages)))
+    (jack-html
+     "<!DOCTYPE html>"
+     `(:html
+       (:head
+        (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1"))
+        (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
+        (:title ,title))
+       (:body
+        (:div/header (:a (@ :href "/") ,website-name))
+        (:div/content
+         (:div/title (:h1 ,title))
+         ,content
+         ,nav))))))
+#+END_SRC
+
+** But how is the website built?
+
+Good question!
+
+From an org file (or only buffer) containing all the pages of our
+website we can build the website under ~./public/~ subdirectory
+by calling either ~one-build~ or ~one-build-only-html~.
+
+The difference between those two commands is that before producing the
+HTML pages calling ~one-build-only-html~, ~one-build~ command cleans the
+subdirectory ~./public/~ and copies the content of ~./assets/~ subdirectory
+into ~./public/~ subdirectory.
+
+So all the interesting work is done by ~one-build-only-html~ command.
+When we call it in an org buffer containing all our pages,
+~one-build-only-html~ does the following:
+
+1) set ~tree~ local variable to the parsed tree of the current org
+   buffer,
+2) set ~pages~ local variable to the list of pages in ~tree~,
+3) set ~global~ local variable according to the information in
+   ~one-add-to-global~ user variable,
+4) call the functions in ~one-hook~ with the previously computed
+   variables ~tree~, ~pages~ and ~global~ as arguments,
+5) finally produce the HTML pages in ~./public/~ subdirectory doing the
+   following.  For each ~page~ in ~pages~:
+   - set ~path~, ~render-page-function~, ~page-tree~ local variables
+     using respectively the values of the properties ~:one-path~,
+     ~:one-render-page-function~, ~:one-page-tree~ in ~page~ property list,
+   - fill the content of a new created file ~index.html~ in the
+     subdirectory ~path~ with the HTML string generated by
+     ~render-page-function~ function called with ~page-tree~, ~pages~ and
+     ~global~ as arguments.
+
+Here is the complete implementation of ~one-build-only-html~:
+
+#+BEGIN_SRC emacs-lisp
+(defun one-build-only-html ()
+  "..."
+  (interactive)
+  (let* ((tree (one-parse-buffer))
+         (pages (one-list-pages tree))
+         (global
+          (let (global)
+            (dolist (glob one-add-to-global)
+              (push (funcall (plist-get glob :one-global-function) pages tree)
+                    global)
+              (push (plist-get glob :one-global-property) global))
+            global)))
+    (dolist (hook one-hook) (funcall hook pages tree global))
+    (dolist (page pages)
+      (let* ((path (concat "./public" (plist-get page :one-path)))
+             (file (concat path "index.html"))
+             (render-page-function (plist-get page :one-render-page-function))
+             (page-tree (plist-get page :one-page-tree)))
+        (make-directory path t)
+        (with-temp-file file
+          (insert (funcall render-page-function page-tree pages global)))))))
+#+END_SRC
+
+* The default page with a TOC
+:PROPERTIES:
+:ONE: one-default-with-toc
+:CUSTOM_ID: /blog/one-default-with-toc/
+:END:
+
+This page is rendered with the render function ~one-default-with-toc~
+specified in the org property ~ONE~.
+
+** Do you want a sidebar?
+
+Perhaps we want a sidebar listing all the pages on your website, as
+many modern documentation sites do.  If so, we can use the default
+render function ~one-default-doc~ presented in [[#/blog/one-default-doc/][The default page with TOC
+and sidebar]].
+
+* The default page with TOC and sidebar
+:PROPERTIES:
+:ONE: one-default-doc
+:CUSTOM_ID: /blog/one-default-doc/
+:END:
+
+This page is rendered with the function ~one-default-doc~ specified
+in the org property ~ONE~.
+
+** headline 1
+*** headline 1.1
+
+foo
+
+*** headline 1.2
+
+bar
+
+** headline 2
