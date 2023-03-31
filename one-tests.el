@@ -100,7 +100,7 @@ variable, and communication channel under `info'."
                          (one-ox-headline headline nil nil)))))))
 
 (ert-deftest one-ox-section-markup-plain-list-test ()
-  ;; section, paragraph, plain-text, bold, italic, strike-through, underline
+  ;; section, paragraph, plain-text, bold, italic, strike-through, underline, subscript, superscript
   (should (string= (one-ox-section nil "section" nil) "<div>section</div>"))
   (should (string= (one-ox-section nil nil nil) ""))
   (should (string= (one-ox-paragraph nil "paragraph" nil) "<p>paragraph</p>"))
@@ -109,7 +109,8 @@ variable, and communication channel under `info'."
   (should (string= (one-ox-italic nil "italic" nil) "<i>italic</i>"))
   (should (string= (one-ox-strike-through nil "strike-through" nil) "<del>strike-through</del>"))
   (should (string= (one-ox-underline nil "underline" nil) "<u>underline</u>"))
-
+  (should (string= (one-ox-no-subscript nil "foo" nil) "_foo"))
+  (should (string= (one-ox-no-superscript nil "bar" nil) "^bar"))
   ;; plain-list, item
   (let ((ordered-list
          (org-test-with-temp-text "<point>1) first
@@ -141,47 +142,6 @@ variable, and communication channel under `info'."
                      "<code class=\"one-hl one-hl-inline\">inline code</code>"))
     (should (string= (one-ox-verbatim verbatim nil nil)
                      "<code class=\"one-hl one-hl-inline\">verbatim</code>"))))
-
-(ert-deftest one-ox--subscript-and-superscript ()
-  ;; one-ox-subscript, one-ox-superscript
-  (should (string= (one-ox-subscript nil "subscript" nil)
-                   "<sub>subscript</sub>"))
-  (should (string= (one-ox-superscript nil "superscript" nil)
-                   "<sup>superscript</sup>"))
-
-  ;; by default ox.el exports with specific transcode functions
-  ;; for the org elements `subscript' and `superscript'.
-  ;; This is controlled by the variable `org-export-with-sub-superscripts'.
-  ;; See `org-export-options-alist'.
-  (let ((backend
-         (org-export-create-backend
-          :transcoders
-          '((section . (lambda (_e c _i) c))
-            (paragraph . (lambda (_e c _i) c))
-            (subscript . one-ox-subscript)
-            (superscript . one-ox-superscript)))))
-    (let ((org-export-with-sub-superscripts t))
-      (should
-       (string=
-        (org-test-with-temp-text "foo_bar"
-          (org-export-as backend))
-        "foo<sub>bar</sub>\n"))
-      (should
-       (string=
-        (org-test-with-temp-text "foo^bar"
-          (org-export-as backend))
-        "foo<sup>bar</sup>\n")))
-    (let ((org-export-with-sub-superscripts nil))
-      (should
-       (string=
-        (org-test-with-temp-text "foo_bar"
-          (org-export-as backend))
-        "foo_bar\n"))
-      (should
-       (string=
-        (org-test-with-temp-text "foo^bar"
-          (org-export-as backend))
-        "foo^bar\n")))))
 
 ;;;; blocks
 
