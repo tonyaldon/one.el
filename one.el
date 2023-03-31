@@ -1495,10 +1495,10 @@ See `one-default-with-toc' and `one-default-doc'."
         :title ,(org-element-property :raw-value elt)))))
 
 (defun one-default-toc (headlines)
-  "Return `jack-html' table of content (TOC) component.
+  "Return table of content (TOC) as an HTML string.
 
-The TOC returned (a nested list) is computed from the ordered
-flat list of headlines in HEADLINES where the level of each
+The TOC returned is computed from the ordered flat list of
+headlines in HEADLINES where the level of each
 headline is given by the property `:level'.
 See `one-default-list-headlines'.
 
@@ -1514,97 +1514,47 @@ For instance, evaluating the following form
 
 returns
 
-    (:ul
-      (:li (:a (@ :href \"#id-foo\") \"foo\"))
-      (:li (:a (@ :href \"#id-bar-1\") \"bar-1\")
-       (:ul
-        (:li (:a (@ :href \"#id-bar-2\") \"bar-2\")
-         (:ul
-          (:li (:a (@ :href \"#id-bar-3\") \"bar-3\"))))
-        (:li (:a (@ :href \"#id-bar-22\") \"bar-22\"))))
-      (:li (:a (@ :href \"#id-baz\") \"baz\")))
+     \"
+     <ul>
+     <li><a href=\\\"#id-foo\\\">foo</a></li>
+     <li><a href=\\\"#id-bar-1\\\">bar-1</a>
+     <ul>
+     <li><a href=\\\"#id-bar-2\\\">bar-2</a>
+     <ul>
+     <li><a href=\\\"#id-bar-3\\\">bar-3</a></li>
+     </ul>
+     </li>
+     <li><a href=\\\"#id-bar-22\\\">bar-22</a></li>
+     </ul>
+     </li>
+     <li><a href=\\\"#id-baz\\\">baz</a></li>
+     </ul>
+     \"
 
 See `one-default-with-toc' and `one-default-doc'."
-  (let* ((-headlines (cdr headlines))
-         (stack (list (car headlines)))
-         headline
-         (anchor-title-id
-          (lambda (title id)
-            `(:a (@ :href ,(concat "#" id)) ,title)))
-         (ul-or-child
-          (lambda (title id child)
-            (or (and title child `(:ul (:li ,(funcall anchor-title-id title id) ,child)))
-                (and title `(:ul (:li ,(funcall anchor-title-id title id))))
-                child))))
-    (while -headlines
-      (setq headline (pop -headlines))
-      (while headline
-        (if (>= (plist-get headline :level)
-                (plist-get (car stack) :level))
-            (progn (push headline stack)
-                   (setq headline nil))
-          (let* ((stack-0 (pop stack))
-                 (level-0 (plist-get stack-0 :level))
-                 (title-0 (plist-get stack-0 :title))
-                 (id-0 (plist-get stack-0 :id))
-                 (child-0 (plist-get stack-0 :child))
-                 (stack-1 (pop stack))
-                 (level-1 (plist-get stack-1 :level))
-                 (title-1 (plist-get stack-1 :title))
-                 (id-1 (plist-get stack-1 :id))
-                 (child-1 (plist-get stack-1 :child))
-                 (anchor-0 (funcall anchor-title-id title-0 id-0))
-                 (anchor-1 (funcall anchor-title-id title-1 id-1)))
-            (if (> level-0 level-1)
-                (push `(:level ,level-1 :title ,title-1 :id ,id-1
-                        :child ,(funcall ul-or-child title-0 id-0 child-0))
-                      stack)
-              (push
-               `(:level ,level-1
-                 :child
-                 ,(if child-0
-                      `(:ul
-                        ,(if child-1 `(:li ,anchor-1 ,child-1) `(:li ,anchor-1))
-                        ,@(cdr child-0))
-                    `(:ul
-                      ,(if child-1 `(:li ,anchor-1 ,child-1) `(:li ,anchor-1))
-                      (:li ,anchor-0))))
-               stack))))))
-    ;; pop the stack
-    (while (>= (length stack) 2)
-      (let* ((stack-0 (pop stack))
-             (level-0 (plist-get stack-0 :level))
-             (title-0 (plist-get stack-0 :title))
-             (id-0 (plist-get stack-0 :id))
-             (child-0 (plist-get stack-0 :child))
-             (stack-1 (pop stack))
-             (level-1 (plist-get stack-1 :level))
-             (title-1 (plist-get stack-1 :title))
-             (id-1 (plist-get stack-1 :id))
-             (child-1 (plist-get stack-1 :child))
-             (anchor-0 (funcall anchor-title-id title-0 id-0))
-             (anchor-1 (funcall anchor-title-id title-1 id-1)))
-        (if (> level-0 level-1)
-            (push `(:level ,level-1 :title ,title-1 :id ,id-1
-                    :child ,(funcall ul-or-child title-0 id-0 child-0))
-                  stack)
-          (push
-           `(:level ,level-1
-             :child ,(if title-0
-                         `(:ul
-                           ,(if child-1 `(:li ,anchor-1 ,child-1) `(:li ,anchor-1))
-                           ,(if child-0 `(:li ,anchor-0 ,child-0) `(:li ,anchor-0)))
-                       `(:ul
-                         ,(if child-1
-                              `(:li ,anchor-1 ,child-1)
-                            `(:li ,anchor-1))
-                         ,@(cdr child-0))))
-           stack))))
-    (funcall
-     ul-or-child
-     (plist-get (car stack) :title)
-     (plist-get (car stack) :id)
-     (plist-get (car stack) :child))))
+
+  (let* ((prev-level (1- (plist-get (car headlines) :level)))
+	       (start-level prev-level)
+         (concat-n-times
+          (lambda (n str) (apply #'concat (make-list n str)))))
+    (concat
+     (mapconcat
+      (lambda (headline)
+	      (let ((title (plist-get headline :title))
+              (href (concat "#" (plist-get headline :id)))
+	            (level (plist-get headline :level)))
+	        (concat
+	         (let* ((delta (- level prev-level))
+		              (times (if (> delta 0) (1- delta) (- delta))))
+	           (setq prev-level level)
+	           (concat
+	            (funcall concat-n-times
+                       times (cond ((> delta 0) "\n<ul>\n<li>")
+			                             ((< delta 0) "</li>\n</ul>\n")))
+	            (if (> delta 0) "\n<ul>\n<li>" "</li>\n<li>")))
+	         (concat "<a href=\"" href "\">" title "</a>"))))
+      headlines "")
+     (funcall concat-n-times (- prev-level start-level) "</li>\n</ul>\n"))))
 
 ;;; one provide
 

@@ -641,84 +641,63 @@ A simple example
       "one-" 1 "page 1"
       "id-11" 2 "headline 1.1"))))
 
+(global-set-key (kbd "C-<f1>") (lambda () (interactive) (ert "one-default-toc-test")))
 (ert-deftest one-default-toc-test ()
   (should
    (equal
     (one-default-toc
-     '((:level 1 :title "bar-11" :id "id-bar-11")
-       (:level 2 :title "bar-21" :id "id-bar-21")
-       (:level 2 :title "bar-22" :id "id-bar-22")
-       (:level 2 :title "bar-23" :id "id-bar-23")
-       (:level 1 :title "bar-12" :id "id-bar-12")))
-    '(:ul
-      (:li (:a (@ :href "#id-bar-11") "bar-11")
-       (:ul
-        (:li (:a (@ :href "#id-bar-21") "bar-21"))
-        (:li (:a (@ :href "#id-bar-22") "bar-22"))
-        (:li (:a (@ :href "#id-bar-23") "bar-23"))))
-      (:li (:a (@ :href "#id-bar-12") "bar-12")))))
-  (should
-   (equal
-    (one-default-toc
-     '((:level 1 :title "bar-1" :id "id-bar-1")
-       (:level 2 :title "bar-2" :id "id-bar-2")
-       (:level 3 :title "bar-3" :id "id-bar-3")))
-    '(:ul
-      (:li (:a (@ :href "#id-bar-1") "bar-1")
-       (:ul
-        (:li (:a (@ :href "#id-bar-2") "bar-2")
-         (:ul
-          (:li (:a (@ :href "#id-bar-3") "bar-3")))))))))
-  (should
-   (equal
-    (one-default-toc
-     '((:level 1 :title "foo" :id "id-foo")
-       (:level 1 :title "bar-1" :id "id-bar-1")
-       (:level 2 :title "bar-2" :id "id-bar-2")
-       (:level 3 :title "bar-3" :id "id-bar-3")
-       (:level 2 :title "bar-22" :id "id-bar-22")
-       (:level 1 :title "baz" :id "id-baz")))
-    '(:ul
-      (:li (:a (@ :href "#id-foo") "foo"))
-      (:li (:a (@ :href "#id-bar-1") "bar-1")
-       (:ul
-        (:li (:a (@ :href "#id-bar-2") "bar-2")
-         (:ul
-          (:li (:a (@ :href "#id-bar-3") "bar-3"))))
-        (:li (:a (@ :href "#id-bar-22") "bar-22"))))
-      (:li (:a (@ :href "#id-baz") "baz")))))
-  (should
-   (equal
-    (one-default-toc
-     '((:level 1 :title "foo" :id "id-foo")
-       (:level 1 :title "bar-1" :id "id-bar-1")
-       (:level 2 :title "bar-2" :id "id-bar-2")
-       (:level 3 :title "bar-3" :id "id-bar-3")
-       (:level 1 :title "baz" :id "id-baz")))
-    '(:ul
-      (:li (:a (@ :href "#id-foo") "foo"))
-      (:li (:a (@ :href "#id-bar-1") "bar-1")
-       (:ul
-        (:li (:a (@ :href "#id-bar-2") "bar-2")
-         (:ul
-          (:li (:a (@ :href "#id-bar-3") "bar-3"))))))
-      (:li (:a (@ :href "#id-baz") "baz")))))
-  (should
-   (equal
-    (one-default-toc
-     '((:level 2 :title "foo" :id "id-foo")
-       (:level 2 :title "bar-1" :id "id-bar-1")
-       (:level 3 :title "bar-2" :id "id-bar-2")
-       (:level 4 :title "bar-3" :id "id-bar-3")))
-    '(:ul
-      (:li (:a (@ :href "#id-foo") "foo"))
-      (:li (:a (@ :href "#id-bar-1") "bar-1")
-       (:ul
-        (:li (:a (@ :href "#id-bar-2") "bar-2")
-         (:ul
-          (:li (:a (@ :href "#id-bar-3") "bar-3")))))))))
-  (should
-   (equal
-    (one-default-toc
-     '((:level 1 :title "foo" :id "id-foo")))
-    '(:ul (:li (:a (@ :href "#id-foo") "foo"))))))
+     '((:level 2 :id "id-bar-1" :title "bar-1")
+       (:level 3 :id "id-bar-1.1" :title "bar-1.1")
+       (:level 3 :id "id-bar-1.2" :title "bar-1.2")
+       (:level 4 :id "id-bar-1.2.1" :title "bar-1.2.1")
+       (:level 4 :id "id-bar-1.2.2" :title "bar-1.2.2")
+       (:level 5 :id "id-bar-1.2.2.1" :title "bar-1.2.2.1")
+       (:level 5 :id "id-bar-1.2.2.2" :title "bar-1.2.2.2")
+       (:level 6 :id "id-bar-1.2.2.2.1" :title "bar-1.2.2.2.1")
+       (:level 6 :id "id-bar-1.2.2.2.2" :title "bar-1.2.2.2.2")
+       (:level 6 :id "id-bar-1.2.2.2.3" :title "bar-1.2.2.2.3")
+       (:level 2 :id "id-bar-2" :title "bar-2")
+       (:level 3 :id "id-bar-2.1" :title "bar-2.1")
+       (:level 3 :id "id-bar-2.2" :title "bar-2.2")
+       (:level 2 :id "id-bar-3" :title "bar-3")
+       (:level 3 :id "id-bar-3.1" :title "bar-3.1")
+       (:level 2 :id "id-bar-4" :title "bar-4")))
+    "
+<ul>
+<li><a href=\"#id-bar-1\">bar-1</a>
+<ul>
+<li><a href=\"#id-bar-1.1\">bar-1.1</a></li>
+<li><a href=\"#id-bar-1.2\">bar-1.2</a>
+<ul>
+<li><a href=\"#id-bar-1.2.1\">bar-1.2.1</a></li>
+<li><a href=\"#id-bar-1.2.2\">bar-1.2.2</a>
+<ul>
+<li><a href=\"#id-bar-1.2.2.1\">bar-1.2.2.1</a></li>
+<li><a href=\"#id-bar-1.2.2.2\">bar-1.2.2.2</a>
+<ul>
+<li><a href=\"#id-bar-1.2.2.2.1\">bar-1.2.2.2.1</a></li>
+<li><a href=\"#id-bar-1.2.2.2.2\">bar-1.2.2.2.2</a></li>
+<li><a href=\"#id-bar-1.2.2.2.3\">bar-1.2.2.2.3</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=\"#id-bar-2\">bar-2</a>
+<ul>
+<li><a href=\"#id-bar-2.1\">bar-2.1</a></li>
+<li><a href=\"#id-bar-2.2\">bar-2.2</a></li>
+</ul>
+</li>
+<li><a href=\"#id-bar-3\">bar-3</a>
+<ul>
+<li><a href=\"#id-bar-3.1\">bar-3.1</a></li>
+</ul>
+</li>
+<li><a href=\"#id-bar-4\">bar-4</a></li>
+</ul>
+"))
+  )
