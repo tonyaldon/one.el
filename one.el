@@ -782,12 +782,12 @@ a:visited {
 .toc {
   display: flex;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 1.8rem;
   color: #d1d1d1;
 }
 
 .toc > div {
-  padding: 1em;
+  padding: 0 1em;
 }
 
 .toc a {
