@@ -1446,7 +1446,7 @@ For instance, evaluating the following form
 
 returns (the \"RANDOM\" link could have been \"foo-1\" or \"foo-3\")
 
-    (:div/nav
+    (:div.nav
      (:a (@ :href \"/foo-1/\") \"PREV\")
      (:a (@ :href \"/foo-4/\") \"RANDOM\")
      (:a (@ :href \"/foo-3/\") \"NEXT\"))
@@ -1468,7 +1468,7 @@ See `one-default',`one-default-with-toc' and `one-default-doc'."
         (while (not (string= (plist-get (car tail) :one-path) path))
           (setq prev (car tail))
           (setq tail (cdr tail)))
-        `(:div/nav
+        `(:div.nav
           ,(when prev `(:a (@ :href ,(plist-get prev :one-path)) "PREV"))
           ,(when (<= 3 (length pages-no-home))
              `(:a (@ :href ,(plist-get random :one-path)) "RANDOM"))

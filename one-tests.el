@@ -582,7 +582,7 @@ A simple example
      '((:one-path "/")
        (:one-path "/foo-1/")
        (:one-path "/foo-2/")))
-    '(:div/nav nil nil (:a (@ :href "/foo-2/") "NEXT"))))
+    '(:div.nav nil nil (:a (@ :href "/foo-2/") "NEXT"))))
   (should
    (equal
     (one-default-nav
@@ -590,7 +590,7 @@ A simple example
      '((:one-path "/")
        (:one-path "/foo-1/")
        (:one-path "/foo-2/")))
-    '(:div/nav (:a (@ :href "/foo-1/") "PREV") nil nil)))
+    '(:div.nav (:a (@ :href "/foo-1/") "PREV") nil nil)))
   (let* ((nav (one-default-nav
                "/foo-2/"
                '((:one-path "/")
