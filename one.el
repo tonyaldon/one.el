@@ -585,7 +585,7 @@ a:hover {
 }
 
 a:visited {
-  color: #ff87af;
+  color: #ffd787;
 }
 
 /* ------- '.one' classes used by 'one' org backend ------- */
@@ -615,7 +615,7 @@ a:visited {
 .one-blockquote {
   background: #202d31;
   border-left: 0.3em solid #31424a;
-  margin: auto;
+  margin: 0px auto 16px;
   padding: 1em 1em;
   width: 90%;
 }
@@ -677,7 +677,7 @@ a:visited {
 
 /* -------- specific to the default render functions -------- */
 
-#header {
+.header {
   color: #ffffff;
   font-size: 2em;
   font-weight: bold;
@@ -694,24 +694,24 @@ a:visited {
   align-items: center;
 }
 
-#header > a {
-  color: none;
+.header > a {
+  color: inherit;
   cursor: pointer;
   text-decoration: none;
 }
 
-#header > a:visited {
+.header > a:visited {
   color: inherit;
 }
 
-#content {
+.content {
   margin: 3.5rem auto;
   padding-top: 1.8rem;
   max-width: 740px;
   padding: 0 16px;
 }
 
-#title {
+.title {
   text-align: center;
   padding: 1.8rem 0;
 }
@@ -719,6 +719,12 @@ a:visited {
 /* -------- one-default-home -------- */
 
 #home {
+  margin: 5rem 0 1.5rem 0;
+}
+
+/* -------- one-default-home-list-pages -------- */
+
+#home-list-pages {
   margin: 5rem 0 1.5rem 0;
   text-align: center;
 }
@@ -745,7 +751,7 @@ a:visited {
 
 /* -------- one-default, one-default-with-toc, one-default-doc -------- */
 
-#nav {
+.nav {
   border-top: 1px solid #c5c5c5;
   margin-top: 3em;
   padding: 2em 0;
@@ -755,7 +761,7 @@ a:visited {
   font-weight: bold;
 }
 
-#nav a {
+.nav a {
   display: block;
   background: #dedede;
   border-radius: 6px;
@@ -766,29 +772,29 @@ a:visited {
 }
 
 @media (max-width:600px) {
-  #nav a {
+  .nav a {
     width: auto;
   }
 }
 
 /* -------- one-default-with-toc, one-default-doc -------- */
 
-#toc {
+.toc {
   display: flex;
   justify-content: center;
   margin-bottom: 32px;
   color: #d1d1d1;
 }
 
-#toc > div {
+.toc > div {
   padding: 1em;
 }
 
-#toc a {
+.toc a {
   color: #d1d1d1;
 }
 
-#toc > div > div:first-child {
+.toc > div > div:first-child {
   text-decoration: underline 1px;
   text-align: center;
   font-size: 1.2em;
@@ -815,7 +821,7 @@ a:visited {
 }
 
 #header-doc > a {
-  color: none;
+  color: inherit;
   cursor: pointer;
   text-decoration: none;
 }
@@ -847,6 +853,8 @@ a:visited {
   border-right: 2px solid #31424a;
   top: 4.5rem;
   position: sticky;
+  padding-top: 2.2em;
+  padding-bottom: 6em;
   width: 250px;
   max-height: 100vh;
   overflow-y: auto;
@@ -867,7 +875,7 @@ a:visited {
 }
 
 #sidebar li {
-  padding: 0.2em 0.6em;
+  padding: 0.5em 0.6em;
 }
 
 #sidebar li:hover {
@@ -920,6 +928,7 @@ article {
 }
 
 #sidebar-left li {
+  padding: 0.5em 0;
   list-style-type: none;
 }
 
