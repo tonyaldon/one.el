@@ -970,13 +970,43 @@ This style sheet is meant to be used with the default render functions
 See `one-default-new-project' and `one-default-add-css-file'.")
 
 (defvar one-default-org-content
-  "* Home
+  "* My Website
 :PROPERTIES:
-:ONE: one-default-home
+:ONE: one-default-home-list-pages
 :CUSTOM_ID: /
 :END:
 
-This text is inserted before we list the pages in our web site.
+This page is rendered with the default render function
+~one-default-home-list-pages~ specified in ~ONE~ org property.  Being the
+website's home page, its path specified in ~CUSTOM_ID~ org property is
+set to one slash ~/~.
+
+Thus this text is inserted before we list the website's pages (in
+reverse order of appearance in the org document).
+
+We can change this page's appearance by modifying the CSS ids
+~home-list-pages~ and ~pages~, and the CSS classes ~header~ and ~content~.
+
+And if we don't want to list the website's pages we can use the
+default render function ~one-default-home~ presented in [[#/default-home/][Alternative
+default render function for the home page]].
+
+* Alternative default render function for the home page
+:PROPERTIES:
+:ONE: one-default-home
+:CUSTOM_ID: /default-home/
+:END:
+
+This page is rendered with the default render function ~one-default-home~
+specified in ~ONE~ org property.
+
+And as we can see the website's pages are not listed and the content
+is rendered \"normaly\" (not text centered as in the [[#/][home page]]).
+
+We can change this page's appearance by modifying the CSS id
+~home~ and the CSS classes ~header~ and ~content~.
+
+Let's move on to [[#/blog/default/][The default page]].
 
 * The default page
 :PROPERTIES:
