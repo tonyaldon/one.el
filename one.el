@@ -1108,9 +1108,9 @@ we can use the package [[https://jack.tonyaldon.com][Jack]] as in ~one-default~ 
         (:link (@ :rel \"stylesheet\" :type \"text/css\" :href \"/one.css\"))
         (:title ,title))
        (:body
-        (:div/header (:a (@ :href \"/\") ,website-name))
-        (:div/content
-         (:div/title (:h1 ,title))
+        (:div.header (:a (@ :href \"/\") ,website-name))
+        (:div.content
+         (:div.title (:h1 ,title))
          ,content
          ,nav))))))
 #+END_SRC
@@ -1265,10 +1265,10 @@ See `one-build-only-html'."
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div/header ,website-name)
-        (:div/content
-         (:div/home ,content)
-         (:div/pages ,pages-list)))))))
+        (:div.header ,website-name)
+        (:div.content
+         (:div/home ,content)))))))
+
 (defun one-default-home-list-pages (page-tree pages global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
@@ -1307,9 +1307,9 @@ See `one-build-only-html'."
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div/header (:a (@ :href "/") ,website-name))
-        (:div/content
-         (:div/title (:h1 ,title))
+        (:div.header (:a (@ :href "/") ,website-name))
+        (:div.content
+         (:div.title (:h1 ,title))
          ,content
          ,nav))))))
 
@@ -1323,7 +1323,7 @@ See `one-build-only-html'."
          (website-name (one-default-website-name pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
          (toc (when headlines
-                `(:div/toc
+                `(:div.toc
                   (:div
                    (:div "Table of content")
                    (:div ,(one-default-toc headlines))))))
@@ -1336,9 +1336,9 @@ See `one-build-only-html'."
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div/header (:a (@ :href "/") ,website-name))
-        (:div/content
-         (:div/title (:h1 ,title))
+        (:div.header (:a (@ :href "/") ,website-name))
+        (:div.content
+         (:div.title (:h1 ,title))
          ,toc
          ,content
          ,nav))))))
@@ -1354,7 +1354,7 @@ See `one-build-only-html'."
          (pages-list (one-default-pages pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
          (toc (when headlines
-                `(:div/toc
+                `(:div.toc
                   (:div
                    (:div "Table of content")
                    (:div ,(one-default-toc headlines))))))
@@ -1369,7 +1369,7 @@ See `one-build-only-html'."
        (:body
         ;; sidebar-left and sidebar-main are for small devices
         (:div/sidebar-left (@ :onclick "followSidebarLink()")
-         (:div (:div ,website-name))
+         (:div (:div "Pages"))
          ,pages-list)
         (:div/sidebar-main)
         (:div/header-doc
@@ -1379,7 +1379,7 @@ See `one-build-only-html'."
         (:div/content-doc
          (:div/sidebar ,pages-list)
          (:article
-          (:div/title (:h1 ,title))
+          (:div.title (:h1 ,title))
           ,toc
           ,content
           ,nav)))
