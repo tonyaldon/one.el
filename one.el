@@ -469,7 +469,9 @@ live reloading, you can run the following commands (in a terminal):
                    (page-tree (plist-get page :one-page-tree)))
               (make-directory path t)
               (with-temp-file file
-                (insert (funcall render-page-function page-tree pages global)))))))
+                (insert (funcall render-page-function page-tree pages global))))))
+         (onerc (concat default-directory "onerc.el")))
+    (when (file-exists-p onerc) (load onerc))
     (dolist (hook one-hook) (funcall hook pages tree global))
     (if one-path
         (if-let ((page (seq-some
@@ -488,11 +490,9 @@ live reloading, you can run the following commands (in a terminal):
   (let* ((org-content (buffer-substring (point-min) (point-max)))
          (org-content-file (make-temp-file "one-content-"))
          (current-dir default-directory)
-         (onerc (concat current-dir "onerc.el"))
          (sexp (with-output-to-string
                  (prin1 `(progn
                            (require 'one)
-                           (when (file-exists-p ,onerc) (load ,onerc))
                            (let ((buff (find-file-noselect ,org-content-file)))
                              (with-current-buffer buff
                                (setq default-directory ,current-dir)
@@ -504,7 +504,7 @@ live reloading, you can run the following commands (in a terminal):
          (sentinel (lambda (process msg)
                      (internal-default-process-sentinel process msg)
                      (if (string-match-p "finished" msg)
-                         (message "Page(s) have been generated")
+                         (message "Page(s) has/have been generated")
                        (message "%s, check buffer `*one*'"
                                 (string-trim-right msg)
                                 (buffer-name (process-buffer process)))))))
