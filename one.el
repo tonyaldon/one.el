@@ -363,7 +363,7 @@ Those functions take three arguments:
 As those functions take `global' argument they are called after
 that argument has been let binded using `one-add-to-global'.")
 
-(defun one-build-only-html ()
+(defun one-build-only-html (&optional one-path)
   "Build website of the current buffer under `./public/' subdirectory.
 
 The current buffer should look like this.
@@ -452,7 +452,7 @@ live reloading, you can run the following commands (in a terminal):
     $ cd public
     $ browser-sync start -s -w --files \"*\""
   (interactive)
-  (let* ((tree (one-parse-buffer))
+  (let* ((tree (org-with-wide-buffer (one-parse-buffer)))
          (pages (one-list-pages tree))
          (global
           (let (global)
@@ -460,16 +460,27 @@ live reloading, you can run the following commands (in a terminal):
               (push (funcall (plist-get glob :one-global-function) pages tree)
                     global)
               (push (plist-get glob :one-global-property) global))
-            global)))
+            global))
+         (render-page
+          (lambda (page pages global)
+            (let* ((path (concat "./public" (plist-get page :one-path)))
+                   (file (concat path "index.html"))
+                   (render-page-function (plist-get page :one-render-page-function))
+                   (page-tree (plist-get page :one-page-tree)))
+              (make-directory path t)
+              (with-temp-file file
+                (insert (funcall render-page-function page-tree pages global)))))))
     (dolist (hook one-hook) (funcall hook pages tree global))
-    (dolist (page pages)
-      (let* ((path (concat "./public" (plist-get page :one-path)))
-             (file (concat path "index.html"))
-             (render-page-function (plist-get page :one-render-page-function))
-             (page-tree (plist-get page :one-page-tree)))
-        (make-directory path t)
-        (with-temp-file file
-          (insert (funcall render-page-function page-tree pages global)))))))
+    (if one-path
+        (if-let ((page (seq-some
+                        (lambda (page)
+                          (when (string= (plist-get page :one-path) one-path)
+                            page))
+                        pages)))
+            (funcall render-page page pages global)
+          (error "Page `%s' doesn't exist" one-path))
+      (dolist (page pages)
+        (funcall render-page page pages global)))))
 
 (defun one-build ()
   "Build website of the current buffer under `./public/' subdirectory.
