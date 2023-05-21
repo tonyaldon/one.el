@@ -482,6 +482,42 @@ live reloading, you can run the following commands (in a terminal):
       (dolist (page pages)
         (funcall render-page page pages global)))))
 
+(defun one-build-only-html-async (&optional one-path)
+  ""
+  (interactive)
+  (let* ((org-content (buffer-substring (point-min) (point-max)))
+         (org-content-file (make-temp-file "one-content-"))
+         (current-dir default-directory)
+         (onerc (concat current-dir "onerc.el"))
+         (sexp (with-output-to-string
+                 (prin1 `(progn
+                           (require 'one)
+                           (when (file-exists-p ,onerc) (load ,onerc))
+                           (let ((buff (find-file-noselect ,org-content-file)))
+                             (with-current-buffer buff
+                               (setq default-directory ,current-dir)
+                               (one-build-only-html ,one-path))
+                             (kill-buffer buff))))))
+         (emacs (file-truename
+                 (expand-file-name invocation-name invocation-directory)))
+         (command `(,emacs "--batch" "-l" ,user-init-file "--eval" ,sexp))
+         (sentinel (lambda (process msg)
+                     (internal-default-process-sentinel process msg)
+                     (if (string-match-p "finished" msg)
+                         (message "Page(s) have been generated")
+                       (message "%s, check buffer `*one*'"
+                                (string-trim-right msg)
+                                (buffer-name (process-buffer process)))))))
+    (with-temp-file org-content-file (insert org-content))
+    (message "sexp: %S" sexp)
+    (let ((process-connection-type nil))
+      (make-process
+       :name "one"
+       :buffer (get-buffer-create "*one*")
+       :command command
+       :connection-type nil
+       :sentinel sentinel))))
+
 (defun one-build ()
   "Build website of the current buffer under `./public/' subdirectory.
 
