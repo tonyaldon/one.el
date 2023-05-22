@@ -528,16 +528,14 @@ then `command' becomes
   ""
   (interactive)
   (let* ((org-content (buffer-substring (point-min) (point-max)))
-         (org-content-file (make-temp-file "one-content-"))
+         (org-content-file (make-temp-file "one-content-" nil ".org"))
          (current-dir default-directory)
          (sexp (with-output-to-string
                  (prin1 `(progn
                            (require 'one)
-                           (let ((buff (find-file-noselect ,org-content-file)))
-                             (with-current-buffer buff
-                               (setq default-directory ,current-dir)
-                               (one-build-only-html ,one-path))
-                             (kill-buffer buff))))))
+                           (find-file ,org-content-file)
+                           (setq default-directory ,current-dir)
+                           (one-build-only-html ,one-path)))))
          (emacs (file-truename
                  (expand-file-name invocation-name invocation-directory)))
          (command (if one-emacs-cmd-line-args-async
