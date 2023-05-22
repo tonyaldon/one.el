@@ -540,7 +540,9 @@ then `command' becomes
                              (kill-buffer buff))))))
          (emacs (file-truename
                  (expand-file-name invocation-name invocation-directory)))
-         (command `(,emacs "--batch" "-l" ,user-init-file "--eval" ,sexp))
+         (command (if one-emacs-cmd-line-args-async
+                      `(,emacs "--batch" ,@one-emacs-cmd-line-args-async "--eval" ,sexp)
+                    `(,emacs "--batch" "-l" ,user-init-file "--eval" ,sexp)))
          (sentinel (lambda (process msg)
                      (internal-default-process-sentinel process msg)
                      (if (string-match-p "finished" msg)
