@@ -540,7 +540,7 @@ See `one-build-only-html'."
       (if (file-directory-p file)
           (delete-directory file t)
         (delete-file file))))
-  (copy-directory "./assets/" "./public/" nil nil 'copy-contents)
+  (one-copy-assets-to-public)
   (one-build-only-html))
 
 ;;; A default web site
