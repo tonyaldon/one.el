@@ -452,6 +452,8 @@ live reloading, you can run the following commands (in a terminal):
     $ cd public
     $ browser-sync start -s -w --files \"*\""
   (interactive)
+  (let ((onerc (concat default-directory "onerc.el")))
+    (when (file-exists-p onerc) (load onerc)))
   (let* ((tree (org-with-wide-buffer (one-parse-buffer)))
          (pages (one-list-pages tree))
          (global
@@ -469,9 +471,7 @@ live reloading, you can run the following commands (in a terminal):
                    (page-tree (plist-get page :one-page-tree)))
               (make-directory path t)
               (with-temp-file file
-                (insert (funcall render-page-function page-tree pages global))))))
-         (onerc (concat default-directory "onerc.el")))
-    (when (file-exists-p onerc) (load onerc))
+                (insert (funcall render-page-function page-tree pages global)))))))
     (dolist (hook one-hook) (funcall hook pages tree global))
     (if one-path
         (if-let ((page (seq-some
