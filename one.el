@@ -518,6 +518,12 @@ live reloading, you can run the following commands (in a terminal):
        :connection-type nil
        :sentinel sentinel))))
 
+(defun one-copy-assets-to-public ()
+  "Copy `./assets/' files into `./public/' subdirectory."
+  (interactive)
+  (when (file-exists-p "./assets/")
+    (copy-directory "./assets/" "./public/" nil nil 'copy-contents)))
+
 (defun one-build ()
   "Build website of the current buffer under `./public/' subdirectory.
 
