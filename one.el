@@ -484,6 +484,46 @@ live reloading, you can run the following commands (in a terminal):
       (dolist (page pages)
         (funcall render-page page pages global)))))
 
+(defvar one-emacs-cmd-line-args-async nil
+  "List of command line arguments to pass to `emacs' subprocess.
+
+The function `one-build-only-html-async' spawns an `emacs' subprocess
+in order to build html pages asynchronously.  The arguments passed to
+`emacs' depends on `one-emacs-cmd-line-args-async' value.
+
+By default, when `one-emacs-cmd-line-args-async' is nil, we run `emacs'
+in \"batch mode\", we load the user's initialization file and we evaluate
+a specific sexp that builds html pages using `one'.  Specifically, we pass
+the following `command' (`emacs' file name followed by command line
+arguments) to `make-process' function like this:
+
+    (let* ((emacs (file-truename
+                   (expand-file-name invocation-name invocation-directory)))
+           (command \\=`(,emacs \"--batch\"
+                             \"-l\" ,user-init-file
+                             \"--eval\" ,sexp))
+           (sexp ...))
+      (make-process
+       :name ...
+       :buffer ...
+       :command command))
+
+If `one-emacs-cmd-line-args-async' is non nil, we no longer load the user's
+initialization file and replace `\"-l\" ,user-init-file' in `command' above
+by the elements of `one-emacs-cmd-line-args-async'.  For instance, if
+`one-emacs-cmd-line-args-async' is equal to
+
+    \\='(\"-l\" \"/path/to/some-elisp-file/\")
+
+then `command' becomes
+
+    (let* (...
+           (command \\=`(,emacs \"--batch\"
+                             \"-l\" \"/path/to/some-elisp-file/\"
+                             \"--eval\" ,sexp))
+           ...)
+      ...)")
+
 (defun one-build-only-html-async (&optional one-path)
   ""
   (interactive)
