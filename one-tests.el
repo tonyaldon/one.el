@@ -540,6 +540,37 @@ A simple example
         "/page-2/\n/page-3/"))
       (delete-directory temp-dir t))))
 
+(ert-deftest one-page-at-point-test ()
+  (let (one-path-1 one-path-2 one-path-3 one-path-4 one-path-5)
+    (should
+     (equal
+      (org-test-with-temp-text "no page at point
+
+* foo
+:PROPERTIES:
+:ONE: foo
+:CUSTOM_ID: /foo/
+:END:
+
+some content here
+
+* foo bar
+:PROPERTIES:
+:ONE: foo-bar
+:CUSTOM_ID: /foo/bar/
+:END:"
+        (setq one-path-1 (one-page-at-point))
+        (forward-line 2)
+        (setq one-path-2 (one-page-at-point))
+        (forward-line 6)
+        (setq one-path-3 (one-page-at-point))
+        (forward-line 2)
+        (setq one-path-4 (one-page-at-point))
+        (forward-line 2)
+        (setq one-path-5 (one-page-at-point))
+        (list one-path-1 one-path-2 one-path-3 one-path-4 one-path-5))
+      '(nil "/foo/" "/foo/" "/foo/bar/" "/foo/bar/")))))
+
 ;;; default
 
 (ert-deftest one-default-pages-test ()

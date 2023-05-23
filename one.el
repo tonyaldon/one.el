@@ -571,6 +571,19 @@ then `command' becomes
        :connection-type nil
        :sentinel sentinel))))
 
+(defun one-page-at-point ()
+  "Return `one-path' of the page at point.
+
+Return nil if no page found.
+Doesn't move point nor change the match data."
+  (save-match-data
+    (save-excursion
+      (org-with-wide-buffer
+       (goto-char (point-at-bol))
+       (when (not (looking-at "^\\* "))
+         (search-backward-regexp "^\\* " nil t))
+       (org-element-property :CUSTOM_ID (org-element-at-point))))))
+
 (defun one-copy-assets-to-public ()
   "Copy `./assets/' files into `./public/' subdirectory."
   (interactive)
