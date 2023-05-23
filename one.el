@@ -265,6 +265,10 @@ INFO is a plist holding contextual information."
                             `(,raw-link ,(format "goto-char: %s" beg))))))
                 (t raw-link))))
     (or custom-type-link
+        (and
+         (string-match one-ox-link-image-extensions path)
+         (format "<p><img src=\"%s\" alt=\"%s\" /></p>"
+                 href (or (org-string-nw-p desc) href)) )
         (format "<a href=\"%s\">%s</a>"
                 href (or (org-string-nw-p desc) href)))))
 
@@ -796,6 +800,12 @@ a:hover {
 
 a:visited {
   color: #ffd787;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
 }
 
 /* ------- '.one' classes used by 'one' org backend ------- */

@@ -286,11 +286,17 @@ A simple example
       (org-test-with-temp-text "[[./public/blog/page-1.md][Page 1 in markdown]]"
         (org-export-as backend))
       "<a href=\"/blog/page-1.md\">Page 1 in markdown</a>\n"))
+    ;; images
+    (should
+     (string=
+      (org-test-with-temp-text "[[./assets/images/one.png]]"
+        (org-export-as backend))
+      "<p><img src=\"/images/one.png\" alt=\"/images/one.png\" /></p>\n"))
     (should
      (string=
       (org-test-with-temp-text "[[./assets/images/one.png][one image]]"
         (org-export-as backend))
-      "<a href=\"/images/one.png\">one image</a>\n"))))
+      "<p><img src=\"/images/one.png\" alt=\"one image\" /></p>\n"))))
 
 (ert-deftest one-ox-link--custom-type-test ()
   ;; link type with an export function defined with `org-link-set-parameters'
