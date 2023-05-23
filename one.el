@@ -615,6 +615,54 @@ See `one-build-only-html-async'."
   (when (file-exists-p "./assets/")
     (copy-directory "./assets/" "./public/" nil nil 'copy-contents)))
 
+(defun one-build-async ()
+  "Build website of the current buffer under `./public/' dir asynchronously.
+
+The function `one-build-async' spawns an `emacs' subprocess in order to
+render html pages, clean `./public/' directory and copy `./assets/'
+directory asynchronously.  The arguments passed to `emacs' depends
+on `one-emacs-cmd-line-args-async' value.
+
+See `one-build'."
+  (interactive)
+  (let* ((org-content (buffer-substring (point-min) (point-max)))
+         (org-content-file (make-temp-file "one-content-" nil ".org"))
+         (current-dir default-directory)
+         (sexp (with-output-to-string
+                 (prin1 `(progn
+                           (find-file ,org-content-file)
+                           (setq default-directory ,current-dir)
+                           (when (file-exists-p "./public/")
+                             (dolist (file (cddr (directory-files "./public/" 'full)))
+                               (if (file-directory-p file)
+                                   (delete-directory file t)
+                                 (delete-file file))))
+                           (require 'one)
+                           (one-copy-assets-to-public)
+                           (one-build-only-html)))))
+         (emacs (file-truename
+                 (expand-file-name invocation-name invocation-directory)))
+         (command (if one-emacs-cmd-line-args-async
+                      `(,emacs "--batch" ,@one-emacs-cmd-line-args-async "--eval" ,sexp)
+                    `(,emacs "--batch" "-l" ,user-init-file "--eval" ,sexp)))
+         (sentinel (lambda (process msg)
+                     (internal-default-process-sentinel process msg)
+                     (if (string-match-p "finished" msg)
+                         (message "Build pages...done")
+                       (message "%s, check buffer `*one*'"
+                                (string-trim-right msg)
+                                (buffer-name (process-buffer process)))))))
+    (with-temp-file org-content-file (insert org-content))
+    (message "Build pages...")
+    (let ((process-connection-type nil)
+          (inhibit-message t))
+      (make-process
+       :name "one"
+       :buffer (get-buffer-create "*one*")
+       :command command
+       :connection-type nil
+       :sentinel sentinel))))
+
 (defun one-build ()
   "Build website of the current buffer under `./public/' subdirectory.
 
