@@ -552,13 +552,18 @@ then `command' becomes
          (sentinel (lambda (process msg)
                      (internal-default-process-sentinel process msg)
                      (if (string-match-p "finished" msg)
-                         (message "Page(s) has/have been generated")
+                         (if one-path
+                             (message "Build page `%s'...done" one-path)
+                           (message "Build pages...done"))
                        (message "%s, check buffer `*one*'"
                                 (string-trim-right msg)
                                 (buffer-name (process-buffer process)))))))
     (with-temp-file org-content-file (insert org-content))
-    (message "sexp: %S" sexp)
-    (let ((process-connection-type nil))
+    (if one-path
+        (message "Build page `%s'..." one-path)
+      (message "Build pages..." one-path))
+    (let ((process-connection-type nil)
+          (inhibit-message t))
       (make-process
        :name "one"
        :buffer (get-buffer-create "*one*")
