@@ -452,7 +452,8 @@ live reloading, you can run the following commands (in a terminal):
     $ cd public
     $ browser-sync start -s -w --files \"*\""
   (interactive)
-  (let ((onerc (concat default-directory "onerc.el")))
+  (let ((onerc (concat default-directory "onerc.el"))
+        (inhibit-message t))
     (when (file-exists-p onerc) (load onerc)))
   (let* ((tree (org-with-wide-buffer (one-parse-buffer)))
          (pages (one-list-pages tree))
@@ -479,10 +480,17 @@ live reloading, you can run the following commands (in a terminal):
                           (when (string= (plist-get page :one-path) one-path)
                             page))
                         pages)))
-            (funcall render-page page pages global)
+            (progn
+              (message "Build page `%s'..." one-path)
+              (funcall render-page page pages global)
+              (message "Build page `%s'...done" one-path))
           (error "Page `%s' doesn't exist" one-path))
+      (message "Build pages...")
       (dolist (page pages)
-        (funcall render-page page pages global)))))
+        (progn
+          (message "Build page `%s'" (plist-get page :one-path))
+          (funcall render-page page pages global)))
+      (message "Build pages...done"))))
 
 (defvar one-emacs-cmd-line-args-async nil
   "List of command line arguments to pass to `emacs' subprocess.
