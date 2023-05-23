@@ -584,6 +584,21 @@ Doesn't move point nor change the match data."
          (search-backward-regexp "^\\* " nil t))
        (org-element-property :CUSTOM_ID (org-element-at-point))))))
 
+(defun one-build-page-at-point ()
+  "Build page at point."
+  (interactive)
+  (if-let ((one-path (one-page-at-point)))
+      (one-build-only-html one-path)
+    (message "No page found at point")))
+
+(defun one-build-page-at-point-async ()
+  "Build page at point asynchronously."
+  (interactive)
+  (if-let ((one-path (one-page-at-point)))
+      (one-build-only-html-async one-path)
+    (message "No page found at point")))
+
+
 (defun one-copy-assets-to-public ()
   "Copy `./assets/' files into `./public/' subdirectory."
   (interactive)
