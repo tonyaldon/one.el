@@ -306,7 +306,7 @@ If HEADLINE is a page, return a plist with the properties
   - `pages' list of pages,
   - `global' a plist of global informations that are computed once
     when `one' website is built (before rendering the pages), see
-    `one-build-only-html' and `one-build'.  This argument can be
+    `one-render-pages' and `one-build'.  This argument can be
     modified by the user at build time.  That means that if your
     render function needs extra information you can tell `one' to
     compute those informations and to add them to `global'.
@@ -347,12 +347,12 @@ Elements in that list are plist with the following properties:
 - `:one-global-function': a function that takes two arguments `pages'
   (list of pages, see `one-list-pages') and `tree'
   (see `one-parse-buffer').  That function is called once in
-  `one-build-only-html' and its result is used as the value of
+  `one-render-pages' and its result is used as the value of
   the property `:one-global-property' in the `global' argument
   passed to the render functions.")
 
 (defvar one-hook nil
-  "List of functions called once in `one-build-only-html'.
+  "List of functions called once in `one-render-pages'.
 
 Those functions take three arguments:
 
@@ -373,7 +373,7 @@ that argument has been let binded using `one-add-to-global'.")
     (with-temp-file file
       (insert (funcall render-page-function page-tree pages global)))))
 
-(defun one-build-only-html (&optional one-path)
+(defun one-render-pages (&optional one-path)
   "Render webpages of the current buffer under `./public/' dir.
 
 If ONE-PATH is non-nil, it must be the path of page in the current
@@ -425,7 +425,7 @@ are well defined and assuming the render function
     (defun render-function-1 (page-tree pages global)
       \"<h1>Hello world!</h1>\")
 
-calling the command `one-build-only-html' produces
+calling the command `one-render-pages' produces
 the following files
 
     .
@@ -451,7 +451,7 @@ You can see how to implement render functions looking at the
 implementation of the default render functions `one-default-home',
 `one-default', `one-default-with-toc' and `one-default-doc'.
 
-Note that `one-build-only-html' doesn't copy files from
+Note that `one-render-pages' doesn't copy files from
 `./assets/' directory to `./public/' directory.
 
 See `one-build'.
@@ -500,7 +500,7 @@ live reloading, you can run the following commands (in a terminal):
 (defvar one-emacs-cmd-line-args-async nil
   "List of command line arguments to pass to `emacs' subprocess.
 
-The function `one-build-only-html-async' and `one-build-async'spawn an
+The function `one-render-pages-async' and `one-build-async'spawn an
 `emacs' subprocess in order to build html pages asynchronously.  The
 arguments passed to `emacs' depends on `one-emacs-cmd-line-args-async' value.
 
@@ -537,10 +537,10 @@ then `command' becomes
            ...)
       ...)")
 
-(defun one-build-only-html-async (&optional one-path)
+(defun one-render-pages-async (&optional one-path)
   "Render webpages of the current buffer under `./public/' dir asynchronously.
 
-The function `one-build-only-html-async' spawns an `emacs' subprocess
+The function `one-render-pages-async' spawns an `emacs' subprocess
 in order to build html pages asynchronously.  The arguments passed to
 `emacs' depends on `one-emacs-cmd-line-args-async' value.
 
@@ -548,7 +548,7 @@ If ONE-PATH is non-nil, it must be the path of page in the current
 buffer.  That means it must match the `CUSTOM_ID'org property value
 of a level 1 headline.
 
-See `one-build-only-html'."
+See `one-render-pages'."
   (interactive)
   (let* ((org-content (buffer-substring (point-min) (point-max)))
          (org-content-file (make-temp-file "one-content-" nil ".org"))
@@ -558,7 +558,7 @@ See `one-build-only-html'."
                            (require 'one)
                            (find-file ,org-content-file)
                            (setq default-directory ,current-dir)
-                           (one-build-only-html ,one-path)))))
+                           (one-render-pages ,one-path)))))
          (emacs (file-truename
                  (expand-file-name invocation-name invocation-directory)))
          (command (if one-emacs-cmd-line-args-async
@@ -602,19 +602,19 @@ Doesn't move point nor change the match data."
 (defun one-build-page-at-point ()
   "Build page at point.
 
-See `one-build-only-html'."
+See `one-render-pages'."
   (interactive)
   (if-let ((one-path (one-page-at-point)))
-      (one-build-only-html one-path)
+      (one-render-pages one-path)
     (message "No page found at point")))
 
 (defun one-build-page-at-point-async ()
   "Build page at point asynchronously.
 
-See `one-build-only-html-async'."
+See `one-render-pages-async'."
   (interactive)
   (if-let ((one-path (one-page-at-point)))
-      (one-build-only-html-async one-path)
+      (one-render-pages-async one-path)
     (message "No page found at point")))
 
 (defun one-copy-assets-to-public ()
@@ -647,7 +647,7 @@ See `one-build'."
                                  (delete-file file))))
                            (require 'one)
                            (one-copy-assets-to-public)
-                           (one-build-only-html)))))
+                           (one-render-pages)))))
          (emacs (file-truename
                  (expand-file-name invocation-name invocation-directory)))
          (command (if one-emacs-cmd-line-args-async
@@ -678,9 +678,9 @@ Specifically:
 
 1) clean `./public/' subdirectory (if it exists),
 2) copy `./assets/' files into `./public/' subdirectory and
-3) call `one-build-only-html' once.
+3) call `one-render-pages' once.
 
-See `one-build-only-html'."
+See `one-render-pages'."
   (interactive)
   (when (file-exists-p "./public/")
     (dolist (file (cddr (directory-files "./public/" 'full)))
@@ -688,7 +688,7 @@ See `one-build-only-html'."
           (delete-directory file t)
         (delete-file file))))
   (one-copy-assets-to-public)
-  (one-build-only-html))
+  (one-render-pages))
 
 ;;; A default web site
 
@@ -1274,7 +1274,7 @@ A render function is a regular Elisp function that takes 3 arguments
   the page,
 - ~pages~: list of pages,
 - ~global~: a plist of global informations that are computed once
-  in ~one-build-only-html~ (see ~one-add-to-global~) before rendering the
+  in ~one-render-pages~ (see ~one-add-to-global~) before rendering the
   pages
 
 and returns an HTML string.
@@ -1360,16 +1360,16 @@ Good question!
 
 From an org file (or only buffer) containing all the pages of our
 website we can build the website under ~./public/~ subdirectory
-by calling either ~one-build~ or ~one-build-only-html~.
+by calling either ~one-build~ or ~one-render-pages~.
 
 The difference between those two commands is that before producing the
-HTML pages calling ~one-build-only-html~, ~one-build~ command cleans the
+HTML pages calling ~one-render-pages~, ~one-build~ command cleans the
 subdirectory ~./public/~ and copies the content of ~./assets/~ subdirectory
 into ~./public/~ subdirectory.
 
-So all the interesting work is done by ~one-build-only-html~ command.
+So all the interesting work is done by ~one-render-pages~ command.
 When we call it in an org buffer containing all our pages,
-~one-build-only-html~ does the following:
+~one-render-pages~ does the following:
 
 1) set ~tree~ local variable to the parsed tree of the current org
    buffer,
@@ -1388,10 +1388,10 @@ When we call it in an org buffer containing all our pages,
      ~render-page-function~ function called with ~page-tree~, ~pages~ and
      ~global~ as arguments.
 
-Here is the complete implementation of ~one-build-only-html~:
+Here is the complete implementation of ~one-render-pages~:
 
 #+BEGIN_SRC emacs-lisp
-(defun one-build-only-html ()
+(defun one-render-pages ()
   \"...\"
   (interactive)
   (let* ((tree (one-parse-buffer))
@@ -1482,7 +1482,7 @@ Once you've initialized this new `one' project, you can build it
 calling `one-build' command while visiting the file `./one.org'.
 This results in producing the website under the subdirectory `./public/'.
 
-See `one-build-only-html'."
+See `one-render-pages'."
   (interactive)
   (one-default-add-css-file)
   (with-temp-file "one.org" (insert one-default-org-content))

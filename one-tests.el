@@ -496,7 +496,7 @@ A simple example
 :one-tree org-data"))
         (delete-directory temp-dir t)))))
 
-(ert-deftest one-build-only-html-test ()
+(ert-deftest one-render-pages-test ()
   ;; test variables `one-add-to-global' and `one-hook',
   ;; and also that `onerc.el' file is loaded
   (flet ((render-function-1 (page-tree pages global)
@@ -565,7 +565,7 @@ A simple example
 :ONE: render-function-3
 :CUSTOM_ID: /page-3/
 :END:"
-        (one-build-only-html))
+        (one-render-pages))
       (should
        (string=
         (with-current-buffer (find-file-noselect "public/page-1/index.html")

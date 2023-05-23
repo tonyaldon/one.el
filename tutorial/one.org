@@ -67,7 +67,7 @@ If the port ~3000~ isn't used we should have our website served at
 Finally:
 
 1) after this paragraph we write 'Hello world!',
-2) we call ~one-build~ command (or ~one-build-only-html~) and
+2) we call ~one-build~ command (or ~one-render-pages~) and
 3) we watch the changes live in our browser.
 
 Cool, right?
@@ -137,7 +137,7 @@ A render function is a regular Elisp function that takes 3 arguments
   the page,
 - ~pages~: list of pages,
 - ~global~: a plist of global informations that are computed once
-  in ~one-build-only-html~ (see ~one-add-to-global~) before rendering the
+  in ~one-render-pages~ (see ~one-add-to-global~) before rendering the
   pages
 
 and returns an HTML string.
@@ -223,16 +223,16 @@ Good question!
 
 From an org file (or only buffer) containing all the pages of our
 website we can build the website under ~./public/~ subdirectory
-by calling either ~one-build~ or ~one-build-only-html~.
+by calling either ~one-build~ or ~one-render-pages~.
 
 The difference between those two commands is that before producing the
-HTML pages calling ~one-build-only-html~, ~one-build~ command cleans the
+HTML pages calling ~one-render-pages~, ~one-build~ command cleans the
 subdirectory ~./public/~ and copies the content of ~./assets/~ subdirectory
 into ~./public/~ subdirectory.
 
-So all the interesting work is done by ~one-build-only-html~ command.
+So all the interesting work is done by ~one-render-pages~ command.
 When we call it in an org buffer containing all our pages,
-~one-build-only-html~ does the following:
+~one-render-pages~ does the following:
 
 1) set ~tree~ local variable to the parsed tree of the current org
    buffer,
@@ -251,10 +251,10 @@ When we call it in an org buffer containing all our pages,
      ~render-page-function~ function called with ~page-tree~, ~pages~ and
      ~global~ as arguments.
 
-Here is the complete implementation of ~one-build-only-html~:
+Here is the complete implementation of ~one-render-pages~:
 
 #+BEGIN_SRC emacs-lisp
-(defun one-build-only-html ()
+(defun one-render-pages ()
   "..."
   (interactive)
   (let* ((tree (one-parse-buffer))
@@ -306,6 +306,17 @@ in the org property ~ONE~.
 *** headline 1.1
 
 foo
+
+- [[rev:de7901abbc21114721057c907cc52455e228f826:emacs:lisp/subr.el:2554][start-process]]
+
+#+BEGIN_SRC tms
+$ ls
+...
+#+END_SRC
+
+#+BEGIN_SRC json
+{ "foo": "bar" }
+#+END_SRC
 
 *** headline 1.2
 
