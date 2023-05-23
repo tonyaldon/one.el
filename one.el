@@ -225,6 +225,16 @@ If nil, the CSS class is `one-hl one-hl-block'."
 
 (define-error 'one-link-broken "Unable to resolve link")
 
+(defvar one-ox-link-image-extensions
+  (format "\\.%s\\'"
+          (regexp-opt
+           '("webp" "avif" "png" "jpeg" "jpg" "gif"
+             "tiff" "tif" "xbm" "xpm" "pbm" "pgm" "ppm")
+           t))
+  "Regexp matching image extensions.
+
+See `one-ox-link'.")
+
 (defun one-ox-link (link desc info)
   "Transcode a LINK object from Org to HTML.
 DESC is the description part of the link, or the empty string.
