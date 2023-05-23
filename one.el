@@ -473,16 +473,7 @@ live reloading, you can run the following commands (in a terminal):
               (push (funcall (plist-get glob :one-global-function) pages tree)
                     global)
               (push (plist-get glob :one-global-property) global))
-            global))
-         (render-page
-          (lambda (page pages global)
-            (let* ((path (concat "./public" (plist-get page :one-path)))
-                   (file (concat path "index.html"))
-                   (render-page-function (plist-get page :one-render-page-function))
-                   (page-tree (plist-get page :one-page-tree)))
-              (make-directory path t)
-              (with-temp-file file
-                (insert (funcall render-page-function page-tree pages global)))))))
+            global)))
     (dolist (hook one-hook) (funcall hook pages tree global))
     (if one-path
         (if-let ((page (seq-some
@@ -492,14 +483,14 @@ live reloading, you can run the following commands (in a terminal):
                         pages)))
             (progn
               (message "Build page `%s'..." one-path)
-              (funcall render-page page pages global)
+              (one-render-page page pages global)
               (message "Build page `%s'...done" one-path))
           (error "Page `%s' doesn't exist" one-path))
       (message "Build pages...")
       (dolist (page pages)
         (progn
           (message "Build page `%s'" (plist-get page :one-path))
-          (funcall render-page page pages global)))
+          (one-render-page page pages global)))
       (message "Build pages...done"))))
 
 (defvar one-emacs-cmd-line-args-async nil
