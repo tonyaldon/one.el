@@ -374,7 +374,7 @@ that argument has been let binded using `one-add-to-global'.")
       (insert (funcall render-page-function page-tree pages global)))))
 
 (defun one-build-only-html (&optional one-path)
-  "Build website of the current buffer under `./public/' subdirectory.
+  "Render webpages of the current buffer under `./public/' dir.
 
 The current buffer should look like this.
 
@@ -496,9 +496,9 @@ live reloading, you can run the following commands (in a terminal):
 (defvar one-emacs-cmd-line-args-async nil
   "List of command line arguments to pass to `emacs' subprocess.
 
-The function `one-build-only-html-async' spawns an `emacs' subprocess
-in order to build html pages asynchronously.  The arguments passed to
-`emacs' depends on `one-emacs-cmd-line-args-async' value.
+The function `one-build-only-html-async' and `one-build-async'spawn an
+`emacs' subprocess in order to build html pages asynchronously.  The
+arguments passed to `emacs' depends on `one-emacs-cmd-line-args-async' value.
 
 By default, when `one-emacs-cmd-line-args-async' is nil, we run `emacs'
 in \"batch mode\", we load the user's initialization file and we evaluate
@@ -534,7 +534,13 @@ then `command' becomes
       ...)")
 
 (defun one-build-only-html-async (&optional one-path)
-  ""
+  "Render webpages of the current buffer under `./public/' dir asynchronously.
+
+The function `one-build-only-html-async' spawns an `emacs' subprocess
+in order to build html pages asynchronously.  The arguments passed to
+`emacs' depends on `one-emacs-cmd-line-args-async' value.
+
+See `one-build-only-html'."
   (interactive)
   (let* ((org-content (buffer-substring (point-min) (point-max)))
          (org-content-file (make-temp-file "one-content-" nil ".org"))
@@ -586,19 +592,22 @@ Doesn't move point nor change the match data."
        (org-element-property :CUSTOM_ID (org-element-at-point))))))
 
 (defun one-build-page-at-point ()
-  "Build page at point."
+  "Build page at point.
+
+See `one-build-only-html'."
   (interactive)
   (if-let ((one-path (one-page-at-point)))
       (one-build-only-html one-path)
     (message "No page found at point")))
 
 (defun one-build-page-at-point-async ()
-  "Build page at point asynchronously."
+  "Build page at point asynchronously.
+
+See `one-build-only-html-async'."
   (interactive)
   (if-let ((one-path (one-page-at-point)))
       (one-build-only-html-async one-path)
     (message "No page found at point")))
-
 
 (defun one-copy-assets-to-public ()
   "Copy `./assets/' files into `./public/' subdirectory."
