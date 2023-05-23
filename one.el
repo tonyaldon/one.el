@@ -376,6 +376,10 @@ that argument has been let binded using `one-add-to-global'.")
 (defun one-build-only-html (&optional one-path)
   "Render webpages of the current buffer under `./public/' dir.
 
+If ONE-PATH is non-nil, it must be the path of page in the current
+buffer.  That means it must match the `CUSTOM_ID'org property value
+of a level 1 headline.
+
 The current buffer should look like this.
 
     ---------- Buffer ----------
@@ -539,6 +543,10 @@ then `command' becomes
 The function `one-build-only-html-async' spawns an `emacs' subprocess
 in order to build html pages asynchronously.  The arguments passed to
 `emacs' depends on `one-emacs-cmd-line-args-async' value.
+
+If ONE-PATH is non-nil, it must be the path of page in the current
+buffer.  That means it must match the `CUSTOM_ID'org property value
+of a level 1 headline.
 
 See `one-build-only-html'."
   (interactive)
