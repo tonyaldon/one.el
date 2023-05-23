@@ -363,6 +363,16 @@ Those functions take three arguments:
 As those functions take `global' argument they are called after
 that argument has been let binded using `one-add-to-global'.")
 
+(defun one-render-page (page pages global)
+  ""
+  (let* ((path (concat "./public" (plist-get page :one-path)))
+         (file (concat path "index.html"))
+         (render-page-function (plist-get page :one-render-page-function))
+         (page-tree (plist-get page :one-page-tree)))
+    (make-directory path t)
+    (with-temp-file file
+      (insert (funcall render-page-function page-tree pages global)))))
+
 (defun one-build-only-html (&optional one-path)
   "Build website of the current buffer under `./public/' subdirectory.
 

@@ -449,6 +449,53 @@ A simple example
               (car (plist-get page-1 :one-page-tree)))))
     '(1 "/path/to/page-1/" render-function-1 headline))))
 
+(ert-deftest one-render-page-test ()
+  (let* ((one-tree
+          (org-test-with-temp-text "* Page foo bar
+:PROPERTIES:
+:ONE: render-function
+:CUSTOM_ID: /foo/bar/
+:END:
+* Page foo bar baz
+:PROPERTIES:
+:ONE: render-function
+:CUSTOM_ID: /foo/bar/baz/
+:END:"
+            (one-parse-buffer)))
+         (page (one-is-page (nth 2 one-tree)))
+         (pages (one-list-pages one-tree))
+         (global (list :one-tree one-tree)))
+    (flet ((render-function
+            (page-tree pages global)
+            (message "%S" pages)
+            (concat "-- page   --\n"
+                    ":ONE " (org-element-property :ONE page-tree) "\n"
+                    ":CUSTOM_ID " (org-element-property :CUSTOM_ID page-tree) "\n"
+                    "-- pages  --\n"
+                    ":one-title " (plist-get (car pages) :one-title) "\n"
+                    ":one-title " (plist-get (cadr pages) :one-title) "\n"
+                    "-- global --\n"
+                    ":one-tree " (symbol-name (car (plist-get global :one-tree))))))
+      (let* ((temp-dir (file-name-as-directory
+                        (expand-file-name
+                         (make-temp-file "one-" 'dir))))
+             (default-directory temp-dir))
+        ;; we are testing `one-render-page'
+        (one-render-page page pages global)
+        (should
+         (string=
+          (with-current-buffer (find-file-noselect "public/foo/bar/index.html")
+            (buffer-substring-no-properties (point-min) (point-max)))
+          "-- page   --
+:ONE render-function
+:CUSTOM_ID /foo/bar/
+-- pages  --
+:one-title Page foo bar
+:one-title Page foo bar baz
+-- global --
+:one-tree org-data"))
+        (delete-directory temp-dir t)))))
+
 (ert-deftest one-build-only-html-test ()
   ;; test variable `one-add-to-global'
   (flet ((render-function-1 (page-tree pages global)
