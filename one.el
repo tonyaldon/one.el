@@ -562,7 +562,7 @@ then `command' becomes
     (with-temp-file org-content-file (insert org-content))
     (if one-path
         (message "Build page `%s'..." one-path)
-      (message "Build pages..." one-path))
+      (message "Build pages..."))
     (let ((process-connection-type nil)
           (inhibit-message t))
       (make-process
