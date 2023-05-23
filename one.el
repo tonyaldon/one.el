@@ -260,6 +260,74 @@ INFO is a plist holding contextual information."
 
 ;;; Commands to build `one' web sites
 
+(defvar one-add-to-global
+  '((:one-global-property :one-tree
+     :one-global-function (lambda (pages tree) tree)))
+  "List used to set the `global' argument passed to render functions.
+
+Elements in that list are plist with the following properties:
+
+- `:one-global-property': a keyword that is used as proprety
+  in the `global' argument passed to the render functions.
+- `:one-global-function': a function that takes two arguments `pages'
+  (list of pages, see `one-list-pages') and `tree'
+  (see `one-parse-buffer').  That function is called once in
+  `one-render-pages' and its result is used as the value of
+  the property `:one-global-property' in the `global' argument
+  passed to the render functions.")
+
+(defvar one-hook nil
+  "List of functions called once in `one-render-pages'.
+
+Those functions take three arguments:
+
+- `pages': list of pages, see `one-list-pages',
+- `tree': see `one-parse-buffer',
+- `global': see `one-add-to-global'.
+
+As those functions take `global' argument they are called after
+that argument has been let binded using `one-add-to-global'.")
+
+(defvar one-emacs-cmd-line-args-async nil
+  "List of command line arguments to pass to `emacs' subprocess.
+
+The function `one-render-pages-async' and `one-build-async'spawn an
+`emacs' subprocess in order to build html pages asynchronously.  The
+arguments passed to `emacs' depends on `one-emacs-cmd-line-args-async' value.
+
+By default, when `one-emacs-cmd-line-args-async' is nil, we run `emacs'
+in \"batch mode\", we load the user's initialization file and we evaluate
+a specific sexp that builds html pages using `one'.  Specifically, we pass
+the following `command' (`emacs' file name followed by command line
+arguments) to `make-process' function like this:
+
+    (let* ((emacs (file-truename
+                   (expand-file-name invocation-name invocation-directory)))
+           (command \\=`(,emacs \"--batch\"
+                             \"-l\" ,user-init-file
+                             \"--eval\" ,sexp))
+           (sexp ...))
+      (make-process
+       :name ...
+       :buffer ...
+       :command command))
+
+If `one-emacs-cmd-line-args-async' is non nil, we no longer load the user's
+initialization file and replace `\"-l\" ,user-init-file' in `command' above
+by the elements of `one-emacs-cmd-line-args-async'.  For instance, if
+`one-emacs-cmd-line-args-async' is equal to
+
+    \\='(\"-l\" \"/path/to/some-elisp-file/\")
+
+then `command' becomes
+
+    (let* (...
+           (command \\=`(,emacs \"--batch\"
+                             \"-l\" \"/path/to/some-elisp-file/\"
+                             \"--eval\" ,sexp))
+           ...)
+      ...)")
+
 (define-error 'one-path "CUSTOM_ID not defined")
 
 (defun one-internal-id (headline)
@@ -334,34 +402,6 @@ The function `one-is-page' determines which headlines in TREE
 are pages."
   (org-element-map tree 'headline
     (lambda (headline) (one-is-page headline))))
-
-(defvar one-add-to-global
-  '((:one-global-property :one-tree
-     :one-global-function (lambda (pages tree) tree)))
-  "List used to set the `global' argument passed to render functions.
-
-Elements in that list are plist with the following properties:
-
-- `:one-global-property': a keyword that is used as proprety
-  in the `global' argument passed to the render functions.
-- `:one-global-function': a function that takes two arguments `pages'
-  (list of pages, see `one-list-pages') and `tree'
-  (see `one-parse-buffer').  That function is called once in
-  `one-render-pages' and its result is used as the value of
-  the property `:one-global-property' in the `global' argument
-  passed to the render functions.")
-
-(defvar one-hook nil
-  "List of functions called once in `one-render-pages'.
-
-Those functions take three arguments:
-
-- `pages': list of pages, see `one-list-pages',
-- `tree': see `one-parse-buffer',
-- `global': see `one-add-to-global'.
-
-As those functions take `global' argument they are called after
-that argument has been let binded using `one-add-to-global'.")
 
 (defun one-render-page (page pages global)
   ""
@@ -496,46 +536,6 @@ live reloading, you can run the following commands (in a terminal):
           (message "Build page `%s'" (plist-get page :one-path))
           (one-render-page page pages global)))
       (message "Build pages...done"))))
-
-(defvar one-emacs-cmd-line-args-async nil
-  "List of command line arguments to pass to `emacs' subprocess.
-
-The function `one-render-pages-async' and `one-build-async'spawn an
-`emacs' subprocess in order to build html pages asynchronously.  The
-arguments passed to `emacs' depends on `one-emacs-cmd-line-args-async' value.
-
-By default, when `one-emacs-cmd-line-args-async' is nil, we run `emacs'
-in \"batch mode\", we load the user's initialization file and we evaluate
-a specific sexp that builds html pages using `one'.  Specifically, we pass
-the following `command' (`emacs' file name followed by command line
-arguments) to `make-process' function like this:
-
-    (let* ((emacs (file-truename
-                   (expand-file-name invocation-name invocation-directory)))
-           (command \\=`(,emacs \"--batch\"
-                             \"-l\" ,user-init-file
-                             \"--eval\" ,sexp))
-           (sexp ...))
-      (make-process
-       :name ...
-       :buffer ...
-       :command command))
-
-If `one-emacs-cmd-line-args-async' is non nil, we no longer load the user's
-initialization file and replace `\"-l\" ,user-init-file' in `command' above
-by the elements of `one-emacs-cmd-line-args-async'.  For instance, if
-`one-emacs-cmd-line-args-async' is equal to
-
-    \\='(\"-l\" \"/path/to/some-elisp-file/\")
-
-then `command' becomes
-
-    (let* (...
-           (command \\=`(,emacs \"--batch\"
-                             \"-l\" \"/path/to/some-elisp-file/\"
-                             \"--eval\" ,sexp))
-           ...)
-      ...)")
 
 (defun one-render-pages-async (&optional one-path)
   "Render webpages of the current buffer under `./public/' dir asynchronously.
