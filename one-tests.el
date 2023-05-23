@@ -497,14 +497,16 @@ A simple example
         (delete-directory temp-dir t)))))
 
 (ert-deftest one-build-only-html-test ()
-  ;; test variable `one-add-to-global'
+  ;; test variables `one-add-to-global' and `one-hook',
+  ;; and also that `onerc.el' file is loaded
   (flet ((render-function-1 (page-tree pages global)
                             (org-element-property :raw-value
                               (nth 2 (plist-get global :one-tree))))
          (render-function-2 (page-tree pages global)
                             (plist-get global :foo))
-         (render-function-3 (page-tree pages global)
-                            (plist-get global :bar))
+         ;; we define it below in the file "onerc.el"
+         ;; but we want it to be local to the test
+         (render-function-3 nil)
          (global-function (pages tree) "I'm BAR")
          ;; create page ./public/tag1/index.html and ./public/tag2/index.html
          (tag-hook (pages tree global)
@@ -529,6 +531,10 @@ A simple example
                       (expand-file-name
                        (make-temp-file "one-" 'dir))))
            (default-directory temp-dir)
+           (_ (with-temp-file (concat temp-dir "onerc.el")
+                (prin1 '(defun render-function-3 (page-tree pages global)
+                          (plist-get global :bar))
+                       (current-buffer))))
            (one-add-to-global
             '((:one-global-property :one-tree
                :one-global-function (lambda (pages tree) tree))
