@@ -599,7 +599,7 @@ Doesn't move point nor change the match data."
          (search-backward-regexp "^\\* " nil t))
        (org-element-property :CUSTOM_ID (org-element-at-point))))))
 
-(defun one-build-page-at-point ()
+(defun one-render-page-at-point ()
   "Build page at point.
 
 See `one-render-pages'."
@@ -608,7 +608,7 @@ See `one-render-pages'."
       (one-render-pages one-path)
     (message "No page found at point")))
 
-(defun one-build-page-at-point-async ()
+(defun one-render-page-at-point-async ()
   "Build page at point asynchronously.
 
 See `one-render-pages-async'."
