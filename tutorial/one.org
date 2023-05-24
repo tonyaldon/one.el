@@ -8,7 +8,51 @@ Hi, I'm Tony Aldon and I'm glad that you're giving a try to ~one.el~, a
 simple static site generator for Emacs Lisp programmers and org-mode
 users.  I hope its design fits your workflow.
 
-If you've already [[#/blog/install-one-el/][installed one]] the best way to start is to visite the
+In ~one.el~, the following org file/buffer defines a website with 3
+pages that we build by calling ~one-build~ command while we are visiting
+it.
+
+#+BEGIN_SRC org
+,* My website
+:PROPERTIES:
+:ONE: one-default-home
+:CUSTOM_ID: /
+:END:
+
+Welcome to my website!
+
+,* Blog post 1
+:PROPERTIES:
+:ONE: one-default
+:CUSTOM_ID: /blog/page-1/
+:END:
+
+My first blog post!
+
+,* Blog post 2
+:PROPERTIES:
+:ONE: one-default
+:CUSTOM_ID: /blog/page-2/
+:END:
+
+My second blog post!
+#+END_SRC
+
+The path ~/~ in the first ~CUSTOM_ID~ org property tells ~one.el~ that the
+page "My website" is the home page and should be rendered with
+~one-default-home~ render function (value of ~ONE~ org property).
+
+# TO BE CONTINUED...
+
+# Specifically,
+#
+# - the home page (specified with the path ~/~) which is rendered using
+#   the render function ~one-default-home~ and
+# - the pages "Blog post 1" and "Blog post 2" (with the paths
+#   ~/blog/page-1/~ and ~/blog/page-2/~) which are rendederd with the render
+#   function ~one-default~.
+
+If you've already [[#/blog/install-one-el/][installed one.el]] the best way to start is to visite the
 [[#/blog/getting-started/][Getting started]] page.
 
 * Install one.el
