@@ -429,6 +429,7 @@ are pages."
     (with-temp-file file
       (insert (funcall render-page-function page-tree pages global)))))
 
+;;;###autoload
 (defun one-render-pages (&optional one-path)
   "Render webpages of the current buffer under `./public/' dir.
 
@@ -553,6 +554,7 @@ live reloading, you can run the following commands (in a terminal):
           (one-render-page page pages global)))
       (message "Build pages...done"))))
 
+;;;###autoload
 (defun one-render-pages-async (&optional one-path)
   "Render webpages of the current buffer under `./public/' dir asynchronously.
 
@@ -615,6 +617,7 @@ Doesn't move point nor change the match data."
          (search-backward-regexp "^\\* " nil t))
        (org-element-property :CUSTOM_ID (org-element-at-point))))))
 
+;;;###autoload
 (defun one-render-page-at-point ()
   "Build page at point.
 
@@ -624,6 +627,7 @@ See `one-render-pages'."
       (one-render-pages one-path)
     (message "No page found at point")))
 
+;;;###autoload
 (defun one-render-page-at-point-async ()
   "Build page at point asynchronously.
 
@@ -639,6 +643,7 @@ See `one-render-pages-async'."
   (when (file-exists-p "./assets/")
     (copy-directory "./assets/" "./public/" nil nil 'copy-contents)))
 
+;;;###autoload
 (defun one-build-async ()
   "Build website of the current buffer under `./public/' dir asynchronously.
 
@@ -687,6 +692,7 @@ See `one-build'."
        :connection-type nil
        :sentinel sentinel))))
 
+;;;###autoload
 (defun one-build ()
   "Build website of the current buffer under `./public/' subdirectory.
 
@@ -1487,6 +1493,7 @@ See the default render functions `one-default-home',`one-default',
   (make-directory "assets" t)
   (with-temp-file "./assets/one.css" (insert one-default-css)))
 
+;;;###autoload
 (defun one-default-new-project ()
   "Initialize a new `one' project in the current directory with the default style.
 
