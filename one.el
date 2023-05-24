@@ -4,7 +4,7 @@
 
 ;; Author: Tony Aldon <tony.aldon.adm@gmail.com>
 ;; Version: 0.0
-;; Package-Requires: ((emacs "28.1"))
+;; Package-Requires: ((emacs "28.1") (jack "1.0") (htmlize "1.57"))
 ;; Keywords: html, org, static-site, blog
 ;; Homepage: https://github.com/tonyaldon/one
 
