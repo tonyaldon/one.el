@@ -5,8 +5,8 @@
 :END:
 
 Hi, I'm Tony Aldon and I'm glad that you're giving a try to ~one~, a
-simple static site generator for Emacs Lisp programmers.  I hope its
-design fits your workflow.
+simple static site generator for Emacs Lisp programmers and org-mode
+users.  I hope its design fits your workflow.
 
 * Getting started
 :PROPERTIES:
@@ -72,7 +72,7 @@ Finally:
 
 Cool, right?
 
-* The default page
+* TODO The default page
 :PROPERTIES:
 :ONE: one-default
 :CUSTOM_ID: /blog/default/
@@ -210,14 +210,14 @@ we can use the package [[https://jack.tonyaldon.com][Jack]] as in ~one-default~ 
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div/header (:a (@ :href "/") ,website-name))
-        (:div/content
-         (:div/title (:h1 ,title))
+        (:div.header (:a (@ :href "/") ,website-name))
+        (:div.content
+         (:div.title (:h1 ,title))
          ,content
          ,nav))))))
 #+END_SRC
 
-** But how is the website built?
+** TODO But how is the website built?
 
 Good question!
 
@@ -277,7 +277,7 @@ Here is the complete implementation of ~one-render-pages~:
           (insert (funcall render-page-function page-tree pages global)))))))
 #+END_SRC
 
-* The default page with a TOC
+* TODO The default page with a TOC
 :PROPERTIES:
 :ONE: one-default-with-toc
 :CUSTOM_ID: /blog/one-default-with-toc/
@@ -293,7 +293,7 @@ many modern documentation sites do.  If so, we can use the default
 render function ~one-default-doc~ presented in [[#/blog/one-default-doc/][The default page with TOC
 and sidebar]].
 
-* The default page with TOC and sidebar
+* TODO The default page with TOC and sidebar
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /blog/one-default-doc/
@@ -307,19 +307,40 @@ in the org property ~ONE~.
 
 foo
 
-- [[rev:de7901abbc21114721057c907cc52455e228f826:emacs:lisp/subr.el:2554][start-process]]
-
-#+BEGIN_SRC tms
-$ ls
-...
-#+END_SRC
-
-#+BEGIN_SRC json
-{ "foo": "bar" }
-#+END_SRC
-
 *** headline 1.2
 
 bar
 
 ** headline 2
+* TODO Alternative default render function for the home page
+:PROPERTIES:
+:ONE: one-default-home
+:CUSTOM_ID: /default-home/
+:END:
+
+# This page is rendered with the default render function
+# ~one-default-home-list-pages~ specified in ~ONE~ org property.  Being the
+# website's home page, its path specified in ~CUSTOM_ID~ org property is
+# set to one slash ~/~.
+#
+# Thus this text is inserted before we list the website's pages (in
+# reverse order of appearance in the org document).
+#
+# We can change this page's appearance by modifying the CSS ids
+# ~home-list-pages~ and ~pages~, and the CSS classes ~header~ and ~content~.
+#
+# And if we don't want to list the website's pages we can use the
+# default render function ~one-default-home~ presented in [[#/default-home/][Alternative
+# default render function for the home page]].
+
+
+# This page is rendered with the default render function ~one-default-home~
+# specified in ~ONE~ org property.
+#
+# And as we can see the website's pages are not listed and the content
+# is rendered "normaly" (not text centered as in the [[#/][home page]]).
+#
+# We can change this page's appearance by modifying the CSS id
+# ~home~ and the CSS classes ~header~ and ~content~.
+#
+# Let's move on to [[#/blog/default/][The default page]].
