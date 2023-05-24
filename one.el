@@ -6,7 +6,7 @@
 ;; Version: 0.0
 ;; Package-Requires: ((emacs "28.1") (jack "1.0") (htmlize "1.57"))
 ;; Keywords: html, org, static-site, blog
-;; Homepage: https://github.com/tonyaldon/one
+;; Homepage: https://github.com/tonyaldon/one.el
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
