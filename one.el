@@ -707,7 +707,7 @@ See `one-render-pages'."
 ;;; A default web site
 
 (defvar one-default-css
-  "@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Noto+Sans:wght@400;700&display=swap');
+  "@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400&family=Noto+Sans:wght@400;700&display=swap');
 
 html, body, p, ol, ul, li, dl, dt, dd,
 blockquote, figure, fieldset, legend, textarea,
