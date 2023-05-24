@@ -182,7 +182,7 @@ is the language used for CODE, as a string, or nil."
 (defun one-ox-htmlize (code lang &optional is-results-p)
   "Return CODE string htmlized using `htmlize.el' in language LANG.
 
-If `is-results-p' is non-nil, CSS class of tag <code> in the returned
+If IS-RESULTS-P is non-nil, CSS class of tag <code> in the returned
 string is \"one-hl one-hl-results\".
 If nil, the CSS class is `one-hl one-hl-block'."
   (let* ((class (if is-results-p
