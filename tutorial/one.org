@@ -11,7 +11,7 @@ users.  I hope its design fits your workflow.
 If you've already [[#/blog/install-one-el/][installed one]] the best way to start is to visite the
 [[#/blog/getting-started/][Getting started]] page.
 
-* TODO Install one.el
+* Install one.el
 :PROPERTIES:
 :ONE: one-default
 :CUSTOM_ID: /blog/install-one-el/
@@ -26,13 +26,16 @@ If you've already [[#/blog/install-one-el/][installed one]] the best way to star
 (require 'one)
 #+END_SRC
 
-If you're using ~straight.el~, to install ~one.el~ you can add this
-sexp to your init file:
+If you're using ~straight.el~, to install ~one.el~ you just have to add
+this sexp to your init file:
 
 #+BEGIN_SRC emacs-lisp
 (straight-use-package
  '(one :type git :host github :repo "tonyaldon/one.el"))
 #+END_SRC
+
+Now you can call the command ~one-default-new-project~ to create a new
+project and visite the [[#/blog/getting-started/][Getting started]] page to be guided.
 
 * Getting started
 :PROPERTIES:
