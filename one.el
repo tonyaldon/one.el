@@ -40,6 +40,8 @@
 (require 'ox)
 (require 'htmlize)
 
+(defvar htmlize-buffer-places)
+
 ;;; utils
 
 (defun one-escape (s)
@@ -87,7 +89,7 @@
 
 ;;;; headline, section, paragraph, etc.
 
-(defun one-ox-headline (headline contents info)
+(defun one-ox-headline (headline contents _info)
   ;; Note that markups and links are not exported if
   ;; used in headlines, only the raw value string.
   ;; So don't use them in headlines.
@@ -1508,14 +1510,13 @@ See `one-render-pages'."
   (with-temp-file "one.org" (insert one-default-org-content))
   (find-file "one.org"))
 
-(defun one-default-home (page-tree pages global)
+(defun one-default-home (page-tree pages _global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
                    'one nil))
-         (website-name (one-default-website-name pages))
-         (pages-list (one-default-pages pages)))
+         (website-name (one-default-website-name pages)))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -1528,7 +1529,7 @@ See `one-render-pages'."
         (:div.content
          (:div/home ,content)))))))
 
-(defun one-default-home-list-pages (page-tree pages global)
+(defun one-default-home-list-pages (page-tree pages _global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
@@ -1549,7 +1550,7 @@ See `one-render-pages'."
          (:div/home-list-pages ,content)
          (:div/pages (:ul ,(reverse pages-list)))))))))
 
-(defun one-default (page-tree pages global)
+(defun one-default (page-tree pages _global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
@@ -1572,7 +1573,7 @@ See `one-render-pages'."
          ,content
          ,nav))))))
 
-(defun one-default-with-toc (page-tree pages global)
+(defun one-default-with-toc (page-tree pages _global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
@@ -1602,7 +1603,7 @@ See `one-render-pages'."
          ,content
          ,nav))))))
 
-(defun one-default-doc (page-tree pages global)
+(defun one-default-doc (page-tree pages _global)
   ""
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
