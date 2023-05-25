@@ -10,7 +10,7 @@ users.  I hope its design fits your workflow.
 
 In ~one.el~, the following org file/buffer defines a website with 3
 pages that we build by calling ~one-build~ command while we are visiting
-it.
+it:
 
 #+BEGIN_SRC org
 ,* My website
@@ -39,20 +39,33 @@ My second blog post!
 #+END_SRC
 
 The path ~/~ in the first ~CUSTOM_ID~ org property tells ~one.el~ that the
-page "My website" is the home page and should be rendered with
-~one-default-home~ render function (value of ~ONE~ org property).
+page "My website" is the home page.  That page is rendered using
+~one-default-home~ render function, value of ~ONE~ org property of the
+same headline.
 
-# TO BE CONTINUED...
+The path ~/blog/page-1/~ in the second ~CUSTOM_ID~ org property tells
+~one.el~ that we want to render "Blog post 1" page in such a way
+that when we serve our website locally at ~http://localhost:3000~ for
+instance, that page is served at ~http://localhost:3000/blog/page-1/~.
+How that page is rendered is determined by the value of ~ONE~ org
+property of the same headline which is ~one-default~, a render
+function.
 
-# Specifically,
-#
-# - the home page (specified with the path ~/~) which is rendered using
-#   the render function ~one-default-home~ and
-# - the pages "Blog post 1" and "Blog post 2" (with the paths
-#   ~/blog/page-1/~ and ~/blog/page-2/~) which are rendederd with the render
-#   function ~one-default~.
+The same goes for the last page "Blog post 2".
 
-If you've already [[#/blog/install-one-el/][installed one.el]] the best way to start is to visite the
+As you might have noticed, a ~one.el~ website is an org file where the
+pages are the headlines of level 1 with the org properties ~ONE~ and
+~CUSTOM_ID~ set.  Nothing more!
+
+~ONE~ is the only org property added by ~one.el~.  Its value (an Elisp
+function which returns an HTML string) for a given page determines how
+~one.el~ renders that page.
+
+Paths of pages are set using ~CUSTOM_ID~ org property.
+
+With that said, you might want to try it.
+
+You can find the installation instructions [[#/blog/install-one-el/][here]] and be guided by the
 [[#/blog/getting-started/][Getting started]] page.
 
 * Install one.el
