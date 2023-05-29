@@ -568,7 +568,8 @@ of a level 1 headline.
 
 See `one-render-pages'."
   (interactive)
-  (let* ((org-content (buffer-substring (point-min) (point-max)))
+  (let* ((org-content (org-with-wide-buffer
+                       (buffer-substring (point-min) (point-max))))
          (org-content-file (make-temp-file "one-content-" nil ".org"))
          (current-dir default-directory)
          (sexp (with-output-to-string
@@ -654,7 +655,8 @@ on `one-emacs-cmd-line-args-async' value.
 
 See `one-build'."
   (interactive)
-  (let* ((org-content (buffer-substring (point-min) (point-max)))
+  (let* ((org-content (org-with-wide-buffer
+                       (buffer-substring (point-min) (point-max))))
          (org-content-file (make-temp-file "one-content-" nil ".org"))
          (current-dir default-directory)
          (sexp (with-output-to-string
