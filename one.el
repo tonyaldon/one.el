@@ -642,7 +642,7 @@ See `one-render-pages-async'."
   "Copy `./assets/' files into `./public/' subdirectory."
   (interactive)
   (when (file-exists-p "./assets/")
-    (copy-directory "./assets/" "./public/" nil nil 'copy-contents)))
+    (copy-directory "./assets/" "./public/" nil t 'copy-contents)))
 
 ;;;###autoload
 (defun one-build-async ()
