@@ -4,9 +4,12 @@
 :CUSTOM_ID: /
 :END:
 
-Hi, I'm Tony Aldon and I'm glad that you're giving a try to ~one.el~, a
+Hi, I'm [[https://tonyaldon.com][Tony Aldon]] and I'm glad that you're giving a try to [[https://github.com/tonyaldon/one.el][one.el]], a
 simple static site generator for Emacs Lisp programmers and org-mode
 users.  I hope its design fits your workflow.
+
+To get started right away check [[#/docs/install-one-el/][Install one.el]] and [[#/docs/getting-started/][Getting started]]
+pages.
 
 In ~one.el~, the following org file/buffer defines a website with 3
 pages that we build by calling ~one-build~ command while we are visiting
@@ -38,6 +41,9 @@ My first blog post!
 My second blog post!
 #+END_SRC
 
+Note that if we want to use the default css style sheet we can add it
+by calling ~one-default-add-css-file~ before building the website.
+
 The path ~/~ in the first ~CUSTOM_ID~ org property tells ~one.el~ that the
 page "My website" is the home page.  That page is rendered using
 ~one-default-home~ render function, value of ~ONE~ org property of the
@@ -63,21 +69,19 @@ function which returns an HTML string) for a given page determines how
 
 Paths of pages are set using ~CUSTOM_ID~ org property.
 
-With that said, you might want to try it.
-
-You can find the installation instructions [[#/docs/install-one-el/][here]] and be guided by the
-[[#/docs/getting-started/][Getting started]] page.
+With that said, if you want to try it you can check [[#/docs/install-one-el/][Install one.el]] and
+[[#/docs/getting-started/][Getting started]] pages.
 
 ** Why one.el?
 
-I wrote ~one~ to do tech blogging.  More precisely to talk about
+I wrote ~one.el~ to do tech blogging.  More precisely to talk about
 programs (not programming).
 
 To me, it involves only three components:
 
 1) chunks of code,
 2) links to those chunks of code and,
-3) the people (big thank you!!!) who wrote those chunks of code.
+3) the people who wrote those chunks of code.
 
 So, when I wrote it, I focused on those aspects.
 
@@ -88,12 +92,12 @@ As a result, I left out many org elements:
 - etc.
 
 The org elements that are not supported are the following:
-center-block, clock, drawer, dynamic-block, entity, export-block,
-export-snippet, footnote-reference, horizontal-rule, inline-src-block,
-inlinetask, keyword, latex-environment, latex-fragment, line-break,
-node-property, planning, property-drawer, radio-target, special-block,
-statistics-cookie, table, table-cell, table-row,target, timestamp,
-verse-block
+~center-block~, ~clock~, drawer, ~dynamic-block~, ~entity~, ~export-block~,
+~export-snippet~, ~footnote-reference~, ~horizontal-rule~, ~inline-src-block~,
+~inlinetask~, ~keyword~, ~latex-environment~, ~latex-fragment~, ~line-break~,
+~node-property~, ~planning~, ~property-drawer~, ~radio-target~, ~special-block~,
+~statistics-cookie~, ~table~, ~table-cell~, ~table-row~, ~target~, ~timestamp~,
+~verse-block~.
 
 Note that "not supported" means they are not rendered by default by
 ~one.el~ but we can still use them or even extend ~one-ox~ org export
@@ -105,7 +109,7 @@ backend to take some of them into account.
 :CUSTOM_ID: /docs/install-one-el/
 :END:
 
-~one.el~ depends on ~jack~ and ~htmlize~ packages that are available on
+~one.el~ depends on [[https://jack.tonyaldon.com/][jack]] and [[https://github.com/hniksic/emacs-htmlize][htmlize]] packages that are available on
 [[https://melpa.org/][Melpa]].  Once you have them installed you can add ~one.el~ to your
 ~load-path~ and require it like this:
 
@@ -114,7 +118,7 @@ backend to take some of them into account.
 (require 'one)
 #+END_SRC
 
-If you're using ~straight.el~, to install ~one.el~ you just have to add
+If you're using [[https://github.com/radian-software/straight.el][straight.el]], to install ~one.el~ you just have to add
 this sexp to your init file:
 
 #+BEGIN_SRC emacs-lisp
@@ -122,18 +126,22 @@ this sexp to your init file:
  '(one :type git :host github :repo "tonyaldon/one.el"))
 #+END_SRC
 
-Now you can call the command ~one-default-new-project~ to create a new
-project and visite the [[#/docs/getting-started/][Getting started]] page to be guided.
+Now you can create a new website by calling ~one-default-new-project~
+(preferably in an empty directory) and you can build it by calling
+~one-build~ command.
 
-* Getting started
+If this is the first time you try ~one.el~ reading [[#/docs/getting-started/][Getting started]]
+page might be helpful.
+
+* TODO Getting started
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/getting-started/
 :END:
 
-If you're reading this from Emacs, that means you've already called
-~one-default-new-project~ command and produced a ~one~ project with
-the following structure:
+By calling ~one-default-new-project~ command (preferably in an empty
+directory) we produce a new ~one.el~ project with the following
+structure
 
 #+BEGIN_SRC text
 .
@@ -142,12 +150,11 @@ the following structure:
 └── one.org
 #+END_SRC
 
-If you didn't, start Emacs and in a new empty directory call
-~one-default-new-project~ command.  Now you are in the org buffer
-visiting the file ~one.org~ and you can go through this tutorial.
+and we visit the new created file ~one.org~.
 
-Let's build the website under the directory ~./public/~ by calling
-~one-build~ command.  Our project's structure is now:
+Once this done we can build the website under the directory ~./public/~
+by calling ~one-build~ command (being in the file ~one.org~).  Our
+project's structure is now:
 
 # FIXME: update the tree when the tutorial is terminated
 
