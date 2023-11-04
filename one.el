@@ -1199,43 +1199,30 @@ This style sheet is meant to be used with the default render functions
 See `one-default-new-project' and `one-default-add-css-file'.")
 
 (defvar one-default-org-content
-  "* My Website
+  "* one.el
 :PROPERTIES:
-:ONE: one-default-home-list-pages
+:ONE: one-default-home
 :CUSTOM_ID: /
 :END:
 
-This page is rendered with the default render function
-~one-default-home-list-pages~ specified in ~ONE~ org property.  Being the
-website's home page, its path specified in ~CUSTOM_ID~ org property is
-set to one slash ~/~.
+This is a new ~one.el~ project.
 
-Thus this text is inserted before we list the website's pages (in
-reverse order of appearance in the org document).
+If you don't know how ~one.el~ works, you can check the documentation at
+https://one.tonyaldon.com.
 
-We can change this page's appearance by modifying the CSS ids
-~home-list-pages~ and ~pages~, and the CSS classes ~header~ and ~content~.
+If you want to list all the pages on your website on the home page,
+check [[#/blog/default-home-list-pages/][List all website's pages on the home page]].
 
-And if we don't want to list the website's pages we can use the
-default render function ~one-default-home~ presented in [[#/default-home/][Alternative
-default render function for the home page]].
-
-* Alternative default render function for the home page
+* List all website's pages on the home page
 :PROPERTIES:
-:ONE: one-default-home
-:CUSTOM_ID: /default-home/
+:ONE: one-default-home-list-pages
+:CUSTOM_ID: /blog/default-home-list-pages/
 :END:
 
-This page is rendered with the default render function ~one-default-home~
-specified in ~ONE~ org property.
-
-And as we can see the website's pages are not listed and the content
-is rendered \"normaly\" (not text centered as in the [[#/][home page]]).
-
-We can change this page's appearance by modifying the CSS id
-~home~ and the CSS classes ~header~ and ~content~.
-
-Let's move on to [[#/blog/default/][The default page]].
+This page is rendered with the default render function
+~one-default-home-list-pages~ specified in ~ONE~ org property which lists
+below all the pages on the website.  You can use it instead of
+~one-default-home~ for your home page.
 
 * The default page
 :PROPERTIES:
@@ -1244,204 +1231,47 @@ Let's move on to [[#/blog/default/][The default page]].
 :END:
 
 This page is rendered with the default render function ~one-default~
-specified in ~ONE~ org property.  The path of the page is specified in
-~CUSTOM_ID~ org property.  Notice that it starts with a slash ~/~ and end
-with a slash ~/~.
+specified in ~ONE~ org property.
 
 ** Do you want a table of content?
 
-As we can see, ~one-default~ doesn't add a table of content (TOC).
+As you can see, ~one-default~ doesn't add a table of content (TOC).  If
+you want a default render function that adds the TOC to the page you can
+use the render function ~one-default-with-toc~ presented in [[#/blog/one-default-with-toc/][The default
+page with a TOC]].
 
-If we want a default render function that adds the TOC to the page
-we can use the render function ~one-default-with-toc~ presented in
-[[#/blog/one-default-with-toc/][The default page with a TOC]].
+** Headline foo
+*** Headline bar
 
-** Links to pages
+Some content.
 
-Note that the previous links is written in the org file like this
+*** Headline baz
 
-#+BEGIN_SRC text
-[[#/blog/one-default-with-toc/][The default page with a TOC]]
+#+BEGIN_SRC bash :results verbatim
+tree
 #+END_SRC
 
-making it an internal org link that targets the entry in the same file
-with the ~CUSTOM_ID~ property set to ~/blog/one-default-with-toc/~ and the
-render function ~one-default~ renders it like this:
-
-#+BEGIN_SRC html
-<a href=\"/blog/one-default-with-toc/\">The default page with a TOC</a>
-#+END_SRC
-
-The advantage of doing this is that the navigation between pages
-(level 1 headlines with ~ONE~ and ~CUSTOM_ID~ org properties set) inside
-Emacs is the same as in the browser once the website has been built.
-
-** Why does one-default render links in this way?
-
-This is because ~one-default~ render function uses ~one~ org export
-backend internally to convert the parsed tree of this page into an
-HTML string.  And ~one~ backend is designed to do the right thing for
-links, code blocks and headlines in the context of ~one~.
-
-To convert the parsed tree of this page into an HTML string,
-~one-default~ uses the function ~org-export-data-with-backend~ like this
-
-#+BEGIN_SRC emacs-lisp
-(org-export-data-with-backend
- (org-element-contents page-tree)
- 'one nil)
-#+END_SRC
-
-where ~page-tree~ is the parsed tree of the entry of this page given as
-the first argument of ~one-default~.
-
-** But what is a render function?
-
-A render function is a regular Elisp function that takes 3 arguments
-
-- ~page-tree~: corresponding to the parsed tree of the org entry defining
-  the page,
-- ~pages~: list of pages,
-- ~global~: a plist of global informations that are computed once
-  in ~one-render-pages~ (see ~one-add-to-global~) before rendering the
-  pages
-
-and returns an HTML string.
-
-For instance, the following ~hello-world~ function
-
-#+BEGIN_SRC emacs-lisp
-(defun hello-world (page-tree pages global)
-      \"<h1>Hello world!</h1>\")
-#+END_SRC
-
-defined a valid render function.  We can use it to build a website
-like this.  In an empty directory, we create a file named ~one.org~ with
-the following content:
-
-#+BEGIN_SRC org
-,* The home page
-:PROPERTIES:
-:ONE: hello-world
-:CUSTOM_ID: /
-:END:
-,* Blog post 1
-:PROPERTIES:
-:ONE: hello-world
-:CUSTOM_ID: /blog/page-1/
-:END:
-#+END_SRC
-
-We visit that file and call ~one-build~ command.  It produces the following files
-
-#+BEGIN_SRC text
+#+RESULTS:
+#+begin_example
 .
-├── one.org (already there)
+├── assets
+│   └── one.css
+├── one.org
 └── public
     ├── blog
-    │   └── page-1
+    │   ├── default
+    │   │   └── index.html
+    │   ├── default-home-list-pages
+    │   │   └── index.html
+    │   ├── one-default-doc
+    │   │   └── index.html
+    │   └── one-default-with-toc
     │       └── index.html
-    └── index.html
-#+END_SRC
+    ├── index.html
+    └── one.css
 
-and the content of the files ~./public/blog/page-1/index.html~ and
-~./public/index.html~ is
-
-#+BEGIN_SRC html
-<h1>Hello world!</h1>
-#+END_SRC
-
-Therefore if we serve the website in ~./public/~ directory at
-~http://localhost:3000~ we can access the 2 \"Hello world!\" pages
-at ~http://localhost:3000/blog/page-1/~ and ~http://localhost:3000~.
-
-To facilitate the generation of the HTML strings in render functions
-we can use the package [[https://jack.tonyaldon.com][Jack]] as in ~one-default~ function:
-
-#+BEGIN_SRC emacs-lisp
-(defun one-default (page-tree pages global)
-  \"...\"
-  (let* ((title (org-element-property :raw-value page-tree))
-         (path (org-element-property :CUSTOM_ID page-tree))
-         (content (org-export-data-with-backend
-                   (org-element-contents page-tree)
-                   'one nil))
-         (website-name (one-default-website-name pages))
-         (nav (one-default-nav path pages)))
-    (jack-html
-     \"<!DOCTYPE html>\"
-     `(:html
-       (:head
-        (:meta (@ :name \"viewport\" :content \"width=device-width,initial-scale=1\"))
-        (:link (@ :rel \"stylesheet\" :type \"text/css\" :href \"/one.css\"))
-        (:title ,title))
-       (:body
-        (:div.header (:a (@ :href \"/\") ,website-name))
-        (:div.content
-         (:div.title (:h1 ,title))
-         ,content
-         ,nav))))))
-#+END_SRC
-
-** But how is the website built?
-
-Good question!
-
-From an org file (or only buffer) containing all the pages of our
-website we can build the website under ~./public/~ subdirectory
-by calling either ~one-build~ or ~one-render-pages~.
-
-The difference between those two commands is that before producing the
-HTML pages calling ~one-render-pages~, ~one-build~ command cleans the
-subdirectory ~./public/~ and copies the content of ~./assets/~ subdirectory
-into ~./public/~ subdirectory.
-
-So all the interesting work is done by ~one-render-pages~ command.
-When we call it in an org buffer containing all our pages,
-~one-render-pages~ does the following:
-
-1) set ~tree~ local variable to the parsed tree of the current org
-   buffer,
-2) set ~pages~ local variable to the list of pages in ~tree~,
-3) set ~global~ local variable according to the information in
-   ~one-add-to-global~ user variable,
-4) call the functions in ~one-hook~ with the previously computed
-   variables ~tree~, ~pages~ and ~global~ as arguments,
-5) finally produce the HTML pages in ~./public/~ subdirectory doing the
-   following.  For each ~page~ in ~pages~:
-   - set ~path~, ~render-page-function~, ~page-tree~ local variables
-     using respectively the values of the properties ~:one-path~,
-     ~:one-render-page-function~, ~:one-page-tree~ in ~page~ property list,
-   - fill the content of a new created file ~index.html~ in the
-     subdirectory ~path~ with the HTML string generated by
-     ~render-page-function~ function called with ~page-tree~, ~pages~ and
-     ~global~ as arguments.
-
-Here is the complete implementation of ~one-render-pages~:
-
-#+BEGIN_SRC emacs-lisp
-(defun one-render-pages ()
-  \"...\"
-  (interactive)
-  (let* ((tree (one-parse-buffer))
-         (pages (one-list-pages tree))
-         (global
-          (let (global)
-            (dolist (glob one-add-to-global)
-              (push (funcall (plist-get glob :one-global-function) pages tree)
-                    global)
-              (push (plist-get glob :one-global-property) global))
-            global)))
-    (dolist (hook one-hook) (funcall hook pages tree global))
-    (dolist (page pages)
-      (let* ((path (concat \"./public\" (plist-get page :one-path)))
-             (file (concat path \"index.html\"))
-             (render-page-function (plist-get page :one-render-page-function))
-             (page-tree (plist-get page :one-page-tree)))
-        (make-directory path t)
-        (with-temp-file file
-          (insert (funcall render-page-function page-tree pages global)))))))
-#+END_SRC
+7 directories, 8 files
+#+end_example
 
 * The default page with a TOC
 :PROPERTIES:
@@ -1454,10 +1284,43 @@ specified in the org property ~ONE~.
 
 ** Do you want a sidebar?
 
-Perhaps you want a sidebar listing all the pages on your website, as
+Perhaps you want a sidebar listing all the pages on our website, as
 many modern documentation sites do.  If so, you can use the default
 render function ~one-default-doc~ presented in [[#/blog/one-default-doc/][The default page with TOC
 and sidebar]].
+
+** Headline foo
+*** Headline bar
+
+Some content.
+
+*** Headline baz
+
+#+BEGIN_SRC bash :results verbatim
+tree
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+.
+├── assets
+│   └── one.css
+├── one.org
+└── public
+    ├── blog
+    │   ├── default
+    │   │   └── index.html
+    │   ├── default-home-list-pages
+    │   │   └── index.html
+    │   ├── one-default-doc
+    │   │   └── index.html
+    │   └── one-default-with-toc
+    │       └── index.html
+    ├── index.html
+    └── one.css
+
+7 directories, 8 files
+#+end_example
 
 * The default page with TOC and sidebar
 :PROPERTIES:
@@ -1468,16 +1331,42 @@ and sidebar]].
 This page is rendered with the function ~one-default-doc~ specified
 in the org property ~ONE~.
 
-** headline 1
-*** headline 1.1
+** Do you want to know more about one.el?
 
-foo
+Check the documentation at https://one.tonyaldon.com.
 
-*** headline 1.2
+** Headline foo
+*** Headline bar
 
-bar
+Some content.
 
-** headline 2
+*** Headline baz
+
+#+BEGIN_SRC bash :results verbatim
+tree
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+.
+├── assets
+│   └── one.css
+├── one.org
+└── public
+    ├── blog
+    │   ├── default
+    │   │   └── index.html
+    │   ├── default-home-list-pages
+    │   │   └── index.html
+    │   ├── one-default-doc
+    │   │   └── index.html
+    │   └── one-default-with-toc
+    │       └── index.html
+    ├── index.html
+    └── one.css
+
+7 directories, 8 files
+#+end_example
 "
   "Default org file to start a new `one' project.
 
@@ -1553,7 +1442,7 @@ See `one-render-pages'."
         (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
         (:title ,title))
        (:body
-        (:div.header ,website-name)
+        (:div.header (:a (@ :href "/") ,website-name))
         (:div.content
          (:div/home-list-pages ,content)
          (:div/pages (:ul ,(reverse pages-list)))))))))
