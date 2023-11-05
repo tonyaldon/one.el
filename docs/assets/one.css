@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Noto+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400&family=Noto+Sans:wght@400;700&display=swap');
 
 html, body, p, ol, ul, li, dl, dt, dd,
 blockquote, figure, fieldset, legend, textarea,
@@ -91,6 +91,12 @@ a:hover {
 
 a:visited {
   color: #ffd787;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
 }
 
 /* ------- '.one' classes used by 'one' org backend ------- */
@@ -466,30 +472,3 @@ article {
     padding: 0;
   }
 }
-
-/* BEGIN - Specific to my configuration (Tony Aldon) */
-
-/* (defface ta-colon-keyword-face nil */
-/*   "Face used to font-lock colon keywords (:something).") */
-/*  */
-/* (font-lock-add-keywords */
-/*  'emacs-lisp-mode */
-/*  `((,(concat "\\_<:" lisp-mode-symbol-regexp "\\_>") */
-/*     (0 'ta-colon-keyword-face)))) */
-.one-hl-ta-colon-keyword {color: #62b5e0;}   /* ta-colon-keyword-face */
-
-/* For my mode tms-mode */
-.one-hl-tms-cmd-line {                       /* tms-cmd-line-face */
-  background: #31424a;
-  color: #dedede;
-  font-weight: bold;
-	display: inline-block;
-  margin: 0.2em 0em;
-  border-radius: 6px;
-  padding: 0.2em 0.4em;
-}
-.one-hl-tms-ps1-user-host {color: #d7af87;}  /* tms-ps1-user-host-face */
-.one-hl-tms-ps1-directory {color: #ffd787;}  /* tms-ps1-directory-face */
-.one-hl-tms-ps1-git {color: #ff8700;}        /* tms-ps1-git-face */
-
-/* END - Specific to my configuration (Tony Aldon) */
