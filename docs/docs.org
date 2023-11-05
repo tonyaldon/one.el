@@ -138,6 +138,7 @@ page might be helpful.
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/getting-started/
 :END:
+** Start a new project
 
 By calling ~one-default-new-project~ command (preferably in an empty
 directory) we produce a new ~one.el~ project with the following
@@ -152,11 +153,9 @@ structure
 
 and we visit the new created file ~one.org~.
 
-Once this done we can build the website under the directory ~./public/~
-by calling ~one-build~ command (being in the file ~one.org~).  Our
+Once done we can build the website under the directory ~./public/~
+by calling ~one-build~ command (while we are in the file ~one.org~).  Our
 project's structure is now:
-
-# FIXME: update the tree when the tutorial is terminated
 
 #+BEGIN_SRC text
 .
@@ -167,7 +166,7 @@ project's structure is now:
     ├── blog
     │   ├── default
     │   │   └── index.html
-    │   ├── getting-started
+    │   ├── default-home-list-pages
     │   │   └── index.html
     │   ├── one-default-doc
     │   │   └── index.html
@@ -176,6 +175,8 @@ project's structure is now:
     ├── index.html
     └── one.css
 #+END_SRC
+
+** Modify the content with live reloading
 
 To get our website up and running, we serve the files in ~./public/~
 subdirectory using [[https://browsersync.io][brower-sync]] (any webserver serving files is OK).
@@ -190,15 +191,43 @@ $ browser-sync start -s -w --files "*"
 Assuming the port ~3000~ isn't used we have our website served at
 ~http://localhost:3000~.
 
-Finally:
+Now we can modify the content of ~one.org~ file and see the changes
+reflected in the browser after we rebuild/re-render the whole website
+or part of it using the following commands ~one-build~, ~one-render-pages~
+and ~one-render-page-at-point~ or the asynchronous version of those
+commands ~one-build-async~, ~one-render-pages-async~ and
+~one-render-page-at-point-async~.
 
-1) in our browser we visit the page
-   ~http://localhost:3000/docs/getting-started/~,
-2) after this paragraph we write 'Hello world!',
-3) then we call ~one-build~ command again and
-4) we watch the changes live in our browser.
 
-Cool, right?
+** CSS style sheet
+
+When we call ~one-build~ (or ~one-build-async~) command the pages of the
+website are rendered in the directory ~./public/~ and the files in
+~./assets/~ directory are copied into ~./public/~ subdirectory.
+
+When we are building a ~one.el~ website with the default render
+functions and the default CSS style sheet (this is the case if we used
+~one-default-new-project~ as we did above) the style sheet that applies
+is ~./public/one.css~ file which is a copy of ~./assets/one.css~ file.
+
+So in that case, to modify the website's layout we just have to modify
+the file ~./assets/one.css~ and copy it in ~./public/~ directory either
+with ~one-build~, ~one-build-async~ or ~one-copy-assets-to-public~.
+
+*** Modify the CSS style sheet with 'reload'
+
+To get the file ~./assets/one.css~ copied into ~./public/~ directory each
+time we modify it we can use [[https://eradman.com/entrproject/][entr]] utility like this (being at the root
+of our project):
+
+#+BEGIN_SRC text
+$ ls assets/one.css | entr -s 'cp ./assets/one.css ./public/'
+#+END_SRC
+
+Combined with ~browser-sync~ live reloading we get a decent programmer
+experience.
+
+*** Source blocks
 
 * How does one.el work?
 :PROPERTIES:
