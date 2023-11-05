@@ -85,23 +85,8 @@ To me, it involves only three components:
 
 So, when I wrote it, I focused on those aspects.
 
-As a result, I left out many org elements:
-
-- I don't do math.  No support for Latex,
-- I don't use table.  No support for tables,
-- etc.
-
-The org elements that are not supported are the following:
-~center-block~, ~clock~, drawer, ~dynamic-block~, ~entity~, ~export-block~,
-~export-snippet~, ~footnote-reference~, ~horizontal-rule~, ~inline-src-block~,
-~inlinetask~, ~keyword~, ~latex-environment~, ~latex-fragment~, ~line-break~,
-~node-property~, ~planning~, ~property-drawer~, ~radio-target~, ~special-block~,
-~statistics-cookie~, ~table~, ~table-cell~, ~table-row~, ~target~, ~timestamp~,
-~verse-block~.
-
-Note that "not supported" means they are not rendered by default by
-~one.el~ but we can still use them or even extend ~one-ox~ org export
-backend to take some of them into account.
+As a result, I left out many org elements.  You can check [[#/docs/one-ox/][one-ox]] org
+backend page for more information.
 
 * Install one.el
 :PROPERTIES:
@@ -133,7 +118,7 @@ Now you can create a new website by calling ~one-default-new-project~
 If this is the first time you try ~one.el~ reading [[#/docs/getting-started/][Getting started]]
 page might be helpful.
 
-* TODO Getting started
+* Getting started
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/getting-started/
@@ -176,7 +161,7 @@ project's structure is now:
     └── one.css
 #+END_SRC
 
-** Modify the content with live reloading
+** TODO Modify the content with live reloading
 
 To get our website up and running, we serve the files in ~./public/~
 subdirectory using [[https://browsersync.io][brower-sync]] (any webserver serving files is OK).
@@ -434,8 +419,17 @@ Here is the complete implementation of ~one-render-pages~:
           (insert (funcall render-page-function page-tree pages global)))))))
 #+END_SRC
 
-
-* Default pages
+* TODO onerc.el "config" file
+:PROPERTIES:
+:ONE: one-default-doc
+:CUSTOM_ID: /docs/.../
+:END:
+* TODO async functions
+:PROPERTIES:
+:ONE: one-default-doc
+:CUSTOM_ID: /docs/.../
+:END:
+* TODO Default pages
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/default-pages/
@@ -526,27 +520,39 @@ bar
 #
 # Let's move on to [[#/blog/default/][The default page]].
 
-* one-ox | org elements not supported
+* one-ox
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/org-elements-not-supported/
+:CUSTOM_ID: /docs/one-ox/
 :END:
+** TODO Org export backend used by the default render functions
+
+# TO BE CONTINUED...
+
+** Org elements not supported
 
 I left out many org elements:
 
 - I don't do math.  No support for Latex,
-- I don't use images.  No support for images.
+- I don't use table.  No support for tables,
 - etc.
 
-You can find the complete list of the org elements that are not
-supported in the commentary section of the file ~one.el~
+The org elements that are not supported are the following:
+~center-block~, ~clock~, ~drawer~, ~dynamic-block~, ~entity~, ~export-block~,
+~export-snippet~, ~footnote-reference~, ~horizontal-rule~, ~inline-src-block~,
+~inlinetask~, ~keyword~, ~latex-environment~, ~latex-fragment~, ~line-break~,
+~node-property~, ~planning~, ~property-drawer~, ~radio-target~, ~special-block~,
+~statistics-cookie~, ~table~, ~table-cell~, ~table-row~, ~target~, ~timestamp~,
+~verse-block~.
 
-Read more: [[#/why-one/][Why one?]].
+Note that "not supported" means they are not rendered by default by
+~one.el~ but we can still use them or even extend ~one-ox~ org export
+backend to take some of them into account.
 
 * one-ox | headline
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/headline/
+:CUSTOM_ID: /docs/one-ox-headline/
 :END:
 
 Note that markups and links are not exported if used in headlines, only
@@ -557,7 +563,7 @@ So don't use them in headlines.
 * one-ox | src-block
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/src-block/
+:CUSTOM_ID: /docs/one-ox-src-block/
 :END:
 ** Code highlighting with 'htmlize.el'
 *** Description
@@ -599,7 +605,7 @@ have been done, is wrapped:
    <pre><code class="one-hl one-hl-results">...</code></pre>
    #+END_SRC
 
-See section [[#/docs/src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS and ATTR_ONE_RESULTS]].
+See section [[#/docs/one-ox-src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS and ATTR_ONE_RESULTS]].
 
 *** Example with Bash code
 
@@ -659,7 +665,7 @@ go and need them.
 
 ** Org keywords 'RESULTS'
 :PROPERTIES:
-:CUSTOM_ID: /docs/src-block/#org-keywords-results-and-attr_one_results
+:CUSTOM_ID: /docs/one-ox-src-block/#org-keywords-results-and-attr_one_results
 :END:
 
 Result blocks are preceded by line starting by ~#+RESULTS:~.
@@ -757,7 +763,7 @@ and is rendered by ~one~ like this:
 * one-ox | quote-block
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/quote-block/
+:CUSTOM_ID: /docs/one-ox-quote-block/
 :END:
 
 Blocks defined with ~#+BEGIN_QUOTE ... #+END_QUOTE~ pattern are
@@ -789,7 +795,7 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 * one-ox | fixed-width and example-block
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/fixed-width-and-example-block/
+:CUSTOM_ID: /docs/one-ox-fixed-width-and-example-block/
 :END:
 ** Description
 
@@ -802,7 +808,7 @@ fixed-width elements are blocks.
 Blocks defined with ~#+BEGIN_EXAMPLE ... #+END_EXAMPLE~ pattern are
 example-block elements.
 
-Both fixed-width and example-block blocks are treated as [[#/docs/src-block/][src-block]] in
+Both fixed-width and example-block blocks are treated as [[#/docs/one-ox-src-block/][src-block]] in
 ~text-mode~.  So:
 
 1) they are highlighted as ~text-mode~ would do,
@@ -887,16 +893,16 @@ This    is
         an    example!
 #+END_EXAMPLE
 
-* one-ox | links
+* TODO one-ox | links
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/links/
+:CUSTOM_ID: /docs/one-ox-links/
 :END:
-** http, https, mailto links
+** PAUSED http, https, mailto links
 
 - http://tonyaldon.com,
 - [[https://tonyaldon.com][Tony Aldon (https)]],
-- [[mailto:aldon.tony.adm@gmail.com][send me an email]].
+- [[mailto:tony@tonyaldon.com][send me an email]].
 
 Web links (starting by ~http~ or ~https~) and links to message
 composition (starting by ~mailto~) are exported as you expect.
@@ -928,19 +934,19 @@ is exported as follow:
 and this ~mailto~ link:
 
 #+BEGIN_SRC text
-[[mailto:aldon.tony.adm@gmail.com][send me an email]]
+[[mailto:tony@tonyaldon.com][send me an email]]
 #+END_SRC
 
 is exported as follow:
 
 #+BEGIN_SRC html
-<a href="mailto:aldon.tony.adm@gmail.com">send me an email</a>
+<a href="mailto:tony@tonyaldon.com">send me an email</a>
 #+END_SRC
 
 ** Custom ID links
 
-- [[#/docs/plain-list-and-item/][page about plain-list]],
-- [[#/docs/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]].
+- [[#/docs/one-ox-plain-list-and-item/][page about plain-list]],
+- [[#/docs/one-ox-plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]].
 
 *** Description
 
@@ -1005,19 +1011,19 @@ is exported as follow:
 *** Example (link to a page)
 
 The following link to the headline with ~CUSTOM_ID~ equal to
-~/docs/plain-list-and-item/~ (that is also an ~one~ page):
+~/docs/one-ox-plain-list-and-item/~ (that is also an ~one~ page):
 
 #+BEGIN_SRC text
-[[#/docs/plain-list-and-item/][page about plain-list]]
+[[#/docs/one-ox-plain-list-and-item/][page about plain-list]]
 #+END_SRC
 
 is exported to this anchor tag that links to the page ~/docs/plain-list-and-item/~:
 
 #+BEGIN_SRC html
-<a href="/docs/plain-list-and-item/">page about plain-list</a>
+<a href="/docs/one-ox-plain-list-and-item/">page about plain-list</a>
 #+END_SRC
 
-and is rendered like this: [[#/docs/plain-list-and-item/][page about plain-list]].
+and is rendered like this: [[#/docs/one-ox-plain-list-and-item/][page about plain-list]].
 
 *** Example (link to a headline in a page)
 
@@ -1026,17 +1032,17 @@ The following link to the headline with ~CUSTOM_ID~ equal to
 ~one~ page ~/docs/plain-list-and-item/~):
 
 #+BEGIN_SRC text
-[[#/docs/plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]]
+[[#/docs/one-ox-plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]]
 #+END_SRC
 
 is exported to this anchor tag that links to the heading with the ~id~
 set to ~unordered-lists~ on the page ~/docs/plain-list-and-item/~:
 
 #+BEGIN_SRC html
-<a href="/docs/plain-list-and-item/#unordered-lists">unordered lists heading in the page about plain-list</a>
+<a href="/docs/one-ox-plain-list-and-item/#unordered-lists">unordered lists heading in the page about plain-list</a>
 #+END_SRC
 
-and is rendered like this: [[#/docs/plain-list-and-item/#unordered-lists][unordered lists heading in the page about
+and is rendered like this: [[#/docs/one-ox-plain-list-and-item/#unordered-lists][unordered lists heading in the page about
 plain-list]].
 
 ** Fuzzy links
@@ -1070,10 +1076,10 @@ raise an error like the following:
 ** File links
 *** Links to local files in the 'public' directory
 :PROPERTIES:
-:CUSTOM_ID: /docs/links/#local-files-in-public-dir
+:CUSTOM_ID: /docs/one-ox-links/#local-files-in-public-dir
 :END:
 
-- [[./public/docs/plain-list-and-item.md][page about plain-list in markdown format]]
+- [[./public/docs/one-ox-plain-list-and-item.md][page about plain-list in markdown format]]
 
 **** Description
 
@@ -1096,25 +1102,25 @@ those links stop being broken in this org file.
 **** Example
 
 For instance, assuming the build of the website produces the markdown
-file ~./public/docs/plain-list-and-item.md~ that is a markdown
-version of the page ~/docs/plain-list-and-item/~, we can link
+file ~./public/docs/one-ox-plain-list-and-item.md~ that is a markdown
+version of the page ~/docs/one-ox-plain-list-and-item/~, we can link
 to that markdown file in this org file as follow:
 
 #+BEGIN_SRC text
-[[./public/docs/plain-list-and-item.md][page about plain-list in markdown format]]
+[[./public/docs/one-ox-plain-list-and-item.md][page about plain-list in markdown format]]
 #+END_SRC
 
 This previous link is exported as follow:
 
 #+BEGIN_SRC html
-<a href="/docs/plain-list-and-item.md">page about plain-list in markdown format</a>
+<a href="/docs/one-ox-plain-list-and-item.md">page about plain-list in markdown format</a>
 #+END_SRC
 
-and is rendered like this: [[./public/docs/plain-list-and-item.md][page about plain-list in markdown format]].
+and is rendered like this: [[./public/docs/one-ox-plain-list-and-item.md][page about plain-list in markdown format]].
 
 *** Links to local files in the 'assets' directory
 :PROPERTIES:
-:CUSTOM_ID: /docs/links/#local-files-in-assets-dir
+:CUSTOM_ID: /docs/one-ox-links/#local-files-in-assets-dir
 :END:
 
 - [[./assets/images/one.png][one image]]
@@ -1167,8 +1173,8 @@ and is rendered like this: [[./assets/images/one.png][one image]].
 
 Any file link that is not one of the following links:
 
-1) [[#/docs/links/#local-files-in-public-dir][link to a local file in the public directory]],
-2) [[#/docs/links/#local-files-in-assets-dir][link to a local file in the assets directory]],
+1) [[#/docs/one-ox-links/#local-files-in-public-dir][link to a local file in the public directory]],
+2) [[#/docs/one-ox-links/#local-files-in-assets-dir][link to a local file in the assets directory]],
 
 raises an ~one-link-broken~ error when ~one~ try to export it.
 
@@ -1191,14 +1197,14 @@ we try to export the link with ~one~) an error like the following:
 * one-ox | plain-list and item
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/plain-list-and-item/
+:CUSTOM_ID: /docs/one-ox-plain-list-and-item/
 :END:
 
 Only unordered and ordered lists are supported.
 
 ** Unordered lists
 :PROPERTIES:
-:CUSTOM_ID: /docs/plain-list-and-item/#unordered-lists
+:CUSTOM_ID: /docs/one-ox-plain-list-and-item/#unordered-lists
 :END:
 
 The following org snippet (unordered list):
