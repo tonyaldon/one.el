@@ -657,7 +657,7 @@ have been done, is wrapped:
    <pre><code class="one-hl one-hl-results">...</code></pre>
    #+END_SRC
 
-   See section [[#/docs/one-ox-src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS]].
+   See section [[#/docs/one-ox-src-block/#org-keywords-results-and-attr_one_results][org keyword RESULTS]].
 
 *** Example with Bash code
 
@@ -715,7 +715,7 @@ CSS classes defined for all the ~font-lock~ faces (faces starting by
 You can add the CSS classes specific to the prog modes you use as you
 go and need them.
 
-** Org keywords RESULTS
+** Org keyword RESULTS
 :PROPERTIES:
 :CUSTOM_ID: /docs/one-ox-src-block/#org-keywords-results-and-attr_one_results
 :END:
@@ -831,13 +831,13 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 ,#+END_QUOTE
 #+END_SRC
 
-defines a quote and is exported by ~one~ as follow:
+defines a quote and is exported by ~one~ as follow
 
 #+BEGIN_SRC html
 <blockquote class="one-blockquote"><p>A quitter never wins and a winner never quits. —Napoleon Hill</p></blockquote>
 #+END_SRC
 
-and look like this:
+and looks like this
 
 #+BEGIN_QUOTE
 A quitter never wins and a winner never quits. —Napoleon Hill
@@ -850,43 +850,52 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 :END:
 ** Description
 
-A line starting with a colon ~:~ followed by a space defined a
-fixed-width element.  A fixed-width element can span several
+A line starting with a colon ~:~ followed by a space defines a
+~fixed-width~ element.  A ~fixed-width~ element can span several
 lines.
 
-fixed-width elements are blocks.
-
 Blocks defined with ~#+BEGIN_EXAMPLE ... #+END_EXAMPLE~ pattern are
-example-block elements.
+~example-block~ elements.
 
-Both fixed-width and example-block blocks are treated as [[#/docs/one-ox-src-block/][src-block]] in
+Both ~fixed-width~ and ~example-block~ blocks are treated as [[#/docs/one-ox-src-block/][src-block]] in
 ~text-mode~.  So:
 
-1) they are highlighted as ~text-mode~ would do,
-2) they are rendered in a ~<pre><code>...</code></pre>~ component
-   (indentation and newlines are respected),
-3) they are normal blocks (with CSS classes ~one-hl one-hl-block~) *OR*
-   result blocks (with CSS classes ~one-hl one-hl-results~).
+1. they are highlighted as ~text-mode~ would do,
+2. they are exported in ~<pre><code>...</code></pre>~ components
+   (indentation and newlines are respected) and
+3. the CSS classes used depend on the block's type:
+
+   - normal blocks use ~one-hl one-hl-block~ CSS classes and
+   - result blocks use ~one-hl one-hl-results~ CSS classes (see [[#/docs/one-ox-src-block/#org-keywords-results-and-attr_one_results][org
+     keyword RESULTS]]).
 
 ** Example
 
-The following org snippet:
+The following org snippet
 
 #+BEGIN_SRC text
-Here is a fixed-width element (one line):
+Here is a ~fixed-width~ element (one line):
 
 : I'm a fixed-width element
 
-fixed-width elements can also be used within lists:
+~fixed-width~ elements can also be used within lists:
 
 - item 1
+
   : fixed-width element
+
 - item 2
+
+  ,#+BEGIN_SRC bash :results output
+  printf 'multiline fixed-width element\nthat is also a result block,\nso has a different style.'
+  ,#+END_SRC
+
+  ,#+RESULTS:
   : multiline fixed-width element
   : that is also a result block,
   : so has a different style.
 
-Although I don't often use example blocks, here is one:
+Although I don't often use ~example-block~ elements, here is one:
 
 ,#+BEGIN_EXAMPLE
 This    is
@@ -894,50 +903,66 @@ This    is
 ,#+END_EXAMPLE
 #+END_SRC
 
-is exported by ~one~ as follow:
+is exported by ~one~ as follow
 
 #+BEGIN_SRC html
-<p>Here is a fixed-width element (one line):</p>
+<p>Here is a <code class="one-hl one-hl-inline">fixed-width</code> element (one line):
+</p>
 
 <pre><code class="one-hl one-hl-block">I'm a fixed-width element</code></pre>
 
-<p>fixed-width elements can also be used within lists:</p>
 
-<ul>
-  <li>
-    <p>item 1</p>
-    <pre><code class="one-hl one-hl-block">fixed-width element</code></pre>
-  </li>
-  <li>
-    <p>item 2</p>
-    <pre><code class="one-hl one-hl-block">multiline fixed-width element
+<p><code class="one-hl one-hl-inline">fixed-width</code> elements can also be used within lists:
+</p>
+
+<ul><li><p>item 1
+</p>
+
+<pre><code class="one-hl one-hl-block">fixed-width element</code></pre>
+</li>
+
+<li><p>item 2
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-builtin">printf</span> <span class="one-hl-string">'multiline fixed-width element\nthat is also a result block,\nso has a different style.'</span></code></pre>
+
+<pre><code class="one-hl one-hl-results">multiline fixed-width element
 that is also a result block,
 so has a different style.</code></pre>
-  </li>
+</li>
 </ul>
 
-<p>Although I don&apos;t often use example blocks, here is one:</p>
+<p>Although I don&apos;t often use <code class="one-hl one-hl-inline">example-block</code> elements, here is one:
+</p>
 
 <pre><code class="one-hl one-hl-block">This    is
         an    example!</code></pre>
 #+END_SRC
 
-and look like this:
+and looks like this:
 
-Here is a fixed-width element (one line):
+Here is a ~fixed-width~ element (one line):
 
 : I'm a fixed-width element
 
-fixed-width elements can also be used within lists:
+~fixed-width~ elements can also be used within lists:
 
 - item 1
+
   : fixed-width element
+
 - item 2
+
+  #+BEGIN_SRC bash :results output
+  printf 'multiline fixed-width element\nthat is also a result block,\nso has a different style.'
+  #+END_SRC
+
+  #+RESULTS:
   : multiline fixed-width element
   : that is also a result block,
   : so has a different style.
 
-Although I don't often use example blocks, here is one:
+Although I don't often use ~example-block~ elements, here is one:
 
 #+BEGIN_EXAMPLE
 This    is
