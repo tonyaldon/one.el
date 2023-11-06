@@ -527,15 +527,54 @@ bar
 :END:
 ** TODO Org export backend used by the default render functions
 
-# TO BE CONTINUED...
+~one.el~ (specifically the default render functions) uses its own org
+export backend called ~one~ to export the org content of the pages into
+HTML strings.
+
+For instance, the render function ~one-default~ takes as first argument
+~page-tree~ which is the current page being rendered (~page-tree~ is the
+org parsed data structure representing the page) and exports it as an
+HTML string using ~org-export-data-with-backend~ function and ~one~ export
+backend and uses it to render the HTML page:
+
+#+BEGIN_SRC emacs-lisp
+(defun one-default (page-tree pages _global)
+  "..."
+  (let* (...
+         (content (org-export-data-with-backend
+                   (org-element-contents page-tree)
+                   'one nil))
+         ...)
+    (jack-html
+     "<!DOCTYPE html>"
+     `(:html
+       (:head ...)
+       (:body ... (:div.content ... ,content ,nav))))))
+#+END_SRC
+
+This org backend is taylor for ~one.el~ usage.  So it doesn't try to
+export all the org elements unlike ~html~ backend and when the org
+elements are exported they differ from what we can expect from ~html~
+backend.
+
+For instance ~headline~ elements don't take into account markups
+neither links.
+
+Another example are the ~link~ elements.  They don't support org fuzzy
+links and links to local files that are not in the subdirectories
+~./public/~ or ~./assets/~ raise errors.
+
+You can read how the supported org elements are exported by ~one~ org
+backend in the following page:
+
+- [[#/docs/one-ox-headline/][one-ox | headline]],
+- [[#/docs/one-ox-src-block/][one-ox | src-block]],
+- [[#/docs/one-ox-quote-block/][one-ox | quote-block]],
+- [[#/docs/one-ox-fixed-width-and-example-block/][one-ox | fixed-width and example-block]],
+- [[#/docs/one-ox-links/][one-ox | links]] and
+- [[#/docs/one-ox-plain-list-and-item/][one-ox | plain-list and item]].
 
 ** Org elements not supported
-
-I left out many org elements:
-
-- I don't do math.  No support for Latex,
-- I don't use table.  No support for tables,
-- etc.
 
 The org elements that are not supported are the following:
 ~center-block~, ~clock~, ~drawer~, ~dynamic-block~, ~entity~, ~export-block~,
@@ -546,8 +585,21 @@ The org elements that are not supported are the following:
 ~verse-block~.
 
 Note that "not supported" means they are not rendered by default by
-~one.el~ but we can still use them or even extend ~one-ox~ org export
+~one.el~ but we can still use them or even extend ~one~ org export
 backend to take some of them into account.
+
+Why doesn't ~one.el~ support all org elements?
+
+1. I don't need those org elements to write my tech blogs:
+
+   - I don't do math.  No support for Latex,
+   - I don't use table.  No support for tables,
+   - etc.
+
+2. ~one~ org backend is used only by the default render functions, so if
+   you need more org elements you can either use another org backend
+   or extend ~one~ org backend and use this other org backend in your
+   own render functions.
 
 * one-ox | headline
 :PROPERTIES:
