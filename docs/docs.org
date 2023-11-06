@@ -11,9 +11,8 @@ users.  I hope its design fits your workflow.
 To get started right away check [[#/docs/install-one-el/][Install one.el]] and [[#/docs/getting-started/][Getting started]]
 pages.
 
-In ~one.el~, the following org file/buffer defines a website with 3
-pages that we build by calling ~one-build~ command while we are visiting
-it:
+In ~one.el~, the following org document defines a website with 3 pages
+that we build by calling ~one-build~ command while we are visiting it:
 
 #+BEGIN_SRC org
 ,* My website
@@ -127,7 +126,7 @@ page might be helpful.
 
 By calling ~one-default-new-project~ command (preferably in an empty
 directory) we produce a new ~one.el~ project with the following
-structure
+structure:
 
 #+BEGIN_SRC text
 .
@@ -136,10 +135,8 @@ structure
 └── one.org
 #+END_SRC
 
-and we visit the new created file ~one.org~.
-
 Once done we can build the website under the directory ~./public/~
-by calling ~one-build~ command (while we are in the file ~one.org~).  Our
+by calling ~one-build~ command while we are in the file ~one.org~.  Our
 project's structure is now:
 
 #+BEGIN_SRC text
@@ -189,8 +186,8 @@ When we call ~one-build~ (or ~one-build-async~) command the pages of the
 website are rendered in the directory ~./public/~ and the files in
 ~./assets/~ directory are copied into ~./public/~ subdirectory.
 
-When we are building a ~one.el~ website with the default render
-functions and the default CSS style sheet (this is the case if we used
+When we build a ~one.el~ website with the default render functions and
+the default CSS style sheet (this is the case if we used
 ~one-default-new-project~ as we did above) the style sheet that applies
 is ~./public/one.css~ file which is a copy of ~./assets/one.css~ file.
 
@@ -198,7 +195,7 @@ So in that case, to modify the website's layout we just have to modify
 the file ~./assets/one.css~ and copy it in ~./public/~ directory either
 with ~one-build~, ~one-build-async~ or ~one-copy-assets-to-public~.
 
-*** Modify the CSS style sheet with 'reload'
+*** Modify the CSS style sheet with live reloading
 
 To get the file ~./assets/one.css~ copied into ~./public/~ directory each
 time we modify it we can use [[https://eradman.com/entrproject/][entr]] utility like this (being at the root
@@ -208,8 +205,8 @@ of our project):
 $ ls assets/one.css | entr -s 'cp assets/one.css public/'
 #+END_SRC
 
-Combined with ~browser-sync~ live reloading we get a decent programmer
-experience.
+Combined with ~browser-sync~ live reloading I think we get a decent
+programmer experience.
 
 *** Source blocks
 
@@ -292,8 +289,8 @@ following files
     └── index.html
 #+END_SRC
 
-and for both files ~./public/blog/page-1/index.html~ and
-~./public/index.html~ the content is:
+and both files ~./public/blog/page-1/index.html~ and
+~./public/index.html~ have the same content:
 
 #+BEGIN_SRC html
 <h1>Hello world!</h1>
@@ -319,6 +316,18 @@ functions.
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/the-default-website/
 :END:
+
+# TO BE CONTINUED...
+# modified a bit hello-world render function to use jack and one-ox
+# org backend with org-export-data-with-backend
+# - write your own render function - copy/past one-default
+# - add org property to a page and get it and render it via your own
+#   render function
+# - missing transcoder function (for instance ~horizontal-rule~), how to
+#   defined a derived org backend from ~one~ backend + also tables with
+#   ~ox-html~...
+# - make them try the function ~org-element-parse-buffer~:
+#     M-x pp-eval-expression RET (org-element-parse-buffer)
 
 To facilitate the generation of the HTML strings in render functions
 we can use the package [[https://jack.tonyaldon.com][Jack]] as in ~one-default~ function:
@@ -585,7 +594,7 @@ backend in the following page:
 - [[#/docs/one-ox-quote-block/][one-ox | quote-block]],
 - [[#/docs/one-ox-fixed-width-and-example-block/][one-ox | fixed-width and example-block]],
 - [[#/docs/one-ox-links/][one-ox | links]] and
-- [[#/docs/one-ox-plain-list-and-item/][one-ox | plain-list and item]].
+- [[#/docs/one-ox-plain-list/][one-ox | plain-list]].
 
 ** Org elements not supported
 
@@ -658,13 +667,13 @@ Bash) code will be transformed into:
 The whole piece of code ~X~, once the previously described operations
 have been done, is wrapped:
 
-1) for a normal block by the component:
+1) for a normal block with the component:
 
    #+BEGIN_SRC html
    <pre><code class="one-hl one-hl-block">...</code></pre>
    #+END_SRC
 
-2) for a result block by the component:
+2) for a result block with the component:
 
    #+BEGIN_SRC html
    <pre><code class="one-hl one-hl-results">...</code></pre>
@@ -982,165 +991,141 @@ This    is
         an    example!
 #+END_EXAMPLE
 
-* TODO one-ox | links
+* one-ox | links
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/one-ox-links/
 :END:
-** PAUSED http, https, mailto links
-
-- http://tonyaldon.com,
-- [[https://tonyaldon.com][Tony Aldon (https)]],
-- [[mailto:tony@tonyaldon.com][send me an email]].
+** http, https, mailto links
 
 Web links (starting by ~http~ or ~https~) and links to message
-composition (starting by ~mailto~) are exported as you expect.
+composition (starting by ~mailto~) are exported as we expect.
 
-For instance the following link:
+For instance the following link
 
 #+BEGIN_SRC text
 http://tonyaldon.com
 #+END_SRC
 
-is exported as follow:
+is exported as follow
 
 #+BEGIN_SRC html
 <a href="http://tonyaldon.com">http://tonyaldon.com</a>
 #+END_SRC
 
-and this following link with a description:
+and rendered like this: http://tonyaldon.com.
+
+This following link with a description
 
 #+BEGIN_SRC text
 [[https://tonyaldon.com][Tony Aldon (https)]]
 #+END_SRC
 
-is exported as follow:
+is exported as follow
 
 #+BEGIN_SRC html
 <a href="https://tonyaldon.com">Tony Aldon (https)</a>
 #+END_SRC
 
-and this ~mailto~ link:
+and rendered like this: [[https://tonyaldon.com][Tony Aldon (https)]].
+
+This ~mailto~ link
 
 #+BEGIN_SRC text
 [[mailto:tony@tonyaldon.com][send me an email]]
 #+END_SRC
 
-is exported as follow:
+is exported as follow
 
 #+BEGIN_SRC html
 <a href="mailto:tony@tonyaldon.com">send me an email</a>
 #+END_SRC
 
+and rendered like this: [[mailto:tony@tonyaldon.com][send me an email]].
+
 ** Custom ID links
 
-- [[#/docs/one-ox-plain-list-and-item/][page about plain-list]],
-- [[#/docs/one-ox-plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]].
+In ~one.el~, ~CUSTOM_ID~ org property is used to defined the path of pages
+or the path to specific heading in pages.
 
-*** Description
+Considering the following org document
 
-In ~one~, ~CUSTOM_ID~ properties are:
+#+BEGIN_SRC text
+,* Home Page
+:PROPERTIES:
+:ONE: one-default-home
+:CUSTOM_ID: /
+:END:
 
-- paths to pages (if the corresponding headline has also the property
-  ~ONE_PAGE~ set to ~t~):
+- [[#/blog/page-1/]]
+- [[#/blog/page-1/#headline-1]]
 
-  #+BEGIN_SRC text
-  ,* Page 1
-  :PROPERTIES:
-  :ONE: t
-  :CUSTOM_ID: /blog/page-1/
-  :END:
-  #+END_SRC
+,* Page 1
+:PROPERTIES:
+:ONE: one-default
+:CUSTOM_ID: /blog/page-1/
+:END:
+,** headline 1 in page Page 1
+:PROPERTIES:
+:CUSTOM_ID: /blog/page-1/#headline-1
+:END:
+#+END_SRC
 
-- or paths to a specific heading (headline in org parlance) inside
-  pages:
-
-  #+BEGIN_SRC text
-  ,* Page 1
-  :PROPERTIES:
-  :ONE: t
-  :CUSTOM_ID: /blog/page-1/
-  :END:
-  ,** headline 1 in page Page 1
-  :PROPERTIES:
-  :CUSTOM_ID: /blog/page-1/#headline-1
-  :END:
-  #+END_SRC
+the link ~[[#/blog/page-1/]]~ in "Home Page" targets "Page 1" page
+and the link ~[[#/blog/page-1/#headline-1]]~ in "Home Page" targets the
+heading "headline 1 in page Page 1" in the "Page 1" page.
 
 Those paths define valid web urls starting at the root of the website
-if you respect (you must):
+if we respect the following rules for ~CUSTOM_ID~ values:
 
-1) url-encoded characters,
-2) start them with a ~/~ and end them with ~/~,
-3) use ~#~ character to start the last part of the path when you're
+1. we use only url-encoded characters,
+2. we start them with a ~/~ and end them with ~/~,
+3. we use ~#~ character to start the last part of the path when we are
    targeting a heading tag with its ~id~ being the last part after the ~#~
    character.
 
 The benefits of these "rules/conventions" are:
 
-1) ~one~ not need to compute anything regarding of the paths of the
-   pages,
-2) ~one~ can leave ~custom-id~ links as they are,
-3) navigation between ~one~ pages (specific headlines) inside emacs
-   using ~custom-id~ links is not broken!  (This is a big win for the
-   writer of the blog who can enjoy his own blog inside emacs!!!).
+1. when we export ~custom-id~ links using ~one~ org backend we can leave
+   them as they are and
+2. the navigation between pages inside emacs using ~custom-id~ links
+   works out-of-the-box.
 
-Precisely, the following link to the ~custom-id~ equal to ~/blog/page-1/~:
+*** Example of a link to a page
+
+The following link
 
 #+BEGIN_SRC text
-[[#/blog/page-1/][Page 1]]
+[[#/docs/one-ox-plain-list/][one-ox | plain-list]]
 #+END_SRC
 
-is exported as follow:
+is exported to this anchor tag that links to the page ~/docs/one-ox-plain-list/~:
 
 #+BEGIN_SRC html
-<a href="/blog/page-1/">Page 1</a>
+<a href="/docs/one-ox-plain-list/">one-ox | plain-list</a>
 #+END_SRC
 
-*** Example (link to a page)
+and is rendered like this [[#/docs/one-ox-plain-list/][one-ox | plain-list]].
 
-The following link to the headline with ~CUSTOM_ID~ equal to
-~/docs/one-ox-plain-list-and-item/~ (that is also an ~one~ page):
+*** Example of a link to a heading in a page
+
+The following link
 
 #+BEGIN_SRC text
-[[#/docs/one-ox-plain-list-and-item/][page about plain-list]]
-#+END_SRC
-
-is exported to this anchor tag that links to the page ~/docs/plain-list-and-item/~:
-
-#+BEGIN_SRC html
-<a href="/docs/one-ox-plain-list-and-item/">page about plain-list</a>
-#+END_SRC
-
-and is rendered like this: [[#/docs/one-ox-plain-list-and-item/][page about plain-list]].
-
-*** Example (link to a headline in a page)
-
-The following link to the headline with ~CUSTOM_ID~ equal to
-~/docs/plain-list-and-item/#unordered-lists~ (that must be a subsection of the
-~one~ page ~/docs/plain-list-and-item/~):
-
-#+BEGIN_SRC text
-[[#/docs/one-ox-plain-list-and-item/#unordered-lists][unordered lists heading in the page about plain-list]]
+[[#/docs/one-ox-plain-list/#unordered-lists][unordered lists heading in the page about plain-list]]
 #+END_SRC
 
 is exported to this anchor tag that links to the heading with the ~id~
-set to ~unordered-lists~ on the page ~/docs/plain-list-and-item/~:
+set to ~unordered-lists~ on the page ~/docs/one-ox-plain-list/~:
 
 #+BEGIN_SRC html
-<a href="/docs/one-ox-plain-list-and-item/#unordered-lists">unordered lists heading in the page about plain-list</a>
+<a href="/docs/one-ox-plain-list/#unordered-lists">unordered lists heading in the page about plain-list</a>
 #+END_SRC
 
-and is rendered like this: [[#/docs/one-ox-plain-list-and-item/#unordered-lists][unordered lists heading in the page about
+and is rendered like this [[#/docs/one-ox-plain-list/#unordered-lists][unordered lists heading in the page about
 plain-list]].
 
 ** Fuzzy links
-
-# uncomment the last line of this comment (fuzzy search link),
-# narrow the buffer to this subsection, and export the narrowed
-# buffer with one.
-# --> This must raise an error.
-# --> [[fuzzy search]]
 
 I don't use ~fuzzy~ links.  So, if there is a ~fuzzy~ link
 in the document, that means I wrote the link wrong.
@@ -1163,137 +1148,76 @@ raise an error like the following:
 #+END_SRC
 
 ** File links
-*** Links to local files in the 'public' directory
-:PROPERTIES:
-:CUSTOM_ID: /docs/one-ox-links/#local-files-in-public-dir
-:END:
+*** Links to local files in assets and public directories
 
-- [[./public/docs/one-ox-plain-list-and-item.md][page about plain-list in markdown format]]
-
-**** Description
-
-One might want to generate at build time files that are going to be
-available in the ~public~ (root of the website) directory.
-Those files not need to be ~one~ pages (that means not need to have
-dedicated entries in this org file).
-
-Those files, that are not ~one~ pages, can't be linked in this
-org file with ~custom-id~ links (because those links would be broken
-inside emacs, and we don't want that).
-
-For those files, that will end up in the ~public~ directory after the
-build, we can use local file links.  They will be exported removing
-the ~./public~ part of the path making them accessible via web url.
-
-It's convenient, because this way, after the build of the website,
-those links stop being broken in this org file.
-
-**** Example
-
-For instance, assuming the build of the website produces the markdown
-file ~./public/docs/one-ox-plain-list-and-item.md~ that is a markdown
-version of the page ~/docs/one-ox-plain-list-and-item/~, we can link
-to that markdown file in this org file as follow:
+Links to local files in ~./assets/~ and ~./public/~ directories like
 
 #+BEGIN_SRC text
-[[./public/docs/one-ox-plain-list-and-item.md][page about plain-list in markdown format]]
+[[./assets/foo/bar.txt][Bar file]]
+[[./public/foo/baz.txt][Baz file]]
 #+END_SRC
 
-This previous link is exported as follow:
+are exported with the prefixes ~./assets~ and ~./public~ of the path
+removed like this:
 
 #+BEGIN_SRC html
-<a href="/docs/one-ox-plain-list-and-item.md">page about plain-list in markdown format</a>
+<a href="/foo/bar.txt">Bar file</a>
+<a href="/foo/baz.txt">Baz file</a>
 #+END_SRC
 
-and is rendered like this: [[./public/docs/one-ox-plain-list-and-item.md][page about plain-list in markdown format]].
+*** Local file links that raise one-link-broken error
 
-*** Links to local files in the 'assets' directory
-:PROPERTIES:
-:CUSTOM_ID: /docs/one-ox-links/#local-files-in-assets-dir
-:END:
+Any file link that doesn't point to a file in ~./assets/~ or ~./public/~
+subdirectories raises an ~one-link-broken~ error when we try to
+export it with ~one~ org backend
 
-- [[./assets/images/one.png][one image]]
-
-**** Description
-
-Files in the directory ~assets~  are copied into the directory
-~public~ (root of the website) when the website is built.
-
-All file links pointing to files in the ~assets~ directory, once the
-website has been built, will point to files in the directory ~public~.
-The links will be exported removing the ~./assets~ part of the path
-making them accessible via web url.
-
-It's convenient, because this way:
-
-1) we can "clean" the ~public~ directory whenever we need it and,
-2) local file links in this org file are never broken.
-
-**** Example
-
-For instance the following link:
+For instance if we try to export using ~one~ org backend the following
+link to the file ~foo.txt~ in the directory ~/tmp/~
 
 #+BEGIN_SRC text
-[[./assets/images/one.png][one image]]
+[[/tmp/foo.txt]]
 #+END_SRC
 
-is exported as follow:
-
-#+BEGIN_SRC html
-<a href="/images/one.png">one image</a>
-#+END_SRC
-
-and is rendered like this: [[./assets/images/one.png][one image]].
-
-*** Local file links that raise an error ('one-link-broken')
-**** Description
-
-# uncomment the last line of this comment (unresolved file link),
-# narrow the buffer to this subsection, and export the narrowed
-# buffer with one.
-# --> This must raise an error because:
-#
-#   1) the directory tmp is not a local relative file
-#      in the root directory ./public/,
-#   2) neither is a local relative file in the assets
-#      directory ./assets/.
-#
-# --> [[/tmp/]]
-
-Any file link that is not one of the following links:
-
-1) [[#/docs/one-ox-links/#local-files-in-public-dir][link to a local file in the public directory]],
-2) [[#/docs/one-ox-links/#local-files-in-assets-dir][link to a local file in the assets directory]],
-
-raises an ~one-link-broken~ error when ~one~ try to export it.
-
-**** Example
-
-Assuming we haven't declared an ~ONE_LINK~ mapping between the
-directory ~/tmp/~ and any web url, the org file link:
-
-#+BEGIN_SRC text
-[[/tmp/]]
-#+END_SRC
-
-that is not in the ~public~ nor in the ~assets~ directory will raise (when
-we try to export the link with ~one~) an error like the following:
+which is not in ~./public/~ subdirectory nor in ~./assets/~ subdirectory
+we will get an error like the following:
 
 #+BEGIN_SRC text
 (one-link-broken "/tmp/" "goto-char: 26308")
 #+END_SRC
 
+*** Links to images
+
+Links to local files in ~./assets/~ and ~./public/~ directories whom path
+matches ~one-ox-link-image-extensions~ regexp are exported with an ~img~
+tag.
+
+For instance the following link to an image in ~./assets/img/~ directory
+
+#+BEGIN_SRC text
+[[./assets/img/keep-learning.png][Keep Learning]]
+#+END_SRC
+
+is exported as follow
+
+#+BEGIN_SRC html
+<img href="/img/keep-learning.png" alt="Keep Learning"></a>
+#+END_SRC
+
+and rendered like this
+
+[[./assets/img/keep-learning.png][Keep Learning]]
+
 * one-ox | plain-list and item
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/one-ox-plain-list-and-item/
+:CUSTOM_ID: /docs/one-ox-plain-list/
 :END:
 
 Only unordered and ordered lists are supported.
 
 ** Unordered lists
 :PROPERTIES:
-:CUSTOM_ID: /docs/one-ox-plain-list-and-item/#unordered-lists
+:CUSTOM_ID: /docs/one-ox-plain-list/#unordered-lists
 :END:
 
 The following org snippet (unordered list):
