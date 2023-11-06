@@ -525,7 +525,7 @@ bar
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/one-ox/
 :END:
-** TODO Org export backend used by the default render functions
+** Org export backend used by the default render functions
 
 ~one.el~ (specifically the default render functions) uses its own org
 export backend called ~one~ to export the org content of the pages into
@@ -617,11 +617,11 @@ So don't use them in headlines.
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/one-ox-src-block/
 :END:
-** Code highlighting with 'htmlize.el'
+** Code highlighting with htmlize
 *** Description
 
 ~one~ highlights code via the function ~one-ox-htmlize~ that uses
-~htmlize.el~ to do the work.
+[[https://github.com/hniksic/emacs-htmlize][htmlize]] to do the work.
 
 For a given piece of code ~X~ in a certain language ~Y~, ~X~ will be
 highlighted as it would be in the emacs mode ~Z~ used to edit ~Y~ code.
@@ -657,7 +657,7 @@ have been done, is wrapped:
    <pre><code class="one-hl one-hl-results">...</code></pre>
    #+END_SRC
 
-See section [[#/docs/one-ox-src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS and ATTR_ONE_RESULTS]].
+   See section [[#/docs/one-ox-src-block/#org-keywords-results-and-attr_one_results][org keywords RESULTS]].
 
 *** Example with Bash code
 
@@ -708,21 +708,20 @@ one-hl-sh-quoted-exec --> sh-quoted-exec
 You might have notice the pattern used for ~font-lock~ faces and the one
 used for mode specific faces.
 
-~one~ provides a style sheet that has the CSS classes defined for all
-the ~font-lock~ faces (faces starting by ~font-lock-~) but not the
-specific faces used by each prog mode (except the ones I use often).
+~one.el~ provides a default style sheet (~one-default-css~) that has the
+CSS classes defined for all the ~font-lock~ faces (faces starting by
+~font-lock-~) but not the specific faces used by each prog mode.
 
 You can add the CSS classes specific to the prog modes you use as you
 go and need them.
 
-** Org keywords 'RESULTS'
+** Org keywords RESULTS
 :PROPERTIES:
 :CUSTOM_ID: /docs/one-ox-src-block/#org-keywords-results-and-attr_one_results
 :END:
 
-Result blocks are preceded by line starting by ~#+RESULTS:~.
-
-Blocks that are not result blocks are normal blocks.
+Result blocks are preceded by a line starting with ~#+RESULTS:~.  Blocks
+that are not result blocks are normal blocks.
 
 When exported, normal blocks and result blocks differ only by their
 CSS classes:
@@ -731,7 +730,7 @@ CSS classes:
 - ~one-hl one-hl-results~ for result blocks.
 
 This way result blocks can be rendered with a different style
-than normal blocks as we can see in the following 2 examples.
+than normal blocks as we can see in the following example.
 
 *** Example using org keyword 'RESULTS'
 
@@ -774,8 +773,8 @@ ls
 
 ** Code blocks inside list
 
-Lists can contain src-block as we can see in the following org
-snippet:
+Lists can contain source blocks as we can see in the following org
+snippet
 
 #+BEGIN_SRC text
 1. item 1
@@ -788,7 +787,7 @@ snippet:
 3. item 3
 #+END_SRC
 
-that is exported by ~one~ as follow:
+which is exported by ~one~ as follow
 
 #+BEGIN_SRC html
 <ol>
