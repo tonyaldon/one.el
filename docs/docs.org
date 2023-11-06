@@ -161,7 +161,7 @@ project's structure is now:
     └── one.css
 #+END_SRC
 
-** TODO Modify the content with live reloading
+** Modify the content with live reloading
 
 To get our website up and running, we serve the files in ~./public/~
 subdirectory using [[https://browsersync.io][brower-sync]] (any webserver serving files is OK).
@@ -182,7 +182,6 @@ or part of it using the following commands ~one-build~, ~one-render-pages~
 and ~one-render-page-at-point~ or the asynchronous version of those
 commands ~one-build-async~, ~one-render-pages-async~ and
 ~one-render-page-at-point-async~.
-
 
 ** CSS style sheet
 
@@ -206,13 +205,20 @@ time we modify it we can use [[https://eradman.com/entrproject/][entr]] utility 
 of our project):
 
 #+BEGIN_SRC text
-$ ls assets/one.css | entr -s 'cp ./assets/one.css ./public/'
+$ ls assets/one.css | entr -s 'cp assets/one.css public/'
 #+END_SRC
 
 Combined with ~browser-sync~ live reloading we get a decent programmer
 experience.
 
 *** Source blocks
+
+When we use the default render functions and the default CSS style
+sheet, the org content is exported into HTML strings using ~one~ org
+export backend.  Consequently, ~src-block~ elements are highlighted
+using [[https://github.com/hniksic/emacs-htmlize][htmlize]].
+
+See [[#/docs/one-ox-src-block/][one-ox | src-block]] for more information.
 
 * How does one.el work?
 :PROPERTIES:
@@ -1291,7 +1297,7 @@ The following org snippet (unordered list):
 - and the last one.
 #+END_SRC
 
-is exported by ~one~ as follow:
+is exported by ~one~ as follow
 
 #+BEGIN_SRC html
 <ul>
@@ -1318,12 +1324,12 @@ and is rendered like this:
 The following org snippet (unordered list):
 
 #+BEGIN_SRC text
-1) first,
-2) second,
-3) third.
+1. first,
+2. second,
+3. third.
 #+END_SRC
 
-is exported by ~one~ as follow:
+is exported by ~one~ as follow
 
 #+BEGIN_SRC html
 <ol>
@@ -1341,6 +1347,6 @@ is exported by ~one~ as follow:
 
 and is rendered like this:
 
-1) first,
-2) second,
-3) third.
+1. first,
+2. second,
+3. third.
