@@ -166,6 +166,8 @@ img {
 
 .one-hl-sh-quoted-exec { color: #62bd9c}             /* sh-quoted-exec */
 
+.one-hl-ta-colon-keyword {color: #62b5e0;}           /* ta-colon-keyword-face */
+
 /* -------- scrollbar -------- */
 
 ::-webkit-scrollbar {
