@@ -1586,7 +1586,7 @@ returns:
   "Return the website's name.
 
 This corresponds to the title (value of the property `:one-title')
-of the page in PAGES whose path is \"/\" (the home page).
+of the page in PAGES whom path is \"/\" (the home page).
 Return nil if the home page is not part of PAGES.
 
 See `one-default-home',`one-default',`one-default-with-toc'
