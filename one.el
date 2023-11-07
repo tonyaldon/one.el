@@ -60,7 +60,7 @@
 ;;; one-ox
 ;;;; one backend
 
-(org-export-define-backend 'one
+(org-export-define-backend 'one-ox
   '((headline . one-ox-headline)
     (section . one-ox-section)
     (paragraph . one-ox-paragraph)
@@ -247,7 +247,7 @@ INFO is a plist holding contextual information."
          (custom-type-link
           (let ((export-func (org-link-get-parameter type :export)))
             (and (functionp export-func)
-                 (funcall export-func path desc 'one info))))
+                 (funcall export-func path desc 'one-ox info))))
          (href (cond
                 ((string= type "custom-id") path)
                 ((string= type "fuzzy")
@@ -818,7 +818,7 @@ img {
   border-radius: 6px;
 }
 
-/* ------- '.one' classes used by 'one' org backend ------- */
+/* ------- '.one' classes used by 'one-ox' org backend ------- */
 
 .one-hl {
 	font-family: 'Fira Mono', monospace;
@@ -1412,7 +1412,7 @@ See `one-render-pages'."
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil))
+                   'one-ox nil))
          (website-name (one-default-website-name pages)))
     (jack-html
      "<!DOCTYPE html>"
@@ -1431,7 +1431,7 @@ See `one-render-pages'."
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil))
+                   'one-ox nil))
          (website-name (one-default-website-name pages))
          (pages-list (one-default-pages pages)))
     (jack-html
@@ -1453,7 +1453,7 @@ See `one-render-pages'."
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil))
+                   'one-ox nil))
          (website-name (one-default-website-name pages))
          (nav (one-default-nav path pages)))
     (jack-html
@@ -1476,7 +1476,7 @@ See `one-render-pages'."
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil))
+                   'one-ox nil))
          (website-name (one-default-website-name pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
          (toc (when headlines
@@ -1506,7 +1506,7 @@ See `one-render-pages'."
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil))
+                   'one-ox nil))
          (website-name (one-default-website-name pages))
          (pages-list (one-default-pages pages))
          (headlines (cdr (one-default-list-headlines page-tree)))

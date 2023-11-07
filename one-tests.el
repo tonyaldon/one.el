@@ -303,13 +303,12 @@ A simple example
   (org-link-set-parameters
    "foo"
    :export (lambda (path desc backend info)
-             (when (eq backend 'one)
+             (when (eq backend 'one-ox)
                (format "<a href=\"%s\">%s</a>"
                        (concat "foo::::" path)
                        desc))))
   (let ((backend
          (org-export-create-backend
-          :name 'one
           :transcoders
           '((section . (lambda (_e c _i) c))
             (paragraph . (lambda (_e c _i) c))

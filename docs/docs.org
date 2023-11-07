@@ -234,7 +234,7 @@ programmer experience.
 *** Source blocks
 
 When we use the default render functions and the default CSS style
-sheet, the org content is exported into HTML strings using ~one~ org
+sheet, the org content is exported into HTML strings using ~one-ox~ org
 export backend.  Consequently, ~src-block~ elements are highlighted
 using [[https://github.com/hniksic/emacs-htmlize][htmlize]].
 
@@ -334,7 +334,7 @@ See [[#/docs/getting-started/][Getting started]] to start a new project with tho
 See [[#/docs/the-default-website/][The default website]] to take inspiration and write your own render
 functions.
 
-* TODO The default website
+* The default website
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/the-default-website/
@@ -669,7 +669,7 @@ that data structure into a HTML string which was written on the file
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil))
+                   'one-ox nil))
          (website-name (one-default-website-name pages))
          (nav (one-default-nav path pages)))
     (jack-html
@@ -687,16 +687,9 @@ that data structure into a HTML string which was written on the file
          ,nav))))))
 #+END_SRC
 
-* TODO onerc.el "config" file
-:PROPERTIES:
-:ONE: one-default-doc
-:CUSTOM_ID: /docs/.../
-:END:
-* TODO async functions
-:PROPERTIES:
-:ONE: one-default-doc
-:CUSTOM_ID: /docs/.../
-:END:
+#+RESULTS:
+: one-default
+
 * one-ox
 :PROPERTIES:
 :ONE: one-default-doc
@@ -705,14 +698,14 @@ that data structure into a HTML string which was written on the file
 ** Org export backend used by the default render functions
 
 ~one.el~ (specifically the default render functions) uses its own org
-export backend called ~one~ to export the org content of the pages into
-HTML strings.
+export backend called ~one-ox~ to export the org content of the pages
+into HTML strings.
 
 For instance, the render function ~one-default~ takes as first argument
 ~page-tree~ which is the current page being rendered (~page-tree~ is the
 org parsed data structure representing the page) and exports it as an
-HTML string using ~org-export-data-with-backend~ function and ~one~ export
-backend and uses it to render the HTML page:
+HTML string using ~org-export-data-with-backend~ function and ~one-ox~
+export backend and uses it to render the HTML page:
 
 #+BEGIN_SRC emacs-lisp
 (defun one-default (page-tree pages _global)
@@ -720,7 +713,7 @@ backend and uses it to render the HTML page:
   (let* (...
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
-                   'one nil))
+                   'one-ox nil))
          ...)
     (jack-html
      "<!DOCTYPE html>"
@@ -741,7 +734,7 @@ Another example are the ~link~ elements.  They don't support org fuzzy
 links and links to local files that are not in the subdirectories
 ~./public/~ or ~./assets/~ raise errors.
 
-You can read how the supported org elements are exported by ~one~ org
+You can read how the supported org elements are exported by ~one-ox~ org
 backend in the following page:
 
 - [[#/docs/one-ox-headline/][one-ox | headline]],
@@ -765,7 +758,7 @@ The org elements that are not supported are the following:
 ~verse-block~.
 
 Note that "not supported" means they are not rendered by default by
-~one.el~ but we can still use them or even extend ~one~ org export
+~one.el~ but we can still use them or even extend ~one-ox~ org export
 backend to take some of them into account.
 
 Why doesn't ~one.el~ support all org elements?
@@ -776,10 +769,10 @@ Why doesn't ~one.el~ support all org elements?
    - I don't use table.  No support for tables,
    - etc.
 
-2. ~one~ org backend is used only by the default render functions, so if
-   you need more org elements you can either use another org backend
-   or extend ~one~ org backend and use this other org backend in your
-   own render functions.
+2. ~one-ox~ org backend is used only by the default render functions, so
+   if you need more org elements you can either use another org
+   backend or extend ~one-ox~ org backend and use this other org backend
+   in your own render functions.
 
 * one-ox | headline
 :PROPERTIES:
@@ -800,7 +793,7 @@ So don't use them in headlines.
 ** Code highlighting with htmlize
 *** Description
 
-~one~ highlights code via the function ~one-ox-htmlize~ that uses
+~one-ox~ highlights code via the function ~one-ox-htmlize~ that uses
 [[https://github.com/hniksic/emacs-htmlize][htmlize]] to do the work.
 
 For a given piece of code ~X~ in a certain language ~Y~, ~X~ will be
@@ -922,23 +915,21 @@ ls
 ,#+END_SRC
 
 ,#+RESULTS:
-: content.org
-: one.css
-: one.el
-: README.org
+: assets
+: docs.org
+: public
 #+END_SRC
 
-is exported by ~one~ as follow:
+is exported by ~one-ox~ as follow:
 
 #+BEGIN_SRC html
 <pre><code class="one-hl one-hl-block">ls</code></pre>
-<pre><code class="one-hl one-hl-results">content.org
-one.css
-one.el
-README.org</code></pre>
+<pre><code class="one-hl one-hl-results">assets
+docs.org
+public</code></pre>
 #+END_SRC
 
-and is rendered by ~one~ with the first block (normal block) having a
+and is rendered by ~one-ox~ with the first block (normal block) having a
 different style from second block (result block):
 
 #+BEGIN_SRC bash :results output
@@ -946,10 +937,9 @@ ls
 #+END_SRC
 
 #+RESULTS:
-: content.org
-: one.css
-: one.el
-: README.org
+: assets
+: docs.org
+: public
 
 ** Code blocks inside list
 
@@ -980,7 +970,7 @@ which is exported by ~one~ as follow
 </ol>
 #+END_SRC
 
-and is rendered by ~one~ like this:
+and is rendered by ~one-ox~ like this:
 
 1. item 1
 
@@ -1000,8 +990,8 @@ and is rendered by ~one~ like this:
 Blocks defined with ~#+BEGIN_QUOTE ... #+END_QUOTE~ pattern are
 quote-block.
 
-They are exported by ~one~ in a ~<blockquote>...</blockquote>~ component
-with the CSS class ~one-blockquote~.
+They are exported by ~one-ox~ in a ~<blockquote>...</blockquote>~
+component with the CSS class ~one-blockquote~.
 
 The following org snippet:
 
@@ -1011,7 +1001,7 @@ A quitter never wins and a winner never quits. —Napoleon Hill
 ,#+END_QUOTE
 #+END_SRC
 
-defines a quote and is exported by ~one~ as follow
+defines a quote and is exported by ~one-ox~ as follow
 
 #+BEGIN_SRC html
 <blockquote class="one-blockquote"><p>A quitter never wins and a winner never quits. —Napoleon Hill</p></blockquote>
@@ -1245,8 +1235,8 @@ if we respect the following rules for ~CUSTOM_ID~ values:
 
 The benefits of these "rules/conventions" are:
 
-1. when we export ~custom-id~ links using ~one~ org backend we can leave
-   them as they are and
+1. when we export ~custom-id~ links using ~one-ox~ org backend we can
+   leave them as they are and
 2. the navigation between pages inside emacs using ~custom-id~ links
    works out-of-the-box.
 
@@ -1291,7 +1281,7 @@ in the document, that means I wrote the link wrong.
 
 Broken links are bad user experience.  I don't like them.
 
-So I decided that ~one~ raises an error (hard-coded) when we try to
+So I decided that ~one-ox~ raises an error (hard-coded) when we try to
 export a fuzzy link to HTML.
 
 For instance, the following ~fuzzy~ link:
@@ -1328,10 +1318,10 @@ removed like this:
 
 Any file link that doesn't point to a file in ~./assets/~ or ~./public/~
 subdirectories raises an ~one-link-broken~ error when we try to
-export it with ~one~ org backend
+export it with ~one-ox~ org backend
 
-For instance if we try to export using ~one~ org backend the following
-link to the file ~foo.txt~ in the directory ~/tmp/~
+For instance if we try to export using ~one-ox~ org backend the
+following link to the file ~foo.txt~ in the directory ~/tmp/~
 
 #+BEGIN_SRC text
 [[/tmp/foo.txt]]
@@ -1387,7 +1377,7 @@ The following org snippet (unordered list):
 - and the last one.
 #+END_SRC
 
-is exported by ~one~ as follow
+is exported by ~one-ox~ as follow
 
 #+BEGIN_SRC html
 <ul>
@@ -1419,7 +1409,7 @@ The following org snippet (unordered list):
 3. third.
 #+END_SRC
 
-is exported by ~one~ as follow
+is exported by ~one-ox~ as follow
 
 #+BEGIN_SRC html
 <ol>
