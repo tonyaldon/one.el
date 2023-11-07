@@ -1,4 +1,4 @@
-* TODO one.el
+* one.el
 :PROPERTIES:
 :ONE: one-default-home
 :CUSTOM_ID: /
@@ -10,6 +10,12 @@ users.  I hope its design fits your workflow.
 
 To get started right away check [[#/docs/install-one-el/][Install one.el]] and [[#/docs/getting-started/][Getting started]]
 pages.
+
+Athough ~one.el~ uses org-mode not all the org elements are useful to
+build technical blog sites (see [[#/#why][Why one.el?]]).  So only a few org
+elements have an export function implemented in [[#/docs/one-ox/][one-ox]], the org
+backend used by ~one.el~ to build [[#/docs/the-default-website/][The default website]].  Please check [[#/docs/one-ox/#org-elements-not-supported][Org
+elements not supported]] before relying on ~one.el~.
 
 In ~one.el~, the following org document defines a website with 3 pages
 that we build by calling ~one-build~ command while we are visiting it:
@@ -62,8 +68,8 @@ As you might have noticed, a ~one.el~ website is an org file where the
 pages are the headlines of level 1 with the org properties ~ONE~ and
 ~CUSTOM_ID~ set.  Nothing more!
 
-~ONE~ is the only org property added by ~one.el~.  Its value (an Elisp
-function which returns an HTML string) for a given page determines how
+~ONE~ is the only org property added by ~one.el~.  Its value, an Emacs Lisp
+function which returns an HTML string, for a given page determines how
 ~one.el~ renders that page.
 
 Paths of pages are set using ~CUSTOM_ID~ org property.
@@ -72,20 +78,35 @@ With that said, if you want to try it you can check [[#/docs/install-one-el/][In
 [[#/docs/getting-started/][Getting started]] pages.
 
 ** Why one.el?
+:PROPERTIES:
+:CUSTOM_ID: /#why
+:END:
 
-I wrote ~one.el~ to do tech blogging.  More precisely to talk about
-programs (not programming).
+I wrote ~one.el~ because I didn't find an existing static site generator
+with the following requirements:
 
-To me, it involves only three components:
+- I'm not looking for a solution for every type of websites, only for
+  technical blog sites which are basically chunks of code surrounded
+  by text,
+- I want something simple that I understand and that I can modify
+  only by writting some Emacs Lisp,
+- I want websites to be written to a single org file,
+- I want something with no dependencies other than emacs packages
+  that are not bridges to feed other static site frameworks,
+- I want something with no configuration options, if you want to
+  modify something you write Emacs Lisp code and
+- Finally, I want an Emacs solution for an Emacs user.
 
-1) chunks of code,
-2) links to those chunks of code and,
-3) the people who wrote those chunks of code.
+Following those requirements led me to ~one.el~, an opiniated static
+site generator for Emacs Lisp programmers and Org mode users that
+works well if you want to build websites like
 
-So, when I wrote it, I focused on those aspects.
+- [[https://posts.tonyaldon.com][minibuffer]], a website to learn Emacs Lisp one sexp at a time,
+- [[https://posts.tonyaldon.com][Elisp posts]], a website with some articles about Emacs Lisp,
+- [[https://lnroom.live][LNROOM]], a website to learn how to hack on Core Lightning and
+- https://tonyaldon.com
 
-As a result, I left out many org elements.  You can check [[#/docs/one-ox/][one-ox]] org
-backend page for more information.
+all built with ~one.el~.
 
 * Install one.el
 :PROPERTIES:
@@ -597,6 +618,9 @@ backend in the following page:
 - [[#/docs/one-ox-plain-list/][one-ox | plain-list]].
 
 ** Org elements not supported
+:PROPERTIES:
+:CUSTOM_ID: /docs/one-ox/#org-elements-not-supported
+:END:
 
 The org elements that are not supported are the following:
 ~center-block~, ~clock~, ~drawer~, ~dynamic-block~, ~entity~, ~export-block~,
@@ -612,7 +636,7 @@ backend to take some of them into account.
 
 Why doesn't ~one.el~ support all org elements?
 
-1. I don't need those org elements to write my tech blogs:
+1. I don't need those org elements to write my technical blogs:
 
    - I don't do math.  No support for Latex,
    - I don't use table.  No support for tables,
@@ -1079,7 +1103,8 @@ Those paths define valid web urls starting at the root of the website
 if we respect the following rules for ~CUSTOM_ID~ values:
 
 1. we use only url-encoded characters,
-2. we start them with a ~/~ and end them with ~/~,
+2. we start them with a ~/~ and end them with ~/~ excepted for the home
+   page which is a single ~/~,
 3. we use ~#~ character to start the last part of the path when we are
    targeting a heading tag with its ~id~ being the last part after the ~#~
    character.
