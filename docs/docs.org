@@ -101,7 +101,7 @@ Following those requirements led me to ~one.el~, an opiniated static
 site generator for Emacs Lisp programmers and Org mode users that
 works well if you want to build websites like
 
-- [[https://posts.tonyaldon.com][minibuffer]]: learn Emacs Lisp one sexp at a time,
+- [[https://minibuffer.tonyaldon.com][minibuffer]]: learn Emacs Lisp one sexp at a time,
 - [[https://posts.tonyaldon.com][Elisp posts]]: some articles about Emacs Lisp,
 - [[https://jack.tonyaldon.com][jack]]: HTML generator library for Emacs Lisp,
 - [[https://one.tonyaldon.com][one.el]]: documentation of one.el package,
