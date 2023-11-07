@@ -336,6 +336,15 @@ A simple example
       (org-test-with-parsed-data "* headline 1
 ** headline 2
 :PROPERTIES:
+:CUSTOM_ID: /#id-test
+:END:"
+        (one-internal-id (funcall get-headline "headline 2" tree)))
+      "id-test"))
+    (should
+     (string=
+      (org-test-with-parsed-data "* headline 1
+** headline 2
+:PROPERTIES:
 :CUSTOM_ID: /path/to/page/#id-test
 :END:"
         (one-internal-id (funcall get-headline "headline 2" tree)))

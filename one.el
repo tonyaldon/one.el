@@ -354,7 +354,7 @@ or generated a randomly."
   (let* ((custom-id (org-element-property :CUSTOM_ID headline)))
     (or (and custom-id
              ;; we match "baz" in "/foo/bar/#baz"
-             (string-match "\\`\\(?:[^#]+\\S-\\)#\\(.+\\)" custom-id)
+             (string-match "\\`\\(?:[^#]+\\S-*\\)#\\(.+\\)" custom-id)
              (match-string-no-properties 1 custom-id))
         (format "one-%x" (random #x10000000000)))))
 
