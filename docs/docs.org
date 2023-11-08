@@ -710,7 +710,47 @@ webpages.
 This is a good place to set ~one-add-to-global~ and ~one-hook~ variables
 or to define our own render functions.
 
-** TODO one-add-to-global
+** one-add-to-global
+
+Render functions takes 3 arguments:
+
+- ~page-tree~: the parsed tree of the page being rendered,
+- ~pages~: the list of pages,
+- ~global~: a plist of global informations that are computed once
+  in ~one-render-pages~ before rendering the pages using
+  ~one-add-to-global~ variable.
+
+That means that if a render function needs extra informations, we can
+use ~one-add-to-global~ variable to pass those informations to the
+render function.
+
+Specifically, elements in ~one-add-to-global~ list are plist with the
+following properties:
+
+- ~:one-global-property~: a keyword that is used as proprety
+  in the ~global~ argument passed to the render functions,
+- ~:one-global-function~: a function that takes two arguments ~pages~
+  (list of pages, see ~one-list-pages~) and ~tree~
+  (see ~one-parse-buffer~).  That function is called once in
+  ~one-render-pages~ and its result is used as the value of
+  the property ~:one-global-property~ in the ~global~ argument
+  passed to the render functions.
+
+For instance, if ~one-add-to-global~ is set to
+
+#+BEGIN_SRC emacs-lisp
+((:one-global-property :one-tree
+  :one-global-function (lambda (pages tree) tree)))
+#+END_SRC
+
+then ~global~ local variable will be set to
+
+#+BEGIN_SRC emacs-lisp
+((:one-tree tree))
+#+END_SRC
+
+where ~tree~ is the value returned by ~one-parse-buffer~ function.
+
 ** TODO one-hook
 ** Async commands
 
