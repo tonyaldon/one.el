@@ -284,7 +284,7 @@ INFO is a plist holding contextual information."
 Elements in that list are plist with the following properties:
 
 - `:one-global-property': a keyword that is used as proprety
-  in the `global' argument passed to the render functions.
+  in the `global' argument passed to the render functions,
 - `:one-global-function': a function that takes two arguments `pages'
   (list of pages, see `one-list-pages') and `tree'
   (see `one-parse-buffer').  That function is called once in
