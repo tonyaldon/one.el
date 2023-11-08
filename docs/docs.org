@@ -4,12 +4,13 @@
 :CUSTOM_ID: /
 :END:
 
-Hi, I'm [[https://tonyaldon.com][Tony Aldon]] and I'm glad that you're giving a try to [[https://github.com/tonyaldon/one.el][one.el]], a
-simple static site generator for Emacs Lisp programmers and org-mode
-users.  I hope its design fits your workflow.
+~one.el~ is a simple *Static Site Generator* for Emacs Lisp programmers
+and org-mode users.
 
 To get started right away check [[#/docs/install-one-el/][Install one.el]] and [[#/docs/getting-started/][Getting started]]
 pages.
+
+You can find the code here: https://github.com/tonyaldon/one.el.
 
 Athough ~one.el~ uses org-mode not all the org elements are useful to
 build technical blog sites (see [[#/#why][Why one.el?]]).  So only a few org
