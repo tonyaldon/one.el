@@ -687,7 +687,7 @@ that data structure into a HTML string which was written on the file
          ,nav))))))
 #+END_SRC
 
-* TODO Miscellaneous
+* Miscellaneous
 :PROPERTIES:
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/miscellaneous/
@@ -711,6 +711,9 @@ This is a good place to set ~one-add-to-global~ and ~one-hook~ variables
 or to define our own render functions.
 
 ** one-add-to-global
+:PROPERTIES:
+:CUSTOM_ID: /docs/miscellaneous/#one-add-to-global
+:END:
 
 Render functions takes 3 arguments:
 
@@ -751,7 +754,19 @@ then ~global~ local variable will be set to
 
 where ~tree~ is the value returned by ~one-parse-buffer~ function.
 
-** TODO one-hook
+** one-hook
+
+Each function in ~one-hook~ is called once in ~one-render-pages~.
+
+Those functions take three arguments:
+
+- ~pages~: list of pages (see ~one-list-pages~),
+- ~tree~: see ~one-parse-buffer~,
+- ~global~: see [[#/docs/miscellaneous/#one-add-to-global][one-add-to-global]].
+
+As those functions take ~global~ argument they are called after
+that argument has been let binded using ~one-add-to-global~.
+
 ** Async commands
 
 The function ~one-render-pages-async~ and ~one-build-async~ spawn an
@@ -778,7 +793,7 @@ arguments) to ~make-process~ function like this:
 #+END_SRC
 
 If ~one-emacs-cmd-line-args-async~ is non-nil, we no longer load the user's
-initialization file and replace ~\"-l\" ,user-init-file~ in ~command~ above
+initialization file and replace ~"-l" ,user-init-file~ in ~command~ above
 by the elements of ~one-emacs-cmd-line-args-async~.  For instance, if
 ~one-emacs-cmd-line-args-async~ is equal to
 
