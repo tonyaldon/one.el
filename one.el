@@ -318,13 +318,13 @@ that argument has been let binded using `one-add-to-global'.")
 (defvar one-emacs-cmd-line-args-async nil
   "List of command line arguments to pass to `emacs' subprocess.
 
-The function `one-render-pages-async' and `one-build-async'spawn an
+The function `one-render-pages-async' and `one-build-async' spawn an
 `emacs' subprocess in order to build html pages asynchronously.  The
 arguments passed to `emacs' depends on `one-emacs-cmd-line-args-async' value.
 
 By default, when `one-emacs-cmd-line-args-async' is nil, we run `emacs'
 in \"batch mode\", we load the user's initialization file and we evaluate
-a specific sexp that builds html pages using `one'.  Specifically, we pass
+a specific sexp that builds html pages.  Specifically, we pass
 the following `command' (`emacs' file name followed by command line
 arguments) to `make-process' function like this:
 
@@ -339,18 +339,18 @@ arguments) to `make-process' function like this:
        :buffer ...
        :command command))
 
-If `one-emacs-cmd-line-args-async' is non nil, we no longer load the user's
-initialization file and replace `\"-l\" ,user-init-file' in `command' above
+If `one-emacs-cmd-line-args-async' is non-nil, we no longer load the user's
+initialization file and replace '\"-l\" ,user-init-file' in `command' above
 by the elements of `one-emacs-cmd-line-args-async'.  For instance, if
 `one-emacs-cmd-line-args-async' is equal to
 
-    \\='(\"-l\" \"/path/to/some-elisp-file/\")
+    \\='(\"-l\" \"/path/to/some-elisp-file.el\")
 
 then `command' becomes
 
     (let* (...
            (command \\=`(,emacs \"--batch\"
-                             \"-l\" \"/path/to/some-elisp-file/\"
+                             \"-l\" \"/path/to/some-elisp-file.el\"
                              \"--eval\" ,sexp))
            ...)
       ...)")
