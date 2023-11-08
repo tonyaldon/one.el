@@ -445,8 +445,19 @@ are pages."
   "Render webpages of the current buffer under `./public/' dir.
 
 If ONE-PATH is non-nil, it must be the path of page in the current
-buffer.  That means it must match the `CUSTOM_ID'org property value
+buffer.  That means it must match the `CUSTOM_ID' org property value
 of a level 1 headline.
+
+If a file `onerc.el' exist in the current directory, it will be loaded
+first.  This way we can customize how the website is built by adding
+some Elisp code in that file.
+
+Information in `one-add-to-global' are used to set the ‘global’ argument
+passed to render functions.
+
+Once `onerc.el' file has been loaded and `global' argument passed to
+render functions set the hook `one-hook' is run.  Then the webpages
+are rendered.
 
 The current buffer should look like this.
 
