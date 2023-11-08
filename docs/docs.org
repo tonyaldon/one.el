@@ -13,7 +13,7 @@ pages.
 
 Athough ~one.el~ uses org-mode not all the org elements are useful to
 build technical blog sites (see [[#/#why][Why one.el?]]).  So only a few org
-elements have an export function implemented in [[#/docs/one-ox/][one-ox]], the org
+elements have an transcoder function implemented in [[#/docs/one-ox/][one-ox]], the org
 backend used by ~one.el~ to build [[#/docs/the-default-website/][The default website]].  Please check [[#/docs/one-ox/#org-elements-not-supported][Org
 elements not supported]] before relying on ~one.el~.
 
@@ -331,13 +331,13 @@ build that documentation for instance.
 
 See [[#/docs/getting-started/][Getting started]] to start a new project with those defaults.
 
-See [[#/docs/the-default-website/][The default website]] to take inspiration and write your own render
-functions.
+See [[#/docs/one-default-render-function/][one-default render function]] to take inspiration and write your own
+render functions.
 
-* The default website
+* one-default render function
 :PROPERTIES:
 :ONE: one-default-doc
-:CUSTOM_ID: /docs/the-default-website/
+:CUSTOM_ID: /docs/one-default-render-function/
 :END:
 
 In [[#/docs/how-does-one-el-work/][How does one.el work?]] page we saw that render functions are at
@@ -687,8 +687,148 @@ that data structure into a HTML string which was written on the file
          ,nav))))))
 #+END_SRC
 
-#+RESULTS:
-: one-default
+* TODO Miscellaneous
+:PROPERTIES:
+:ONE: one-default-doc
+:CUSTOM_ID: /docs/miscellaneous/
+:END:
+** onerc.el file
+
+We can use an Emacs Lisp file called ~onerc.el~ to customize our
+website.  It must be in the same directory of the org file containing
+the content of our website.
+
+This file is loaded first in ~one-render-pages~ before rendering the
+webpages.
+
+This is a good place to set ~one-add-to-global~ and ~one-hook~ variables
+or to define our own render functions.
+
+** TODO one-add-to-global
+** TODO one-hook
+** TODO Async commands
+
+one-emacs-cmd-line-args-async
+
+** Extend one-ox org backend
+:PROPERTIES:
+:CUSTOM_ID: /docs/miscellaneous/#extend-one-ox-org-backend
+:END:
+
+When we use the default render functions, the org content of the
+webpages is exported using [[#/docs/one-ox/][one-ox]] org backend like this
+
+#+BEGIN_SRC emacs-lisp
+(org-export-data-with-backend
+ (org-element-contents page-tree)
+ 'one-ox nil)
+#+END_SRC
+
+where ~page-tree~ is the parsed tree of the headline containing the page
+being rendered (see [[#/docs/one-default-render-function/][one-default render function]]).
+
+While ~one-ox~ exports enough org elements for my use cases (see [[#/#why][Why
+one.el?]]) this might not be the case for you.
+
+I think this is not a big problem because we can extend ~one-ox~
+(precisely we can derive a new org backend from ~one-ox~ org backend)
+with other transcoder functions for the org elements that miss
+transcoder functions.
+
+Let's see how we can do that with an example.
+
+*** Extend one-ox with horizontal-rule org elements
+
+Lines consisting of only dashes (at least 5) are parsed by the org
+parser as ~horizontal-rule~ org elements.  ~one-ox~ doesn't provide a
+transcoder function for ~horizontal-rule~ so we can't use it directly if
+we want to have them exported as ~<hr>~ tags in our website.
+
+In that section we see how to derived an org backend ~one-ox-with-hr~
+from ~one-ox~ org backend that exports ~horizontal-rule~ org elements
+with ~<hr>~ tags.
+
+To do that we define a transcoder function ~my-horizontal-rule~ which
+takes 3 arguments (not used) and return the string ~"<hr>"~:
+
+#+BEGIN_SRC emacs-lisp
+(defun my-horizontal-rule (_ _ _) "<hr>")
+#+END_SRC
+
+Then we use that function in the ~:translate-alist~ alist in the body of
+the function ~org-export-define-derived-backend~ to define ~one-ox-with-hr~
+org backend:
+
+#+BEGIN_SRC emacs-lisp
+(org-export-define-derived-backend 'one-ox-with-hr 'one-ox
+  :translate-alist
+  '((horizontal-rule . my-horizontal-rule)))
+#+END_SRC
+
+Then we can export the org content of the webpages (including the
+~horizontal-rule~) using ~one-ox-with-hr~ org backend like this
+
+#+BEGIN_SRC emacs-lisp
+(org-export-data-with-backend
+ (org-element-contents page-tree)
+ 'one-ox-with-hr nil)
+#+END_SRC
+
+where ~page-tree~ is the parsed tree of the headline containing the page
+being rendered.
+
+Now that we saw how to derive ~one-ox-with-hr~ org backend and use it,
+let's build a website with only a home page with two ~horizontal-rule~.
+
+In an empty directory let's add the following files:
+
+- ~one.org~:
+
+  #+BEGIN_SRC org
+  ,* Home page
+  :PROPERTIES:
+  :ONE: my-render-function
+  :CUSTOM_ID: /
+  :END:
+
+  foo
+
+  -----
+
+  bar
+
+  -----
+
+  baz
+  #+END_SRC
+
+- ~onerc.el~:
+
+  #+BEGIN_SRC emacs-lisp
+  (defun my-horizontal-rule (_ _ _) "<hr>")
+
+  (org-export-define-derived-backend 'one-ox-with-hr 'one
+    :translate-alist
+    '((horizontal-rule . my-horizontal-rule)))
+
+  (defun my-render-function (page-tree pages _global)
+    ""
+    (let* ((title (org-element-property :raw-value page-tree))
+           (content (org-export-data-with-backend
+                     (org-element-contents page-tree)
+                     'one-ox-with-hr
+                     nil)))
+      (jack-html
+       "<!DOCTYPE html>"
+       `(:html
+         (:head (:title ,title))
+         (:body
+          (:h1 ,title)
+          ,content)))))
+  #+END_SRC
+
+Now while visiting ~one.org~ file we call ~one-build~ to build our website
+with ~<hr>~ tags.
 
 * one-ox
 :PROPERTIES:
@@ -772,7 +912,7 @@ Why doesn't ~one.el~ support all org elements?
 2. ~one-ox~ org backend is used only by the default render functions, so
    if you need more org elements you can either use another org
    backend or extend ~one-ox~ org backend and use this other org backend
-   in your own render functions.
+   in your own render functions (See [[#/docs/miscellaneous/#extend-one-ox-org-backend][Extend one-ox org backend]]).
 
 * one-ox | headline
 :PROPERTIES:
