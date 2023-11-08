@@ -395,7 +395,7 @@ following sections interesting.
 Let's consider the following org document in a file named ~one.org~ for
 instance:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 ,* Home
 :PROPERTIES:
 :ONE: one-default-home
@@ -1078,7 +1078,7 @@ have been done, is wrapped:
 
 For instance, the following org src-block, containing some ~bash~ code:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 ,#+BEGIN_SRC bash
 echo "list file's extensions in current dir:"
 for f in `ls`; do
@@ -1151,7 +1151,7 @@ than normal blocks as we can see in the following example.
 
 The following org snippet:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 ,#+BEGIN_SRC bash :results output
 ls
 ,#+END_SRC
@@ -1188,7 +1188,7 @@ ls
 Lists can contain source blocks as we can see in the following org
 snippet
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 1. item 1
 
    ,#+BEGIN_SRC emacs-lisp
@@ -1237,7 +1237,7 @@ component with the CSS class ~one-blockquote~.
 
 The following org snippet:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 ,#+BEGIN_QUOTE
 A quitter never wins and a winner never quits. —Napoleon Hill
 ,#+END_QUOTE
@@ -1285,7 +1285,7 @@ Both ~fixed-width~ and ~example-block~ blocks are treated as [[#/docs/one-ox-src
 
 The following org snippet
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 Here is a ~fixed-width~ element (one line):
 
 : I'm a fixed-width element
@@ -1393,7 +1393,7 @@ composition (starting by ~mailto~) are exported as we expect.
 
 For instance the following link
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 http://tonyaldon.com
 #+END_SRC
 
@@ -1407,7 +1407,7 @@ and rendered like this: http://tonyaldon.com.
 
 This following link with a description
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[https://tonyaldon.com][Tony Aldon (https)]]
 #+END_SRC
 
@@ -1421,7 +1421,7 @@ and rendered like this: [[https://tonyaldon.com][Tony Aldon (https)]].
 
 This ~mailto~ link
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[mailto:tony@tonyaldon.com][send me an email]]
 #+END_SRC
 
@@ -1440,7 +1440,7 @@ or the path to specific heading in pages.
 
 Considering the following org document
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 ,* Home Page
 :PROPERTIES:
 :ONE: one-default-home
@@ -1486,7 +1486,7 @@ The benefits of these "rules/conventions" are:
 
 The following link
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[#/docs/one-ox-plain-list/][one-ox | plain-list]]
 #+END_SRC
 
@@ -1502,7 +1502,7 @@ and is rendered like this [[#/docs/one-ox-plain-list/][one-ox | plain-list]].
 
 The following link
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[#/docs/one-ox-plain-list/#unordered-lists][unordered lists heading in the page about plain-list]]
 #+END_SRC
 
@@ -1528,13 +1528,13 @@ export a fuzzy link to HTML.
 
 For instance, the following ~fuzzy~ link:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[fuzzy search]]
 #+END_SRC
 
 raise an error like the following:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC emacs-lisp
 (one-link-broken "fuzzy search" "fuzzy links not supported" "goto-char: 5523")
 #+END_SRC
 
@@ -1543,7 +1543,7 @@ raise an error like the following:
 
 Links to local files in ~./assets/~ and ~./public/~ directories like
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[./assets/foo/bar.txt][Bar file]]
 [[./public/foo/baz.txt][Baz file]]
 #+END_SRC
@@ -1565,14 +1565,14 @@ export it with ~one-ox~ org backend
 For instance if we try to export using ~one-ox~ org backend the
 following link to the file ~foo.txt~ in the directory ~/tmp/~
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[/tmp/foo.txt]]
 #+END_SRC
 
 which is not in ~./public/~ subdirectory nor in ~./assets/~ subdirectory
 we will get an error like the following:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC emacs-lisp
 (one-link-broken "/tmp/" "goto-char: 26308")
 #+END_SRC
 
@@ -1584,7 +1584,7 @@ tag.
 
 For instance the following link to an image in ~./assets/img/~ directory
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 [[./assets/img/keep-learning.png][Keep Learning]]
 #+END_SRC
 
@@ -1613,7 +1613,7 @@ Only unordered and ordered lists are supported.
 
 The following org snippet (unordered list):
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 - a thing,
 - another thing,
 - and the last one.
@@ -1645,7 +1645,7 @@ and is rendered like this:
 
 The following org snippet (unordered list):
 
-#+BEGIN_SRC text
+#+BEGIN_SRC org
 1. first,
 2. second,
 3. third.
