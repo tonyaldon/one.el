@@ -290,7 +290,18 @@ Elements in that list are plist with the following properties:
   (see `one-parse-buffer').  That function is called once in
   `one-render-pages' and its result is used as the value of
   the property `:one-global-property' in the `global' argument
-  passed to the render functions.")
+  passed to the render functions.
+
+For instance, if `one-add-to-global' is set to
+
+    ((:one-global-property :one-tree
+      :one-global-function (lambda (pages tree) tree)))
+
+then `global' local variable will be set to
+
+    ((:one-tree tree))
+
+where `tree' is the value returned by `one-parse-buffer' function.")
 
 (defvar one-hook nil
   "List of functions called once in `one-render-pages'.
