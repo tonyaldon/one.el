@@ -168,6 +168,26 @@ img {
 
 .one-hl-ta-colon-keyword {color: #62b5e0;}           /* ta-colon-keyword-face */
 
+
+.one-hl-org-code  { color: #dedede; background: #31424a; }
+.one-hl-org-block  { color: #c5c5c5 ; background: #31424a; }
+.one-hl-org-block-begin-line  { color: #c3957e; }
+.one-hl-org-block-end-line  { color: #c3957e; }
+.one-hl-org-meta-line { color: #8c8c8c;}
+.one-hl-org-quote  { color:  #c5c5c5}
+.one-hl-org-drawer { color: #d3b2a1;  font-size: 0.9em; }
+.one-hl-org-special-keyword { color: #c3957e;  font-size: 0.9em; }
+.one-hl-org-property-value { color: #d2934a;  font-size: 0.9em; }
+.one-hl-org-level-1 { font-size: 1.7em; text-decoration: underline; }
+.one-hl-org-level-2 { font-size: 1.4em; text-decoration: underline; }
+.one-hl-org-level-3 { font-size: 1.2em; text-decoration: underline; }
+.one-hl-org-level-4 { font-size: 1.1em; text-decoration: underline; }
+.one-hl-org-level-5 { font-size: 1.0em; text-decoration: underline; }
+.one-hl-org-level-6 { font-size: 1.0em; text-decoration: underline; }
+.one-hl-org-level-8 { font-size: 1.0em; text-decoration: underline; }
+.one-hl-org-level-8 { font-size: 1.0em; text-decoration: underline; }
+
+
 /* -------- scrollbar -------- */
 
 ::-webkit-scrollbar {
