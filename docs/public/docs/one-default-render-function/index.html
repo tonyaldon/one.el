@@ -1,11 +1,11 @@
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one-default render function</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>one-default render function</h1></div><div class="toc"><div><div>Table of content</div><div>
 <ul>
-<li><a href="#one-402d2fe4dc">The org document</a></li>
-<li><a href="#one-31997c749">Build the website</a></li>
-<li><a href="#one-dc9153b780">Home</a></li>
-<li><a href="#one-9aec329581">Page 1</a></li>
-<li><a href="#one-dd0821835b">Page 2</a></li>
-<li><a href="#one-24f034a9fc">How was "Page 1" built?</a></li>
+<li><a href="#one-48b8b96077">The org document</a></li>
+<li><a href="#one-542b398f07">Build the website</a></li>
+<li><a href="#one-97beca2d8">Home</a></li>
+<li><a href="#one-e7425e7be2">Page 1</a></li>
+<li><a href="#one-beb26279e2">Page 2</a></li>
+<li><a href="#one-85f768cf03">How was "Page 1" built?</a></li>
 </ul>
 </div></div></div><div><p>In <a href="/docs/how-does-one-el-work/">How does one.el work?</a> page we saw that render functions are at
 the heart of <code class="one-hl one-hl-inline">one.el</code> mechanism.  They determine how pages are
@@ -72,7 +72,7 @@ following sections interesting.
 </p>
 </div>
 
-<div><h3 id="one-402d2fe4dc">The org document</h3><div><p>Let&apos;s consider the following org document in a file named <code class="one-hl one-hl-inline">one.org</code> for
+<div><h3 id="one-48b8b96077">The org document</h3><div><p>Let&apos;s consider the following org document in a file named <code class="one-hl one-hl-inline">one.org</code> for
 instance:
 </p>
 
@@ -88,7 +88,7 @@ instance:
 <span class="one-hl-org-drawer">:END:</span>
 <span class="one-hl-org-level-2">** Headline foo 1</span>
 
-<span class="one-hl-org-link"><a href="#/blog/page-2/">[[#/blog/page-2/][Link to Page 2]]</a></span>
+<span class="one-hl-org-link"><a href="#/blog/page-2/">Link to Page 2</a></span>
 
 <span class="one-hl-org-level-2">** Headline foo 2</span>
 <span class="one-hl-org-level-3">*** Headline bar</span>
@@ -110,7 +110,7 @@ Some content.
 <span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/blog/page-2/</span>
 <span class="one-hl-org-drawer">:END:</span>
 
-<span class="one-hl-org-link"><a href="#/blog/page-1/#baz">[[#/blog/page-1/#baz][Link to Headline baz in Page 1]]</a></span>
+<span class="one-hl-org-link"><a href="#/blog/page-1/#baz">Link to Headline baz in Page 1</a></span>
 </code></pre>
 
 <p>Let&apos;s generate the file <code class="one-hl one-hl-inline">./assets/one.css</code> that contains the content of
@@ -127,7 +127,7 @@ Some content.
 </div>
 </div>
 
-<div><h3 id="one-31997c749">Build the website</h3><div><p>Now, while vising the file <code class="one-hl one-hl-inline">one.org</code> we call <code class="one-hl one-hl-inline">one-build</code> which builds
+<div><h3 id="one-542b398f07">Build the website</h3><div><p>Now, while vising the file <code class="one-hl one-hl-inline">one.org</code> we call <code class="one-hl one-hl-inline">one-build</code> which builds
 &quot;Home&quot;, &quot;Page 1&quot; and &quot;Page 2&quot; pages under the directory <code class="one-hl one-hl-inline">./public/</code> such
 that our project tree is now:
 </p>
@@ -147,7 +147,7 @@ that our project tree is now:
 </div>
 </div>
 
-<div><h3 id="one-dc9153b780">Home</h3><div><p>The page &quot;Home&quot; has been generated:
+<div><h3 id="one-97beca2d8">Home</h3><div><p>The page &quot;Home&quot; has been generated:
 </p>
 
 <ul><li><p>in the file <code class="one-hl one-hl-inline">./public/index.html</code> respecting the path information <code class="one-hl one-hl-inline">/</code> in
@@ -180,7 +180,7 @@ function specified in <code class="one-hl one-hl-inline">ONE</code> org property
 </div>
 </div>
 
-<div><h3 id="one-9aec329581">Page 1</h3><div><p>The page &quot;Page 1&quot; has been generated:
+<div><h3 id="one-e7425e7be2">Page 1</h3><div><p>The page &quot;Page 1&quot; has been generated:
 </p>
 
 <ul><li><p>in the file <code class="one-hl one-hl-inline">./public/blog/page-1/index.html</code> respecting the path
@@ -236,7 +236,7 @@ specified in <code class="one-hl one-hl-inline">ONE</code> org property.
 </div>
 </div>
 
-<div><h3 id="one-dd0821835b">Page 2</h3><div><p>The page &quot;Page 2&quot; has been generated:
+<div><h3 id="one-beb26279e2">Page 2</h3><div><p>The page &quot;Page 2&quot; has been generated:
 </p>
 
 <ul><li><p>in the file <code class="one-hl one-hl-inline">./public/blog/page-2/index.html</code> respecting the path
@@ -273,7 +273,7 @@ specified in <code class="one-hl one-hl-inline">ONE</code> org property.
 </div>
 </div>
 
-<div><h3 id="one-24f034a9fc">How was "Page 1" built?</h3><div><p>When we called <code class="one-hl one-hl-inline">one-build</code> in <code class="one-hl one-hl-inline">one.org</code> buffer, the whole buffer was
+<div><h3 id="one-85f768cf03">How was "Page 1" built?</h3><div><p>When we called <code class="one-hl one-hl-inline">one-build</code> in <code class="one-hl one-hl-inline">one.org</code> buffer, the whole buffer was
 parsed with the function <code class="one-hl one-hl-inline">one-parse-buffer</code> and a list of pages was
 built from that parsed tree and looked like this:
 </p>
@@ -381,7 +381,7 @@ that data structure into a HTML string which was written on the file
          ,nav))))))</code></pre>
 </div>
 </div>
-<div class="nav"><a href="/docs/how-does-one-el-work/">PREV</a><a href="/docs/one-ox-quote-block/">RANDOM</a><a href="/docs/miscellaneous/">NEXT</a></div></article></div></body><script>
+<div class="nav"><a href="/docs/how-does-one-el-work/">PREV</a><a href="/docs/one-ox-fixed-width-and-example-block/">RANDOM</a><a href="/docs/miscellaneous/">NEXT</a></div></article></div></body><script>
 function sidebarShow() {
   if (window.innerWidth < 481)
     document.getElementById('sidebar-left').style.width = '75vw';
