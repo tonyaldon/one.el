@@ -1,25 +1,25 @@
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Miscellaneous</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>Miscellaneous</h1></div><div class="toc"><div><div>Table of content</div><div>
 <ul>
-<li><a href="#one-d93919a322">Page at point</a></li>
-<li><a href="#one-728c1ed8ee">onerc.el file</a></li>
+<li><a href="#one-88cdb9a24e">Page at point</a></li>
+<li><a href="#one-aa0a919a62">onerc.el file</a></li>
 <li><a href="#one-add-to-global">one-add-to-global</a></li>
-<li><a href="#one-3bbc240dfe">one-hook</a></li>
-<li><a href="#one-770ee8f3e6">Async commands</a></li>
+<li><a href="#one-956627dcf1">one-hook</a></li>
+<li><a href="#one-b06ea79d92">Async commands</a></li>
 <li><a href="#extend-one-ox-org-backend">Extend one-ox org backend</a>
 <ul>
-<li><a href="#one-fc4728b5d2">Extend one-ox with horizontal-rule org elements</a></li>
+<li><a href="#one-e75568270f">Extend one-ox with horizontal-rule org elements</a></li>
 </ul>
 </li>
 </ul>
 </div></div></div><div></div>
-<div><h2 id="one-d93919a322">Page at point</h2><div><p>If we need to render only the page at point, meaning the headline of
+<div><h2 id="one-88cdb9a24e">Page at point</h2><div><p>If we need to render only the page at point, meaning the headline of
 level 1 with <code class="one-hl one-hl-inline">ONE</code> and <code class="one-hl one-hl-inline">CUSTOM_ID</code> org properties set, we can use the
 commands <code class="one-hl one-hl-inline">one-render-page-at-point</code> and <code class="one-hl one-hl-inline">one-render-page-at-point-async</code>.
 </p>
 </div>
 </div>
 
-<div><h2 id="one-728c1ed8ee">onerc.el file</h2><div><p>We can use an Emacs Lisp file called <code class="one-hl one-hl-inline">onerc.el</code> to customize our
+<div><h2 id="one-aa0a919a62">onerc.el file</h2><div><p>We can use an Emacs Lisp file called <code class="one-hl one-hl-inline">onerc.el</code> to customize our
 website.  It must be in the same directory of the org file containing
 the content of our website.
 </p>
@@ -89,7 +89,7 @@ passed to the render functions.
 </div>
 </div>
 
-<div><h2 id="one-3bbc240dfe">one-hook</h2><div><p>Each function in <code class="one-hl one-hl-inline">one-hook</code> is called once in <code class="one-hl one-hl-inline">one-render-pages</code>.
+<div><h2 id="one-956627dcf1">one-hook</h2><div><p>Each function in <code class="one-hl one-hl-inline">one-hook</code> is called once in <code class="one-hl one-hl-inline">one-render-pages</code>.
 </p>
 
 <p>Those functions take three arguments:
@@ -112,7 +112,7 @@ that argument has been let binded using <code class="one-hl one-hl-inline">one-a
 </div>
 </div>
 
-<div><h2 id="one-770ee8f3e6">Async commands</h2><div><p>The function <code class="one-hl one-hl-inline">one-render-pages-async</code> and <code class="one-hl one-hl-inline">one-build-async</code> spawn an
+<div><h2 id="one-b06ea79d92">Async commands</h2><div><p>The function <code class="one-hl one-hl-inline">one-render-pages-async</code> and <code class="one-hl one-hl-inline">one-build-async</code> spawn an
 <code class="one-hl one-hl-inline">emacs</code> subprocess in order to build html pages asynchronously.  The
 arguments passed to <code class="one-hl one-hl-inline">emacs</code> depends on <code class="one-hl one-hl-inline">one-emacs-cmd-line-args-async</code> value.
 </p>
@@ -181,7 +181,7 @@ transcoder functions.
 </p>
 </div>
 
-<div><h3 id="one-fc4728b5d2">Extend one-ox with horizontal-rule org elements</h3><div><p>Lines consisting of only dashes (at least 5) are parsed by the org
+<div><h3 id="one-e75568270f">Extend one-ox with horizontal-rule org elements</h3><div><p>Lines consisting of only dashes (at least 5) are parsed by the org
 parser as <code class="one-hl one-hl-inline">horizontal-rule</code> org elements.  <code class="one-hl one-hl-inline">one-ox</code> doesn&apos;t provide a
 transcoder function for <code class="one-hl one-hl-inline">horizontal-rule</code> so we can&apos;t use it directly if
 we want to have them exported as <code class="one-hl one-hl-inline">&lt;hr&gt;</code> tags in our website.
@@ -278,7 +278,7 @@ with <code class="one-hl one-hl-inline">&lt;hr&gt;</code> tags.
 </div>
 </div>
 </div>
-<div class="nav"><a href="/docs/one-default-render-function/">PREV</a><a href="/docs/install-one-el/">RANDOM</a><a href="/docs/one-ox/">NEXT</a></div></article></div></body><script>
+<div class="nav"><a href="/docs/one-default-render-function/">PREV</a><a href="/docs/one-ox-quote-block/">RANDOM</a><a href="/docs/one-ox/">NEXT</a></div></article></div></body><script>
 function sidebarShow() {
   if (window.innerWidth < 481)
     document.getElementById('sidebar-left').style.width = '75vw';
