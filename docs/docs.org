@@ -4,8 +4,8 @@
 :CUSTOM_ID: /
 :END:
 
-~one.el~ is a simple *Static Site Generator* for Emacs Lisp programmers
-and org-mode users.
+~one.el~ is a simple *Static Site Generator* for *Emacs Lisp* programmers
+and *org-mode* users.
 
 To get started right away check [[#/docs/install-one-el/][Install one.el]] and [[#/docs/getting-started/][Getting started]]
 pages.
@@ -15,8 +15,9 @@ You can find the code here: https://github.com/tonyaldon/one.el.
 Athough ~one.el~ uses org-mode not all the org elements are useful to
 build technical blog sites (see [[#/#why][Why one.el?]]).  So only a few org
 elements have an transcoder function implemented in [[#/docs/one-ox/][one-ox]], the org
-backend used by ~one.el~ to build [[#/docs/the-default-website/][The default website]].  Please check [[#/docs/one-ox/#org-elements-not-supported][Org
-elements not supported]] before relying on ~one.el~.
+backend used by ~one.el~ to build the default website (see [[#/docs/one-default-render-function/][one-default
+render function]]).  Please check [[#/docs/one-ox/#org-elements-not-supported][Org elements not supported]] before
+relying on ~one.el~.
 
 In ~one.el~, the following org document defines a website with 3 pages
 that we build by calling ~one-build~ command while we are visiting it:
