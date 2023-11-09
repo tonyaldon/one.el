@@ -4,8 +4,17 @@
 :CUSTOM_ID: /
 :END:
 
-~one.el~ is a simple *Static Site Generator* for *Emacs Lisp* programmers
-and *org-mode* users.
+Have you ever wanted to write a blog:
+
+- contained in a unique org file,
+- rendered with only one Emacs command,
+- that can be modified by writing Emacs Lisp code (and CSS too),
+- with "html templates" that are plain Emacs Lisp data,
+- with no config file,
+- and no dependencies on external static site generators?
+
+If so, you might be interested in ~one.el~ a simple *Static Site
+Generator* for *Emacs Lisp* programmers and *org-mode* users.
 
 To get started right away check [[#/docs/install-one-el/][Install one.el]] and [[#/docs/getting-started/][Getting started]]
 pages.
