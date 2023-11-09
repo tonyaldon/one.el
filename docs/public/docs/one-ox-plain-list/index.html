@@ -1,0 +1,99 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one-ox | plain-list and item</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>one-ox | plain-list and item</h1></div><div class="toc"><div><div>Table of content</div><div>
+<ul>
+<li><a href="#unordered-lists">Unordered lists</a></li>
+<li><a href="#one-c2d5810ef4">Ordered list</a></li>
+</ul>
+</div></div></div><div><p>Only unordered and ordered lists are supported.
+</p>
+</div>
+
+<div><h2 id="unordered-lists">Unordered lists</h2><div><p>The following org snippet (unordered list):
+</p>
+
+<pre><code class="one-hl one-hl-block">- a thing,
+- another thing,
+- and the last one.</code></pre>
+
+<p>is exported by <code class="one-hl one-hl-inline">one-ox</code> as follow
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">ul</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;
+    &lt;<span class="one-hl-function-name">p</span>&gt;a thing,&lt;/<span class="one-hl-function-name">p</span>&gt;
+  &lt;/<span class="one-hl-function-name">li</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;
+    &lt;<span class="one-hl-function-name">p</span>&gt;another thing,&lt;/<span class="one-hl-function-name">p</span>&gt;
+  &lt;/<span class="one-hl-function-name">li</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;
+    &lt;<span class="one-hl-function-name">p</span>&gt;and the last one.&lt;/<span class="one-hl-function-name">p</span>&gt;
+  &lt;/<span class="one-hl-function-name">li</span>&gt;
+&lt;/<span class="one-hl-function-name">ul</span>&gt;</code></pre>
+
+<p>and is rendered like this:
+</p>
+
+<ul><li><p>a thing,
+</p>
+</li>
+<li><p>another thing,
+</p>
+</li>
+<li><p>and the last one.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div><h2 id="one-c2d5810ef4">Ordered list</h2><div><p>The following org snippet (unordered list):
+</p>
+
+<pre><code class="one-hl one-hl-block">1. first,
+2. second,
+3. third.</code></pre>
+
+<p>is exported by <code class="one-hl one-hl-inline">one-ox</code> as follow
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">ol</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;
+    &lt;<span class="one-hl-function-name">p</span>&gt;a thing,&lt;/<span class="one-hl-function-name">p</span>&gt;
+  &lt;/<span class="one-hl-function-name">li</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;
+    &lt;<span class="one-hl-function-name">p</span>&gt;another thing,&lt;/<span class="one-hl-function-name">p</span>&gt;
+  &lt;/<span class="one-hl-function-name">li</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;
+    &lt;<span class="one-hl-function-name">p</span>&gt;and the last one.&lt;/<span class="one-hl-function-name">p</span>&gt;
+  &lt;/<span class="one-hl-function-name">li</span>&gt;
+&lt;/<span class="one-hl-function-name">ol</span>&gt;</code></pre>
+
+<p>and is rendered like this:
+</p>
+
+<ol><li><p>first,
+</p>
+</li>
+<li><p>second,
+</p>
+</li>
+<li><p>third.
+</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="nav"><a href="/docs/one-ox-links/">PREV</a><a href="/docs/one-ox-headline/">RANDOM</a></div></article></div></body><script>
+function sidebarShow() {
+  if (window.innerWidth < 481)
+    document.getElementById('sidebar-left').style.width = '75vw';
+  else {
+    document.getElementById('sidebar-left').style.width = 'min(300px, 34vw)';
+  }
+  document.getElementById('sidebar-main').setAttribute('onclick', 'sidebarHide()');
+  document.getElementById('sidebar-main').style.display = 'block';
+}
+function sidebarHide() {
+  document.getElementById('sidebar-left').style.width = '0';
+  document.getElementById('sidebar-main').style.display = 'none';
+}
+</script></html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one-ox</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>one-ox</h1></div><div class="toc"><div><div>Table of content</div><div>
+<ul>
+<li><a href="#one-eef09c9bc3">Org export backend used by the default render functions</a></li>
+<li><a href="#org-elements-not-supported">Org elements not supported</a></li>
+</ul>
+</div></div></div><div></div>
+<div><h2 id="one-eef09c9bc3">Org export backend used by the default render functions</h2><div><p><code class="one-hl one-hl-inline">one.el</code> (specifically the default render functions) uses its own org
+export backend called <code class="one-hl one-hl-inline">one-ox</code> to export the org content of the pages
+into HTML strings.
+</p>
+
+<p>For instance, the render function <code class="one-hl one-hl-inline">one-default</code> takes as first argument
+<code class="one-hl one-hl-inline">page-tree</code> which is the current page being rendered (<code class="one-hl one-hl-inline">page-tree</code> is the
+org parsed data structure representing the page) and exports it as an
+HTML string using <code class="one-hl one-hl-inline">org-export-data-with-backend</code> function and <code class="one-hl one-hl-inline">one-ox</code>
+export backend and uses it to render the HTML page:
+</p>
+
+<pre><code class="one-hl one-hl-block">(<span class="one-hl-keyword">defun</span> <span class="one-hl-function-name">one-default</span> (page-tree pages _global)
+  <span class="one-hl-doc">"..."</span>
+  (<span class="one-hl-keyword">let*</span> (...
+         (content (org-export-data-with-backend
+                   (org-element-contents page-tree)
+                   'one-ox nil))
+         ...)
+    (jack-html
+     <span class="one-hl-string">"&lt;!DOCTYPE html&gt;"</span>
+     `(<span class="one-hl-ta-colon-keyword">:html</span>
+       (<span class="one-hl-ta-colon-keyword">:head</span> ...)
+       (<span class="one-hl-ta-colon-keyword">:body</span> ... (<span class="one-hl-ta-colon-keyword">:div.content</span> ... ,content ,nav))))))</code></pre>
+
+<p>This org backend is taylor for <code class="one-hl one-hl-inline">one.el</code> usage.  So it doesn&apos;t try to
+export all the org elements unlike <code class="one-hl one-hl-inline">html</code> backend and when the org
+elements are exported they differ from what we can expect from <code class="one-hl one-hl-inline">html</code>
+backend.
+</p>
+
+<p>For instance <code class="one-hl one-hl-inline">headline</code> elements don&apos;t take into account markups
+neither links.
+</p>
+
+<p>Another example are the <code class="one-hl one-hl-inline">link</code> elements.  They don&apos;t support org fuzzy
+links and links to local files that are not in the subdirectories
+<code class="one-hl one-hl-inline">./public/</code> or <code class="one-hl one-hl-inline">./assets/</code> raise errors.
+</p>
+
+<p>You can read how the supported org elements are exported by <code class="one-hl one-hl-inline">one-ox</code> org
+backend in the following page:
+</p>
+
+<ul><li><p><a href="/docs/one-ox-headline/">one-ox | headline</a>,
+</p>
+</li>
+<li><p><a href="/docs/one-ox-src-block/">one-ox | src-block</a>,
+</p>
+</li>
+<li><p><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a>,
+</p>
+</li>
+<li><p><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a>,
+</p>
+</li>
+<li><p><a href="/docs/one-ox-links/">one-ox | links</a> and
+</p>
+</li>
+<li><p><a href="/docs/one-ox-plain-list/">one-ox | plain-list</a>.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div><h2 id="org-elements-not-supported">Org elements not supported</h2><div><p>The org elements that are not supported are the following:
+<code class="one-hl one-hl-inline">center-block</code>, <code class="one-hl one-hl-inline">clock</code>, <code class="one-hl one-hl-inline">drawer</code>, <code class="one-hl one-hl-inline">dynamic-block</code>, <code class="one-hl one-hl-inline">entity</code>, <code class="one-hl one-hl-inline">export-block</code>,
+<code class="one-hl one-hl-inline">export-snippet</code>, <code class="one-hl one-hl-inline">footnote-reference</code>, <code class="one-hl one-hl-inline">horizontal-rule</code>, <code class="one-hl one-hl-inline">inline-src-block</code>,
+<code class="one-hl one-hl-inline">inlinetask</code>, <code class="one-hl one-hl-inline">keyword</code>, <code class="one-hl one-hl-inline">latex-environment</code>, <code class="one-hl one-hl-inline">latex-fragment</code>, <code class="one-hl one-hl-inline">line-break</code>,
+<code class="one-hl one-hl-inline">node-property</code>, <code class="one-hl one-hl-inline">planning</code>, <code class="one-hl one-hl-inline">property-drawer</code>, <code class="one-hl one-hl-inline">radio-target</code>, <code class="one-hl one-hl-inline">special-block</code>,
+<code class="one-hl one-hl-inline">statistics-cookie</code>, <code class="one-hl one-hl-inline">table</code>, <code class="one-hl one-hl-inline">table-cell</code>, <code class="one-hl one-hl-inline">table-row</code>, <code class="one-hl one-hl-inline">target</code>, <code class="one-hl one-hl-inline">timestamp</code>,
+<code class="one-hl one-hl-inline">verse-block</code>.
+</p>
+
+<p>Note that &quot;not supported&quot; means they are not rendered by default by
+<code class="one-hl one-hl-inline">one.el</code> but we can still use them or even extend <code class="one-hl one-hl-inline">one-ox</code> org export
+backend to take some of them into account.
+</p>
+
+<p>Why doesn&apos;t <code class="one-hl one-hl-inline">one.el</code> support all org elements?
+</p>
+
+<ol><li><p>I don&apos;t need those org elements to write my technical blogs:
+</p>
+
+<ul><li><p>I don&apos;t do math.  No support for Latex,
+</p>
+</li>
+<li><p>I don&apos;t use table.  No support for tables,
+</p>
+</li>
+<li><p>etc.
+</p>
+</li>
+</ul>
+</li>
+
+<li><p><code class="one-hl one-hl-inline">one-ox</code> org backend is used only by the default render functions, so
+if you need more org elements you can either use another org
+backend or extend <code class="one-hl one-hl-inline">one-ox</code> org backend and use this other org backend
+in your own render functions (See <a href="/docs/miscellaneous/#extend-one-ox-org-backend">Extend one-ox org backend</a>).
+</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="nav"><a href="/docs/miscellaneous/">PREV</a><a href="/docs/one-default-render-function/">RANDOM</a><a href="/docs/one-ox-headline/">NEXT</a></div></article></div></body><script>
+function sidebarShow() {
+  if (window.innerWidth < 481)
+    document.getElementById('sidebar-left').style.width = '75vw';
+  else {
+    document.getElementById('sidebar-left').style.width = 'min(300px, 34vw)';
+  }
+  document.getElementById('sidebar-main').setAttribute('onclick', 'sidebarHide()');
+  document.getElementById('sidebar-main').style.display = 'block';
+}
+function sidebarHide() {
+  document.getElementById('sidebar-left').style.width = '0';
+  document.getElementById('sidebar-main').style.display = 'none';
+}
+</script></html>

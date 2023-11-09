@@ -1,0 +1,118 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>How does one.el work?</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>How does one.el work?</h1></div><div><p>In an org file containing all the pages of our website we can build
+the website under <code class="one-hl one-hl-inline">./public/</code> subdirectory by calling either <code class="one-hl one-hl-inline">one-build</code>
+or <code class="one-hl one-hl-inline">one-render-pages</code> commands.
+</p>
+
+<p>The only difference between those two commands is that before
+producing the HTML pages calling <code class="one-hl one-hl-inline">one-render-pages</code>, <code class="one-hl one-hl-inline">one-build</code> command
+cleans the subdirectory <code class="one-hl one-hl-inline">./public/</code> and copies the content of <code class="one-hl one-hl-inline">./assets/</code>
+subdirectory into <code class="one-hl one-hl-inline">./public/</code> subdirectory.
+</p>
+
+<p>So let&apos;s focus on <code class="one-hl one-hl-inline">one-render-pages</code> command.
+</p>
+
+<p>For each page of our website, the function <code class="one-hl one-hl-inline">one-render-pages</code> uses
+the render function set in <code class="one-hl one-hl-inline">ONE</code> org property of the page to produce the
+HTML string representing the page and stores it in an <code class="one-hl one-hl-inline">index.html</code> file
+whom path is determined by <code class="one-hl one-hl-inline">CUSTOM_ID</code> org property of the page.
+</p>
+
+<p>Render functions are at the heart of <code class="one-hl one-hl-inline">one.el</code> mechanism.  They
+determined how pages are rendered.  Specifically, render functions are
+regular Elisp functions that takes 3 arguments
+</p>
+
+<ul><li><p><code class="one-hl one-hl-inline">page-tree</code>: corresponding to the parsed tree of the org entry defining
+the page,
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">pages</code>: the list of pages,
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">global</code>: a plist of global informations that are computed once
+in <code class="one-hl one-hl-inline">one-render-pages</code> (see <code class="one-hl one-hl-inline">one-add-to-global</code>) before rendering the
+pages
+</p>
+</li>
+</ul>
+
+<p>and return HTML strings.
+</p>
+
+<p>For instance, the following <code class="one-hl one-hl-inline">hello-world</code> function
+</p>
+
+<pre><code class="one-hl one-hl-block">(<span class="one-hl-keyword">defun</span> <span class="one-hl-function-name">hello-world</span> (page-tree pages global)
+      <span class="one-hl-doc">"&lt;h1&gt;Hello world!&lt;/h1&gt;"</span>)</code></pre>
+
+<p>defines a valid render function.  We can use it to build a website
+like this.  In an empty directory, we create a file named <code class="one-hl one-hl-inline">one.org</code> with
+the following content:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">* The home page</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">hello-world</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span>
+<span class="one-hl-org-drawer">:END:</span>
+<span class="one-hl-org-level-1">* Blog post 1</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">hello-world</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/blog/page-1/</span>
+<span class="one-hl-org-drawer">:END:</span></code></pre>
+
+<p>We visit that file and call <code class="one-hl one-hl-inline">one-build</code> command.  It produces the
+following files
+</p>
+
+<pre><code class="one-hl one-hl-block">.
+&#9500;&#9472;&#9472; one.org (already there)
+&#9492;&#9472;&#9472; public
+    &#9500;&#9472;&#9472; blog
+    &#9474;   &#9492;&#9472;&#9472; page-1
+    &#9474;       &#9492;&#9472;&#9472; index.html
+    &#9492;&#9472;&#9472; index.html</code></pre>
+
+<p>and both files <code class="one-hl one-hl-inline">./public/blog/page-1/index.html</code> and
+<code class="one-hl one-hl-inline">./public/index.html</code> have the same content:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">h1</span>&gt;<span class="one-hl-underline"><span class="one-hl-bold">Hello world!</span></span>&lt;/<span class="one-hl-function-name">h1</span>&gt;</code></pre>
+
+<p>Therefore if we serve the website in <code class="one-hl one-hl-inline">./public/</code> directory at
+<code class="one-hl one-hl-inline">http://localhost:3000</code> we can access the two &quot;Hello world!&quot; pages
+at <code class="one-hl one-hl-inline">http://localhost:3000/blog/page-1/</code> and <code class="one-hl one-hl-inline">http://localhost:3000</code>.
+</p>
+
+<p>That&apos;s it!  This is how <code class="one-hl one-hl-inline">one.el</code> works under the hood.
+</p>
+
+<p><code class="one-hl one-hl-inline">one.el</code> comes with predefined render functions, a custom CSS style
+sheet and a custom <a href="/docs/one-ox/">org export backend</a> which are used all together to
+build that documentation for instance.
+</p>
+
+<p>See <a href="/docs/getting-started/">Getting started</a> to start a new project with those defaults.
+</p>
+
+<p>See <a href="/docs/one-default-render-function/">one-default render function</a> to take inspiration and write your own
+render functions.
+</p>
+</div>
+
+<div class="nav"><a href="/docs/getting-started/">PREV</a><a href="/docs/one-default-render-function/">RANDOM</a><a href="/docs/one-default-render-function/">NEXT</a></div></article></div></body><script>
+function sidebarShow() {
+  if (window.innerWidth < 481)
+    document.getElementById('sidebar-left').style.width = '75vw';
+  else {
+    document.getElementById('sidebar-left').style.width = 'min(300px, 34vw)';
+  }
+  document.getElementById('sidebar-main').setAttribute('onclick', 'sidebarHide()');
+  document.getElementById('sidebar-main').style.display = 'block';
+}
+function sidebarHide() {
+  document.getElementById('sidebar-left').style.width = '0';
+  document.getElementById('sidebar-main').style.display = 'none';
+}
+</script></html>

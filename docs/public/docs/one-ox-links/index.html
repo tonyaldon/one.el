@@ -1,0 +1,255 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one-ox | links</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>one-ox | links</h1></div><div class="toc"><div><div>Table of content</div><div>
+<ul>
+<li><a href="#one-d60485a8ff">http, https, mailto links</a></li>
+<li><a href="#one-f207b75624">Custom ID links</a>
+<ul>
+<li><a href="#one-3fb9fc5321">Example of a link to a page</a></li>
+<li><a href="#one-76834a6577">Example of a link to a heading in a page</a></li>
+</ul>
+</li>
+<li><a href="#one-bcacdc6df2">Fuzzy links</a></li>
+<li><a href="#one-676539af81">File links</a>
+<ul>
+<li><a href="#one-a278de615f">Links to local files in assets and public directories</a></li>
+<li><a href="#one-7d8e8167d5">Local file links that raise one-link-broken error</a></li>
+<li><a href="#one-5a5642231c">Links to images</a></li>
+</ul>
+</li>
+</ul>
+</div></div></div><div></div>
+<div><h2 id="one-d60485a8ff">http, https, mailto links</h2><div><p>Web links (starting by <code class="one-hl one-hl-inline">http</code> or <code class="one-hl one-hl-inline">https</code>) and links to message
+composition (starting by <code class="one-hl one-hl-inline">mailto</code>) are exported as we expect.
+</p>
+
+<p>For instance the following link
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="http://tonyaldon.com">http://tonyaldon.com</a></span></code></pre>
+
+<p>is exported as follow
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">a</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"http://tonyaldon.com"</span>&gt;http://tonyaldon.com&lt;/<span class="one-hl-function-name">a</span>&gt;</code></pre>
+
+<p>and rendered like this: <a href="http://tonyaldon.com">http://tonyaldon.com</a>.
+</p>
+
+<p>This following link with a description
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="https://tonyaldon.com">[[https://tonyaldon.com][Tony Aldon (https)]]</a></span></code></pre>
+
+<p>is exported as follow
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">a</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"https://tonyaldon.com"</span>&gt;Tony Aldon (https)&lt;/<span class="one-hl-function-name">a</span>&gt;</code></pre>
+
+<p>and rendered like this: <a href="https://tonyaldon.com">Tony Aldon (https)</a>.
+</p>
+
+<p>This <code class="one-hl one-hl-inline">mailto</code> link
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="mailto:tony@tonyaldon.com">[[mailto:tony@tonyaldon.com][send me an email]]</a></span></code></pre>
+
+<p>is exported as follow
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">a</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"mailto:tony@tonyaldon.com"</span>&gt;send me an email&lt;/<span class="one-hl-function-name">a</span>&gt;</code></pre>
+
+<p>and rendered like this: <a href="mailto:tony@tonyaldon.com">send me an email</a>.
+</p>
+</div>
+</div>
+
+<div><h2 id="one-f207b75624">Custom ID links</h2><div><p>In <code class="one-hl one-hl-inline">one.el</code>, <code class="one-hl one-hl-inline">CUSTOM_ID</code> org property is used to defined the path of pages
+or the path to specific heading in pages.
+</p>
+
+<p>Considering the following org document
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">* Home Page</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default-home</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span>
+<span class="one-hl-org-drawer">:END:</span>
+
+- <span class="one-hl-org-link"><a href="#/blog/page-1/">[[#/blog/page-1/]]</a></span>
+- <span class="one-hl-org-link"><a href="#/blog/page-1/#headline-1">[[#/blog/page-1/#headline-1]]</a></span>
+
+<span class="one-hl-org-level-1">* Page 1</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/blog/page-1/</span>
+<span class="one-hl-org-drawer">:END:</span>
+<span class="one-hl-org-level-2">** headline 1 in page Page 1</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/blog/page-1/#headline-1</span>
+<span class="one-hl-org-drawer">:END:</span></code></pre>
+
+<p>the link <code class="one-hl one-hl-inline">[[#/blog/page-1/]]</code> in &quot;Home Page&quot; targets &quot;Page 1&quot; page
+and the link <code class="one-hl one-hl-inline">[[#/blog/page-1/#headline-1]]</code> in &quot;Home Page&quot; targets the
+heading &quot;headline 1 in page Page 1&quot; in the &quot;Page 1&quot; page.
+</p>
+
+<p>Those paths define valid web urls starting at the root of the website
+if we respect the following rules for <code class="one-hl one-hl-inline">CUSTOM_ID</code> values:
+</p>
+
+<ol><li><p>we use only url-encoded characters,
+</p>
+</li>
+<li><p>we start them with a <code class="one-hl one-hl-inline">/</code> and end them with <code class="one-hl one-hl-inline">/</code> excepted for the home
+page which is a single <code class="one-hl one-hl-inline">/</code>,
+</p>
+</li>
+<li><p>we use <code class="one-hl one-hl-inline">#</code> character to start the last part of the path when we are
+targeting a heading tag with its <code class="one-hl one-hl-inline">id</code> being the last part after the <code class="one-hl one-hl-inline">#</code>
+character.
+</p>
+</li>
+</ol>
+
+<p>The benefits of these &quot;rules/conventions&quot; are:
+</p>
+
+<ol><li><p>when we export <code class="one-hl one-hl-inline">custom-id</code> links using <code class="one-hl one-hl-inline">one-ox</code> org backend we can
+leave them as they are and
+</p>
+</li>
+<li><p>the navigation between pages inside emacs using <code class="one-hl one-hl-inline">custom-id</code> links
+works out-of-the-box.
+</p>
+</li>
+</ol>
+</div>
+
+<div><h3 id="one-3fb9fc5321">Example of a link to a page</h3><div><p>The following link
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="#/docs/one-ox-plain-list/">[[#/docs/one-ox-plain-list/][one-ox | plain-list]]</a></span></code></pre>
+
+<p>is exported to this anchor tag that links to the page <code class="one-hl one-hl-inline">/docs/one-ox-plain-list/</code>:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">a</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"/docs/one-ox-plain-list/"</span>&gt;one-ox | plain-list&lt;/<span class="one-hl-function-name">a</span>&gt;</code></pre>
+
+<p>and is rendered like this <a href="/docs/one-ox-plain-list/">one-ox | plain-list</a>.
+</p>
+</div>
+</div>
+
+<div><h3 id="one-76834a6577">Example of a link to a heading in a page</h3><div><p>The following link
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="#/docs/one-ox-plain-list/#unordered-lists">[[#/docs/one-ox-plain-list/#unordered-lists][unordered lists heading in the page about plain-list]]</a></span></code></pre>
+
+<p>is exported to this anchor tag that links to the heading with the <code class="one-hl one-hl-inline">id</code>
+set to <code class="one-hl one-hl-inline">unordered-lists</code> on the page <code class="one-hl one-hl-inline">/docs/one-ox-plain-list/</code>:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">a</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"/docs/one-ox-plain-list/#unordered-lists"</span>&gt;unordered lists heading in the page about plain-list&lt;/<span class="one-hl-function-name">a</span>&gt;</code></pre>
+
+<p>and is rendered like this <a href="/docs/one-ox-plain-list/#unordered-lists">unordered lists heading in the page about
+plain-list</a>.
+</p>
+</div>
+</div>
+</div>
+
+<div><h2 id="one-bcacdc6df2">Fuzzy links</h2><div><p>I don&apos;t use <code class="one-hl one-hl-inline">fuzzy</code> links.  So, if there is a <code class="one-hl one-hl-inline">fuzzy</code> link
+in the document, that means I wrote the link wrong.
+</p>
+
+<p>Broken links are bad user experience.  I don&apos;t like them.
+</p>
+
+<p>So I decided that <code class="one-hl one-hl-inline">one-ox</code> raises an error (hard-coded) when we try to
+export a fuzzy link to HTML.
+</p>
+
+<p>For instance, the following <code class="one-hl one-hl-inline">fuzzy</code> link:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="fuzzy search">[[fuzzy search]]</a></span></code></pre>
+
+<p>raise an error like the following:
+</p>
+
+<pre><code class="one-hl one-hl-block">(one-link-broken <span class="one-hl-string">"fuzzy search"</span> <span class="one-hl-string">"fuzzy links not supported"</span> <span class="one-hl-string">"goto-char: 5523"</span>)</code></pre>
+</div>
+</div>
+
+<div><h2 id="one-676539af81">File links</h2><div><h3 id="one-a278de615f">Links to local files in assets and public directories</h3><div><p>Links to local files in <code class="one-hl one-hl-inline">./assets/</code> and <code class="one-hl one-hl-inline">./public/</code> directories like
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="./assets/foo/bar.txt">[[./assets/foo/bar.txt][Bar file]]</a></span>
+<span class="one-hl-org-link"><a href="./public/foo/baz.txt">[[./public/foo/baz.txt][Baz file]]</a></span></code></pre>
+
+<p>are exported with the prefixes <code class="one-hl one-hl-inline">./assets</code> and <code class="one-hl one-hl-inline">./public</code> of the path
+removed like this:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">a</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"/foo/bar.txt"</span>&gt;Bar file&lt;/<span class="one-hl-function-name">a</span>&gt;
+&lt;<span class="one-hl-function-name">a</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"/foo/baz.txt"</span>&gt;Baz file&lt;/<span class="one-hl-function-name">a</span>&gt;</code></pre>
+</div>
+</div>
+
+<div><h3 id="one-7d8e8167d5">Local file links that raise one-link-broken error</h3><div><p>Any file link that doesn&apos;t point to a file in <code class="one-hl one-hl-inline">./assets/</code> or <code class="one-hl one-hl-inline">./public/</code>
+subdirectories raises an <code class="one-hl one-hl-inline">one-link-broken</code> error when we try to
+export it with <code class="one-hl one-hl-inline">one-ox</code> org backend
+</p>
+
+<p>For instance if we try to export using <code class="one-hl one-hl-inline">one-ox</code> org backend the
+following link to the file <code class="one-hl one-hl-inline">foo.txt</code> in the directory <code class="one-hl one-hl-inline">/tmp/</code>
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="/tmp/foo.txt">[[/tmp/foo.txt]]</a></span></code></pre>
+
+<p>which is not in <code class="one-hl one-hl-inline">./public/</code> subdirectory nor in <code class="one-hl one-hl-inline">./assets/</code> subdirectory
+we will get an error like the following:
+</p>
+
+<pre><code class="one-hl one-hl-block">(one-link-broken <span class="one-hl-string">"/tmp/"</span> <span class="one-hl-string">"goto-char: 26308"</span>)</code></pre>
+</div>
+</div>
+
+<div><h3 id="one-5a5642231c">Links to images</h3><div><p>Links to local files in <code class="one-hl one-hl-inline">./assets/</code> and <code class="one-hl one-hl-inline">./public/</code> directories whom path
+matches <code class="one-hl one-hl-inline">one-ox-link-image-extensions</code> regexp are exported with an <code class="one-hl one-hl-inline">img</code>
+tag.
+</p>
+
+<p>For instance the following link to an image in <code class="one-hl one-hl-inline">./assets/img/</code> directory
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-link"><a href="./assets/img/keep-learning.png">[[./assets/img/keep-learning.png][Keep Learning]]</a></span></code></pre>
+
+<p>is exported as follow
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">img</span> <span class="one-hl-variable-name">href</span>=<span class="one-hl-string">"/img/keep-learning.png"</span> <span class="one-hl-variable-name">alt</span>=<span class="one-hl-string">"Keep Learning"</span>&gt;&lt;/<span class="one-hl-function-name">a</span>&gt;</code></pre>
+
+<p>and rendered like this
+</p>
+
+<p><p><img src="/img/keep-learning.png" alt="Keep Learning" /></p>
+</p>
+</div>
+</div>
+</div>
+<div class="nav"><a href="/docs/one-ox-fixed-width-and-example-block/">PREV</a><a href="/docs/one-default-render-function/">RANDOM</a><a href="/docs/one-ox-plain-list/">NEXT</a></div></article></div></body><script>
+function sidebarShow() {
+  if (window.innerWidth < 481)
+    document.getElementById('sidebar-left').style.width = '75vw';
+  else {
+    document.getElementById('sidebar-left').style.width = 'min(300px, 34vw)';
+  }
+  document.getElementById('sidebar-main').setAttribute('onclick', 'sidebarHide()');
+  document.getElementById('sidebar-main').style.display = 'block';
+}
+function sidebarHide() {
+  document.getElementById('sidebar-left').style.width = '0';
+  document.getElementById('sidebar-main').style.display = 'none';
+}
+</script></html>

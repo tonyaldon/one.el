@@ -1,0 +1,231 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one-ox | src-block</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>one-ox | src-block</h1></div><div class="toc"><div><div>Table of content</div><div>
+<ul>
+<li><a href="#one-a750e09f53">Code highlighting with htmlize</a>
+<ul>
+<li><a href="#one-c7c2554719">Description</a></li>
+<li><a href="#one-4dbdd92b26">Example with Bash code</a></li>
+</ul>
+</li>
+<li><a href="#org-keywords-results-and-attr_one_results">Org keyword RESULTS</a>
+<ul>
+<li><a href="#one-c29e4fc08a">Example using org keyword 'RESULTS'</a></li>
+</ul>
+</li>
+<li><a href="#one-b73141c590">Code blocks inside list</a></li>
+</ul>
+</div></div></div><div></div>
+<div><h2 id="one-a750e09f53">Code highlighting with htmlize</h2><div><h3 id="one-c7c2554719">Description</h3><div><p><code class="one-hl one-hl-inline">one-ox</code> highlights code via the function <code class="one-hl one-hl-inline">one-ox-htmlize</code> that uses
+<a href="https://github.com/hniksic/emacs-htmlize">htmlize</a> to do the work.
+</p>
+
+<p>For a given piece of code <code class="one-hl one-hl-inline">X</code> in a certain language <code class="one-hl one-hl-inline">Y</code>, <code class="one-hl one-hl-inline">X</code> will be
+highlighted as it would be in the emacs mode <code class="one-hl one-hl-inline">Z</code> used to edit <code class="one-hl one-hl-inline">Y</code> code.
+</p>
+
+<p>For instance, <code class="one-hl one-hl-inline">clojure-mode</code> is used to highlight Clojure code and
+<code class="one-hl one-hl-inline">sh-mode</code> is used to highlight Bash code.
+</p>
+
+<p>Attributes of a face (like <code class="one-hl one-hl-inline">background-color</code> or <code class="one-hl one-hl-inline">foreground-color</code>)
+are not taken directly.  A generated name for the face is produced and
+used as the CSS class for the parts of the code <code class="one-hl one-hl-inline">X</code> that are highlighted
+with that face.
+</p>
+
+<p>For instance, in <code class="one-hl one-hl-inline">sh-mode</code>, the word <code class="one-hl one-hl-inline">echo</code> is highlighted with the face
+<code class="one-hl one-hl-inline">font-lock-builtin-face</code>.  So, the word <code class="one-hl one-hl-inline">echo</code> in a piece of Shell (or
+Bash) code will be transformed into:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-builtin"</span>&gt;echo&lt;/<span class="one-hl-function-name">span</span>&gt;</code></pre>
+
+<p>The whole piece of code <code class="one-hl one-hl-inline">X</code>, once the previously described operations
+have been done, is wrapped:
+</p>
+
+<ol><li><p>for a normal block with the component:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">pre</span>&gt;&lt;<span class="one-hl-function-name">code</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl one-hl-block"</span>&gt;...&lt;/<span class="one-hl-function-name">code</span>&gt;&lt;/<span class="one-hl-function-name">pre</span>&gt;</code></pre>
+</li>
+
+<li><p>for a result block with the component:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">pre</span>&gt;&lt;<span class="one-hl-function-name">code</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl one-hl-results"</span>&gt;...&lt;/<span class="one-hl-function-name">code</span>&gt;&lt;/<span class="one-hl-function-name">pre</span>&gt;</code></pre>
+
+<p>See section <a href="/docs/one-ox-src-block/#org-keywords-results-and-attr_one_results">org keyword RESULTS</a>.
+</p>
+</li>
+</ol>
+</div>
+</div>
+
+<div><h3 id="one-4dbdd92b26">Example with Bash code</h3><div><p>For instance, the following org src-block, containing some <code class="one-hl one-hl-inline">bash</code> code:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-block-begin-line">#+BEGIN_SRC bash
+</span><span class="one-hl-org-block"><span class="one-hl-builtin">echo</span></span><span class="one-hl-org-block"> </span><span class="one-hl-org-block"><span class="one-hl-string">"list file's extensions in current dir:"</span></span><span class="one-hl-org-block">
+</span><span class="one-hl-org-block"><span class="one-hl-keyword">for</span></span><span class="one-hl-org-block"> f</span><span class="one-hl-org-block"><span class="one-hl-keyword"> in</span></span><span class="one-hl-org-block"> </span><span class="one-hl-org-block"><span class="one-hl-sh-quoted-exec">`ls`</span></span><span class="one-hl-org-block">; </span><span class="one-hl-org-block"><span class="one-hl-keyword">do</span></span><span class="one-hl-org-block">
+    </span><span class="one-hl-org-block"><span class="one-hl-builtin">echo</span></span><span class="one-hl-org-block"> ${</span><span class="one-hl-org-block"><span class="one-hl-variable-name">f</span></span><span class="one-hl-org-block">##*.}
+</span><span class="one-hl-org-block"><span class="one-hl-keyword">done</span></span><span class="one-hl-org-block">
+</span><span class="one-hl-org-block-end-line">#+END_SRC</span></code></pre>
+
+<p>is exported as follow:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">pre</span>&gt;&lt;<span class="one-hl-function-name">code</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl one-hl-block"</span>&gt;&lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-builtin"</span>&gt;echo&lt;/<span class="one-hl-function-name">span</span>&gt; &lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-string"</span>&gt;"list file's extensions in current dir:"&lt;/<span class="one-hl-function-name">span</span>&gt;
+&lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-keyword"</span>&gt;for&lt;/<span class="one-hl-function-name">span</span>&gt; f&lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-keyword"</span>&gt; in&lt;/<span class="one-hl-function-name">span</span>&gt; &lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-sh-quoted-exec"</span>&gt;`ls`&lt;/<span class="one-hl-function-name">span</span>&gt;; &lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-keyword"</span>&gt;do&lt;/<span class="one-hl-function-name">span</span>&gt;
+    &lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-builtin"</span>&gt;echo&lt;/<span class="one-hl-function-name">span</span>&gt; ${&lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-variable-name"</span>&gt;f&lt;/<span class="one-hl-function-name">span</span>&gt;##*.}
+&lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-keyword"</span>&gt;done&lt;/<span class="one-hl-function-name">span</span>&gt;&lt;/<span class="one-hl-function-name">code</span>&gt;&lt;/<span class="one-hl-function-name">pre</span>&gt;
+&lt;/<span class="one-hl-function-name">div</span>&gt;</code></pre>
+
+<p>and rendered like this:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-builtin">echo</span> <span class="one-hl-string">"list file's extensions in current dir:"</span>
+<span class="one-hl-keyword">for</span> f<span class="one-hl-keyword"> in</span> <span class="one-hl-sh-quoted-exec">`ls`</span>; <span class="one-hl-keyword">do</span>
+    <span class="one-hl-builtin">echo</span> ${<span class="one-hl-variable-name">f</span>##*.}
+<span class="one-hl-keyword">done</span></code></pre>
+
+<p>Note that <code class="one-hl one-hl-inline">one-ox-htmlize</code> has produced and used the following CSS
+classes (listed with their corresponding emacs faces):
+</p>
+
+<pre><code class="one-hl one-hl-block"># from font-lock
+one-hl-builtin        --&gt; font-lock-builtin-face
+one-hl-keyword        --&gt; font-lock-keyword-face
+one-hl-string         --&gt; font-lock-string-face
+one-hl-variable-name  --&gt; font-lock-variable-name-face
+
+# specific to sh-mode
+one-hl-sh-quoted-exec --&gt; sh-quoted-exec</code></pre>
+
+<p>You might have notice the pattern used for <code class="one-hl one-hl-inline">font-lock</code> faces and the one
+used for mode specific faces.
+</p>
+
+<p><code class="one-hl one-hl-inline">one.el</code> provides a default style sheet (<code class="one-hl one-hl-inline">one-default-css</code>) that has the
+CSS classes defined for all the <code class="one-hl one-hl-inline">font-lock</code> faces (faces starting by
+<code class="one-hl one-hl-inline">font-lock-</code>) but not the specific faces used by each prog mode.
+</p>
+
+<p>You can add the CSS classes specific to the prog modes you use as you
+go and need them.
+</p>
+</div>
+</div>
+</div>
+
+<div><h2 id="org-keywords-results-and-attr_one_results">Org keyword RESULTS</h2><div><p>Result blocks are preceded by a line starting with <code class="one-hl one-hl-inline">#+RESULTS:</code>.  Blocks
+that are not result blocks are normal blocks.
+</p>
+
+<p>When exported, normal blocks and result blocks differ only by their
+CSS classes:
+</p>
+
+<ul><li><p><code class="one-hl one-hl-inline">one-hl one-hl-block</code> for normal blocks,
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">one-hl one-hl-results</code> for result blocks.
+</p>
+</li>
+</ul>
+
+<p>This way result blocks can be rendered with a different style
+than normal blocks as we can see in the following example.
+</p>
+</div>
+
+<div><h3 id="one-c29e4fc08a">Example using org keyword 'RESULTS'</h3><div><p>The following org snippet:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-block-begin-line">#+BEGIN_SRC bash :results output
+</span><span class="one-hl-org-block">ls
+</span><span class="one-hl-org-block-end-line">#+END_SRC
+</span>
+<span class="one-hl-org-meta-line">#+RESULTS:</span>
+<span class="one-hl-org-code">: assets
+: docs.org
+: public</span></code></pre>
+
+<p>is exported by <code class="one-hl one-hl-inline">one-ox</code> as follow:
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">pre</span>&gt;&lt;<span class="one-hl-function-name">code</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl one-hl-block"</span>&gt;ls&lt;/<span class="one-hl-function-name">code</span>&gt;&lt;/<span class="one-hl-function-name">pre</span>&gt;
+&lt;<span class="one-hl-function-name">pre</span>&gt;&lt;<span class="one-hl-function-name">code</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl one-hl-results"</span>&gt;assets
+docs.org
+public&lt;/<span class="one-hl-function-name">code</span>&gt;&lt;/<span class="one-hl-function-name">pre</span>&gt;</code></pre>
+
+<p>and is rendered by <code class="one-hl one-hl-inline">one-ox</code> with the first block (normal block) having a
+different style from second block (result block):
+</p>
+
+<pre><code class="one-hl one-hl-block">ls</code></pre>
+
+<pre><code class="one-hl one-hl-results">assets
+docs.org
+public</code></pre>
+</div>
+</div>
+</div>
+
+<div><h2 id="one-b73141c590">Code blocks inside list</h2><div><p>Lists can contain source blocks as we can see in the following org
+snippet
+</p>
+
+<pre><code class="one-hl one-hl-block">1. item 1
+
+<span class="one-hl-org-block-begin-line">   #+BEGIN_SRC emacs-lisp
+</span><span class="one-hl-org-block">   (message </span><span class="one-hl-org-block"><span class="one-hl-string">"src-block in item 1"</span></span><span class="one-hl-org-block">)
+</span><span class="one-hl-org-block-end-line">   #+END_SRC
+</span>
+2. item 2
+3. item 3</code></pre>
+
+<p>which is exported by <code class="one-hl one-hl-inline">one</code> as follow
+</p>
+
+<pre><code class="one-hl one-hl-block">&lt;<span class="one-hl-function-name">ol</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;
+    &lt;<span class="one-hl-function-name">p</span>&gt;item 1&lt;/<span class="one-hl-function-name">p</span>&gt;
+    &lt;<span class="one-hl-function-name">pre</span>&gt;&lt;<span class="one-hl-function-name">code</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl one-hl-block"</span>&gt;(message &lt;<span class="one-hl-function-name">span</span> <span class="one-hl-variable-name">class</span>=<span class="one-hl-string">"one-hl-string"</span>&gt;"src-block in item 1"&lt;/<span class="one-hl-function-name">span</span>&gt;)&lt;/<span class="one-hl-function-name">code</span>&gt;&lt;/<span class="one-hl-function-name">pre</span>&gt;
+  &lt;/<span class="one-hl-function-name">li</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;&lt;<span class="one-hl-function-name">p</span>&gt;item 2&lt;/<span class="one-hl-function-name">p</span>&gt;&lt;/<span class="one-hl-function-name">li</span>&gt;
+  &lt;<span class="one-hl-function-name">li</span>&gt;&lt;<span class="one-hl-function-name">p</span>&gt;item 3&lt;/<span class="one-hl-function-name">p</span>&gt;&lt;/<span class="one-hl-function-name">li</span>&gt;
+&lt;/<span class="one-hl-function-name">ol</span>&gt;</code></pre>
+
+<p>and is rendered by <code class="one-hl one-hl-inline">one-ox</code> like this:
+</p>
+
+<ol><li><p>item 1
+</p>
+
+<pre><code class="one-hl one-hl-block">(message <span class="one-hl-string">"src-block in item 1"</span>)</code></pre>
+</li>
+
+<li><p>item 2
+</p>
+</li>
+<li><p>item 3
+</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="nav"><a href="/docs/one-ox-headline/">PREV</a><a href="/docs/getting-started/">RANDOM</a><a href="/docs/one-ox-quote-block/">NEXT</a></div></article></div></body><script>
+function sidebarShow() {
+  if (window.innerWidth < 481)
+    document.getElementById('sidebar-left').style.width = '75vw';
+  else {
+    document.getElementById('sidebar-left').style.width = 'min(300px, 34vw)';
+  }
+  document.getElementById('sidebar-main').setAttribute('onclick', 'sidebarHide()');
+  document.getElementById('sidebar-main').style.display = 'block';
+}
+function sidebarHide() {
+  document.getElementById('sidebar-left').style.width = '0';
+  document.getElementById('sidebar-main').style.display = 'none';
+}
+</script></html>

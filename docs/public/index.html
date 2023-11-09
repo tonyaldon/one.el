@@ -1,0 +1,145 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one.el</title></head><body><div class="header">one.el</div><div class="content"><div id="home"><div><p><code class="one-hl one-hl-inline">one.el</code> is a simple <b>Static Site Generator</b> for Emacs Lisp programmers
+and org-mode users.
+</p>
+
+<p>To get started right away check <a href="/docs/install-one-el/">Install one.el</a> and <a href="/docs/getting-started/">Getting started</a>
+pages.
+</p>
+
+<p>You can find the code here: <a href="https://github.com/tonyaldon/one.el">https://github.com/tonyaldon/one.el</a>.
+</p>
+
+<p>Athough <code class="one-hl one-hl-inline">one.el</code> uses org-mode not all the org elements are useful to
+build technical blog sites (see <a href="/#why">Why one.el?</a>).  So only a few org
+elements have an transcoder function implemented in <a href="/docs/one-ox/">one-ox</a>, the org
+backend used by <code class="one-hl one-hl-inline">one.el</code> to build <a href="/docs/the-default-website/">The default website</a>.  Please check <a href="/docs/one-ox/#org-elements-not-supported">Org
+elements not supported</a> before relying on <code class="one-hl one-hl-inline">one.el</code>.
+</p>
+
+<p>In <code class="one-hl one-hl-inline">one.el</code>, the following org document defines a website with 3 pages
+that we build by calling <code class="one-hl one-hl-inline">one-build</code> command while we are visiting it:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">* My website</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default-home</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span>
+<span class="one-hl-org-drawer">:END:</span>
+
+Welcome to my website!
+
+<span class="one-hl-org-level-1">* Blog post 1</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/blog/page-1/</span>
+<span class="one-hl-org-drawer">:END:</span>
+
+My first blog post!
+
+<span class="one-hl-org-level-1">* Blog post 2</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/blog/page-2/</span>
+<span class="one-hl-org-drawer">:END:</span>
+
+My second blog post!</code></pre>
+
+<p>Note that if we want to use the default css style sheet we can add it
+by calling <code class="one-hl one-hl-inline">one-default-add-css-file</code> before building the website.
+</p>
+
+<p>The path <code class="one-hl one-hl-inline">/</code> in the first <code class="one-hl one-hl-inline">CUSTOM_ID</code> org property tells <code class="one-hl one-hl-inline">one.el</code> that the
+page &quot;My website&quot; is the home page.  That page is rendered using
+<code class="one-hl one-hl-inline">one-default-home</code> render function, value of <code class="one-hl one-hl-inline">ONE</code> org property of the
+same headline.
+</p>
+
+<p>The path <code class="one-hl one-hl-inline">/blog/page-1/</code> in the second <code class="one-hl one-hl-inline">CUSTOM_ID</code> org property tells
+<code class="one-hl one-hl-inline">one.el</code> that we want to render &quot;Blog post 1&quot; page in such a way
+that when we serve our website locally at <code class="one-hl one-hl-inline">http://localhost:3000</code> for
+instance, that page is served at <code class="one-hl one-hl-inline">http://localhost:3000/blog/page-1/</code>.
+How that page is rendered is determined by the value of <code class="one-hl one-hl-inline">ONE</code> org
+property of the same headline which is <code class="one-hl one-hl-inline">one-default</code>, a render
+function.
+</p>
+
+<p>The same goes for the last page &quot;Blog post 2&quot;.
+</p>
+
+<p>As you might have noticed, a <code class="one-hl one-hl-inline">one.el</code> website is an org file where the
+pages are the headlines of level 1 with the org properties <code class="one-hl one-hl-inline">ONE</code> and
+<code class="one-hl one-hl-inline">CUSTOM_ID</code> set.  Nothing more!
+</p>
+
+<p><code class="one-hl one-hl-inline">ONE</code> is the only org property added by <code class="one-hl one-hl-inline">one.el</code>.  Its value, an Emacs Lisp
+function which returns an HTML string, for a given page determines how
+<code class="one-hl one-hl-inline">one.el</code> renders that page.
+</p>
+
+<p>Paths of pages are set using <code class="one-hl one-hl-inline">CUSTOM_ID</code> org property.
+</p>
+
+<p>With that said, if you want to try it you can check <a href="/docs/install-one-el/">Install one.el</a> and
+<a href="/docs/getting-started/">Getting started</a> pages.
+</p>
+</div>
+
+<div><h2 id="why">Why one.el?</h2><div><p>I wrote <code class="one-hl one-hl-inline">one.el</code> because I didn&apos;t find an existing static site generator
+with the following requirements:
+</p>
+
+<ul><li><p>I&apos;m not looking for a solution for every type of websites, only for
+technical blog sites which are basically chunks of code surrounded
+by text,
+</p>
+</li>
+<li><p>I want something simple that I understand and that I can modify
+only by writting some Emacs Lisp,
+</p>
+</li>
+<li><p>I want websites to be written to a single org file,
+</p>
+</li>
+<li><p>I want something with no dependencies other than emacs packages
+that are not bridges to feed other static site frameworks,
+</p>
+</li>
+<li><p>I want something with no configuration options, if you want to
+modify something you write Emacs Lisp code and
+</p>
+</li>
+<li><p>Finally, I want an Emacs solution for an Emacs user.
+</p>
+</li>
+</ul>
+
+<p>Following those requirements led me to <code class="one-hl one-hl-inline">one.el</code>, an opiniated static
+site generator for Emacs Lisp programmers and Org mode users that
+works well if you want to build websites like
+</p>
+
+<ul><li><p><a href="https://minibuffer.tonyaldon.com">minibuffer</a>: learn Emacs Lisp one sexp at a time,
+</p>
+</li>
+<li><p><a href="https://posts.tonyaldon.com">Elisp posts</a>: some articles about Emacs Lisp,
+</p>
+</li>
+<li><p><a href="https://jack.tonyaldon.com">jack</a>: HTML generator library for Emacs Lisp,
+</p>
+</li>
+<li><p><a href="https://one.tonyaldon.com">one.el</a>: documentation of one.el package,
+</p>
+</li>
+<li><p><a href="https://lnroom.live">LNROOM</a>: learn how to hack on Core Lightning and
+</p>
+</li>
+<li><p><a href="https://tonyaldon.com">https://tonyaldon.com</a>.
+</p>
+</li>
+</ul>
+
+<p>all built with <code class="one-hl one-hl-inline">one.el</code>.
+</p>
+</div>
+</div>
+</div></div></body></html>

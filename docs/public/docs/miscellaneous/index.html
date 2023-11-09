@@ -1,0 +1,295 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Miscellaneous</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="header-doc"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="content-doc"><div id="sidebar"><ul><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>Miscellaneous</h1></div><div class="toc"><div><div>Table of content</div><div>
+<ul>
+<li><a href="#one-d93919a322">Page at point</a></li>
+<li><a href="#one-728c1ed8ee">onerc.el file</a></li>
+<li><a href="#one-add-to-global">one-add-to-global</a></li>
+<li><a href="#one-3bbc240dfe">one-hook</a></li>
+<li><a href="#one-770ee8f3e6">Async commands</a></li>
+<li><a href="#extend-one-ox-org-backend">Extend one-ox org backend</a>
+<ul>
+<li><a href="#one-fc4728b5d2">Extend one-ox with horizontal-rule org elements</a></li>
+</ul>
+</li>
+</ul>
+</div></div></div><div></div>
+<div><h2 id="one-d93919a322">Page at point</h2><div><p>If we need to render only the page at point, meaning the headline of
+level 1 with <code class="one-hl one-hl-inline">ONE</code> and <code class="one-hl one-hl-inline">CUSTOM_ID</code> org properties set, we can use the
+commands <code class="one-hl one-hl-inline">one-render-page-at-point</code> and <code class="one-hl one-hl-inline">one-render-page-at-point-async</code>.
+</p>
+</div>
+</div>
+
+<div><h2 id="one-728c1ed8ee">onerc.el file</h2><div><p>We can use an Emacs Lisp file called <code class="one-hl one-hl-inline">onerc.el</code> to customize our
+website.  It must be in the same directory of the org file containing
+the content of our website.
+</p>
+
+<p>This file is loaded first in <code class="one-hl one-hl-inline">one-render-pages</code> before rendering the
+webpages.
+</p>
+
+<p>This is a good place to set <code class="one-hl one-hl-inline">one-add-to-global</code> and <code class="one-hl one-hl-inline">one-hook</code> variables
+or to define our own render functions.
+</p>
+</div>
+</div>
+
+<div><h2 id="one-add-to-global">one-add-to-global</h2><div><p>Render functions takes 3 arguments:
+</p>
+
+<ul><li><p><code class="one-hl one-hl-inline">page-tree</code>: the parsed tree of the page being rendered,
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">pages</code>: the list of pages,
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">global</code>: a plist of global informations that are computed once
+in <code class="one-hl one-hl-inline">one-render-pages</code> before rendering the pages using
+<code class="one-hl one-hl-inline">one-add-to-global</code> variable.
+</p>
+</li>
+</ul>
+
+<p>That means that if a render function needs extra informations, we can
+use <code class="one-hl one-hl-inline">one-add-to-global</code> variable to pass those informations to the
+render function.
+</p>
+
+<p>Specifically, elements in <code class="one-hl one-hl-inline">one-add-to-global</code> list are plist with the
+following properties:
+</p>
+
+<ul><li><p><code class="one-hl one-hl-inline">:one-global-property</code>: a keyword that is used as proprety
+in the <code class="one-hl one-hl-inline">global</code> argument passed to the render functions,
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">:one-global-function</code>: a function that takes two arguments <code class="one-hl one-hl-inline">pages</code>
+(list of pages, see <code class="one-hl one-hl-inline">one-list-pages</code>) and <code class="one-hl one-hl-inline">tree</code>
+(see <code class="one-hl one-hl-inline">one-parse-buffer</code>).  That function is called once in
+<code class="one-hl one-hl-inline">one-render-pages</code> and its result is used as the value of
+the property <code class="one-hl one-hl-inline">:one-global-property</code> in the <code class="one-hl one-hl-inline">global</code> argument
+passed to the render functions.
+</p>
+</li>
+</ul>
+
+<p>For instance, if <code class="one-hl one-hl-inline">one-add-to-global</code> is set to
+</p>
+
+<pre><code class="one-hl one-hl-block">((<span class="one-hl-ta-colon-keyword">:one-global-property</span> <span class="one-hl-ta-colon-keyword">:one-tree</span>
+  <span class="one-hl-ta-colon-keyword">:one-global-function</span> (<span class="one-hl-keyword">lambda</span> (pages tree) tree)))</code></pre>
+
+<p>then <code class="one-hl one-hl-inline">global</code> local variable will be set to
+</p>
+
+<pre><code class="one-hl one-hl-block">((<span class="one-hl-ta-colon-keyword">:one-tree</span> tree))</code></pre>
+
+<p>where <code class="one-hl one-hl-inline">tree</code> is the value returned by <code class="one-hl one-hl-inline">one-parse-buffer</code> function.
+</p>
+</div>
+</div>
+
+<div><h2 id="one-3bbc240dfe">one-hook</h2><div><p>Each function in <code class="one-hl one-hl-inline">one-hook</code> is called once in <code class="one-hl one-hl-inline">one-render-pages</code>.
+</p>
+
+<p>Those functions take three arguments:
+</p>
+
+<ul><li><p><code class="one-hl one-hl-inline">pages</code>: list of pages (see <code class="one-hl one-hl-inline">one-list-pages</code>),
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">tree</code>: see <code class="one-hl one-hl-inline">one-parse-buffer</code>,
+</p>
+</li>
+<li><p><code class="one-hl one-hl-inline">global</code>: see <a href="/docs/miscellaneous/#one-add-to-global">one-add-to-global</a>.
+</p>
+</li>
+</ul>
+
+<p>As those functions take <code class="one-hl one-hl-inline">global</code> argument they are called after
+that argument has been let binded using <code class="one-hl one-hl-inline">one-add-to-global</code>.
+</p>
+</div>
+</div>
+
+<div><h2 id="one-770ee8f3e6">Async commands</h2><div><p>The function <code class="one-hl one-hl-inline">one-render-pages-async</code> and <code class="one-hl one-hl-inline">one-build-async</code> spawn an
+<code class="one-hl one-hl-inline">emacs</code> subprocess in order to build html pages asynchronously.  The
+arguments passed to <code class="one-hl one-hl-inline">emacs</code> depends on <code class="one-hl one-hl-inline">one-emacs-cmd-line-args-async</code> value.
+</p>
+
+<p>By default, when <code class="one-hl one-hl-inline">one-emacs-cmd-line-args-async</code> is <code class="one-hl one-hl-inline">nil</code>, we run <code class="one-hl one-hl-inline">emacs</code>
+in &quot;batch mode&quot;, we load the user&apos;s initialization file and we
+evaluate a specific sexp that builds html pages.  Specifically, we
+pass the following <code class="one-hl one-hl-inline">command</code> (<code class="one-hl one-hl-inline">emacs</code> file name followed by command line
+arguments) to <code class="one-hl one-hl-inline">make-process</code> function like this:
+</p>
+
+<pre><code class="one-hl one-hl-block">(<span class="one-hl-keyword">let*</span> ((emacs (file-truename
+               (expand-file-name invocation-name invocation-directory)))
+       (command `(,emacs <span class="one-hl-string">"--batch"</span>
+                         <span class="one-hl-string">"-l"</span> ,user-init-file
+                         <span class="one-hl-string">"--eval"</span> ,sexp))
+       (sexp ...))
+  (make-process
+   <span class="one-hl-ta-colon-keyword">:name</span> ...
+   <span class="one-hl-ta-colon-keyword">:buffer</span> ...
+   <span class="one-hl-ta-colon-keyword">:command</span> command))</code></pre>
+
+<p>If <code class="one-hl one-hl-inline">one-emacs-cmd-line-args-async</code> is non-nil, we no longer load the user&apos;s
+initialization file and replace <code class="one-hl one-hl-inline">&quot;-l&quot; ,user-init-file</code> in <code class="one-hl one-hl-inline">command</code> above
+by the elements of <code class="one-hl one-hl-inline">one-emacs-cmd-line-args-async</code>.  For instance, if
+<code class="one-hl one-hl-inline">one-emacs-cmd-line-args-async</code> is equal to
+</p>
+
+<pre><code class="one-hl one-hl-block">'(<span class="one-hl-string">"-l"</span> <span class="one-hl-string">"/path/to/some-elisp-file.el"</span>)</code></pre>
+
+<p>then <code class="one-hl one-hl-inline">command</code> becomes
+</p>
+
+<pre><code class="one-hl one-hl-block">(<span class="one-hl-keyword">let*</span> (...
+       (command `(,emacs <span class="one-hl-string">"--batch"</span>
+                         <span class="one-hl-string">"-l"</span> <span class="one-hl-string">"/path/to/some-elisp-file.el"</span>
+                         <span class="one-hl-string">"--eval"</span> ,sexp))
+       ...)
+  ...)</code></pre>
+</div>
+</div>
+
+<div><h2 id="extend-one-ox-org-backend">Extend one-ox org backend</h2><div><p>When we use the default render functions, the org content of the
+webpages is exported using <a href="/docs/one-ox/">one-ox</a> org backend like this
+</p>
+
+<pre><code class="one-hl one-hl-block">(org-export-data-with-backend
+ (org-element-contents page-tree)
+ 'one-ox nil)</code></pre>
+
+<p>where <code class="one-hl one-hl-inline">page-tree</code> is the parsed tree of the headline containing the page
+being rendered (see <a href="/docs/one-default-render-function/">one-default render function</a>).
+</p>
+
+<p>While <code class="one-hl one-hl-inline">one-ox</code> exports enough org elements for my use cases (see <a href="/#why">Why
+one.el?</a>) this might not be the case for you.
+</p>
+
+<p>I think this is not a big problem because we can extend <code class="one-hl one-hl-inline">one-ox</code>
+(precisely we can derive a new org backend from <code class="one-hl one-hl-inline">one-ox</code> org backend)
+with other transcoder functions for the org elements that miss
+transcoder functions.
+</p>
+
+<p>Let&apos;s see how we can do that with an example.
+</p>
+</div>
+
+<div><h3 id="one-fc4728b5d2">Extend one-ox with horizontal-rule org elements</h3><div><p>Lines consisting of only dashes (at least 5) are parsed by the org
+parser as <code class="one-hl one-hl-inline">horizontal-rule</code> org elements.  <code class="one-hl one-hl-inline">one-ox</code> doesn&apos;t provide a
+transcoder function for <code class="one-hl one-hl-inline">horizontal-rule</code> so we can&apos;t use it directly if
+we want to have them exported as <code class="one-hl one-hl-inline">&lt;hr&gt;</code> tags in our website.
+</p>
+
+<p>In that section we see how to derived an org backend <code class="one-hl one-hl-inline">one-ox-with-hr</code>
+from <code class="one-hl one-hl-inline">one-ox</code> org backend that exports <code class="one-hl one-hl-inline">horizontal-rule</code> org elements
+with <code class="one-hl one-hl-inline">&lt;hr&gt;</code> tags.
+</p>
+
+<p>To do that we define a transcoder function <code class="one-hl one-hl-inline">my-horizontal-rule</code> which
+takes 3 arguments (not used) and return the string <code class="one-hl one-hl-inline">&quot;&lt;hr&gt;&quot;</code>:
+</p>
+
+<pre><code class="one-hl one-hl-block">(<span class="one-hl-keyword">defun</span> <span class="one-hl-function-name">my-horizontal-rule</span> (_ _ _) <span class="one-hl-doc">"&lt;hr&gt;"</span>)</code></pre>
+
+<p>Then we use that function in the <code class="one-hl one-hl-inline">:translate-alist</code> alist in the body of
+the function <code class="one-hl one-hl-inline">org-export-define-derived-backend</code> to define <code class="one-hl one-hl-inline">one-ox-with-hr</code>
+org backend:
+</p>
+
+<pre><code class="one-hl one-hl-block">(org-export-define-derived-backend 'one-ox-with-hr 'one-ox
+  <span class="one-hl-ta-colon-keyword">:translate-alist</span>
+  '((horizontal-rule . my-horizontal-rule)))</code></pre>
+
+<p>Then we can export the org content of the webpages (including the
+<code class="one-hl one-hl-inline">horizontal-rule</code>) using <code class="one-hl one-hl-inline">one-ox-with-hr</code> org backend like this
+</p>
+
+<pre><code class="one-hl one-hl-block">(org-export-data-with-backend
+ (org-element-contents page-tree)
+ 'one-ox-with-hr nil)</code></pre>
+
+<p>where <code class="one-hl one-hl-inline">page-tree</code> is the parsed tree of the headline containing the page
+being rendered.
+</p>
+
+<p>Now that we saw how to derive <code class="one-hl one-hl-inline">one-ox-with-hr</code> org backend and use it,
+let&apos;s build a website with only a home page with two <code class="one-hl one-hl-inline">horizontal-rule</code>.
+</p>
+
+<p>In an empty directory let&apos;s add the following files:
+</p>
+
+<ul><li><p><code class="one-hl one-hl-inline">one.org</code>:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">* Home page</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">my-render-function</span>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span>
+<span class="one-hl-org-drawer">:END:</span>
+
+foo
+
+-----
+
+bar
+
+-----
+
+baz</code></pre>
+</li>
+
+<li><p><code class="one-hl one-hl-inline">onerc.el</code>:
+</p>
+
+<pre><code class="one-hl one-hl-block">(<span class="one-hl-keyword">defun</span> <span class="one-hl-function-name">my-horizontal-rule</span> (_ _ _) <span class="one-hl-doc">"&lt;hr&gt;"</span>)
+
+(org-export-define-derived-backend 'one-ox-with-hr 'one
+  <span class="one-hl-ta-colon-keyword">:translate-alist</span>
+  '((horizontal-rule . my-horizontal-rule)))
+
+(<span class="one-hl-keyword">defun</span> <span class="one-hl-function-name">my-render-function</span> (page-tree pages _global)
+  <span class="one-hl-doc">""</span>
+  (<span class="one-hl-keyword">let*</span> ((title (org-element-property <span class="one-hl-ta-colon-keyword">:raw-value</span> page-tree))
+         (content (org-export-data-with-backend
+                   (org-element-contents page-tree)
+                   'one-ox-with-hr
+                   nil)))
+    (jack-html
+     <span class="one-hl-string">"&lt;!DOCTYPE html&gt;"</span>
+     `(<span class="one-hl-ta-colon-keyword">:html</span>
+       (<span class="one-hl-ta-colon-keyword">:head</span> (<span class="one-hl-ta-colon-keyword">:title</span> ,title))
+       (<span class="one-hl-ta-colon-keyword">:body</span>
+        (<span class="one-hl-ta-colon-keyword">:h1</span> ,title)
+        ,content)))))</code></pre>
+</li>
+</ul>
+
+<p>Now while visiting <code class="one-hl one-hl-inline">one.org</code> file we call <code class="one-hl one-hl-inline">one-build</code> to build our website
+with <code class="one-hl one-hl-inline">&lt;hr&gt;</code> tags.
+</p>
+</div>
+</div>
+</div>
+<div class="nav"><a href="/docs/one-default-render-function/">PREV</a><a href="/docs/install-one-el/">RANDOM</a><a href="/docs/one-ox/">NEXT</a></div></article></div></body><script>
+function sidebarShow() {
+  if (window.innerWidth < 481)
+    document.getElementById('sidebar-left').style.width = '75vw';
+  else {
+    document.getElementById('sidebar-left').style.width = 'min(300px, 34vw)';
+  }
+  document.getElementById('sidebar-main').setAttribute('onclick', 'sidebarHide()');
+  document.getElementById('sidebar-main').style.display = 'block';
+}
+function sidebarHide() {
+  document.getElementById('sidebar-left').style.width = '0';
+  document.getElementById('sidebar-main').style.display = 'none';
+}
+</script></html>
