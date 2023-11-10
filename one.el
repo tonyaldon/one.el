@@ -1430,7 +1430,9 @@ See `one-render-pages'."
   (find-file "one.org"))
 
 (defun one-default-home (page-tree pages _global)
-  ""
+  "Default render function to use in the home page.
+
+See `one-is-page', `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
@@ -1449,7 +1451,9 @@ See `one-render-pages'."
          (:div/home ,content)))))))
 
 (defun one-default-home-list-pages (page-tree pages _global)
-  ""
+  "Default render function to use in the home page that lists pages.
+
+See `one-is-page', `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
@@ -1470,7 +1474,9 @@ See `one-render-pages'."
          (:div/pages (:ul ,(reverse pages-list)))))))))
 
 (defun one-default (page-tree pages _global)
-  ""
+  "Default render function.
+
+See `one-is-page', `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
@@ -1493,7 +1499,9 @@ See `one-render-pages'."
          ,nav))))))
 
 (defun one-default-with-toc (page-tree pages _global)
-  ""
+  "Default render function with a table of content.
+
+See `one-is-page', `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
@@ -1523,7 +1531,9 @@ See `one-render-pages'."
          ,nav))))))
 
 (defun one-default-doc (page-tree pages _global)
-  ""
+  "Default render function with a table of content and a sidebar listing pages.
+
+See `one-is-page', `one-render-pages', `one-default-css' and `one-default-pages'."
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
