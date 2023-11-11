@@ -1495,7 +1495,9 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
        (:body
         (:div.header (:a (@ :href "/") ,website-name))
         (:div.content
-         (:div.title (:h1 ,title))
+         (:div.title
+          ,(when (not (string= path "/"))
+             `(:h1 ,title)))
          ,content
          ,nav))))))
 
@@ -1526,7 +1528,9 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
        (:body
         (:div.header (:a (@ :href "/") ,website-name))
         (:div.content
-         (:div.title (:h1 ,title))
+         (:div.title
+          ,(when (not (string= path "/"))
+             `(:h1 ,title)))
          ,toc
          ,content
          ,nav))))))
@@ -1569,7 +1573,9 @@ See `one-is-page', `one-render-pages', `one-default-css' and `one-default-pages'
         (:div/content-doc
          (:div/sidebar ,pages-list)
          (:article
-          (:div.title (:h1 ,title))
+          (:div.title
+           ,(when (not (string= path "/"))
+              `(:h1 ,title)))
           ,toc
           ,content
           ,nav)))
