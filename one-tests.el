@@ -691,27 +691,20 @@ some content here
 
 (ert-deftest one-default-nav-test ()
   ;; Two pages different from the home page are expected
-  (should-not
-   (one-default-nav
-    "/foo-1/"
-    '((:one-path "/")
-      (:one-path "/foo-1/"))))
   (should
    (equal
     (one-default-nav
      "/foo-1/"
      '((:one-path "/")
-       (:one-path "/foo-1/")
-       (:one-path "/foo-2/")))
-    '(:div.nav nil nil (:a (@ :href "/foo-2/") "NEXT"))))
+       (:one-path "/foo-1/")))
+    '(:div.nav (:a (@ :href "/") "PREV") nil nil)))
   (should
    (equal
     (one-default-nav
-     "/foo-2/"
+     "/"
      '((:one-path "/")
-       (:one-path "/foo-1/")
-       (:one-path "/foo-2/")))
-    '(:div.nav (:a (@ :href "/foo-1/") "PREV") nil nil)))
+       (:one-path "/foo-1/")))
+    '(:div.nav  nil nil (:a (@ :href "/foo-1/") "NEXT"))))
   (let* ((nav (one-default-nav
                "/foo-2/"
                '((:one-path "/")
@@ -722,7 +715,8 @@ some content here
          (random (nth 2 nav)))
     (should (equal (nth 1 nav) '(:a (@ :href "/foo-1/") "PREV")))
     (should (equal (nth 3 nav) '(:a (@ :href "/foo-3/") "NEXT")))
-    (should (member (nth 2 (nth 1 random)) '("/foo-1/" "/foo-3/" "/foo-4/")))
+    (should-not (string= (nth 2 (nth 1 random)) "/foo-2/"))
+    (should (member (nth 2 (nth 1 random)) '("/" "/foo-1/" "/foo-3/" "/foo-4/")))
     (should (equal (nth 2 random) "RANDOM"))))
 
 (ert-deftest one-default-list-headlines-test ()

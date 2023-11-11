@@ -1660,9 +1660,6 @@ The component is composed of 3 links:
 - \"NEXT\": link to the page after the page whose `:one-path' is
   equal to PATH in PAGES.
 
-In any cases the home page (`:one-page' equal to \"/\") is excluded.
-Return nil, if PAGES contains only one page which is not the home page.
-
 For instance, evaluating the following form
 
     (one-default-nav \"/foo-2/\"
@@ -1672,7 +1669,7 @@ For instance, evaluating the following form
                        (:one-path \"/foo-3/\")
                        (:one-path \"/foo-4/\")))
 
-returns (the \"RANDOM\" link could have been \"foo-1\" or \"foo-3\")
+returns (the \"RANDOM\" link could have been \"/\", \"/foo-1/\" or \"/foo-3/\")
 
     (:div.nav
      (:a (@ :href \"/foo-1/\") \"PREV\")
@@ -1681,24 +1678,20 @@ returns (the \"RANDOM\" link could have been \"foo-1\" or \"foo-3\")
 
 See `one-default',`one-default-with-toc' and `one-default-doc'."
 
-  (let* ((pages-no-home
-          (seq-remove
-           (lambda (page) (string= (plist-get page :one-path) "/"))
-           pages))
-         (pages-no-home/path
+  (let* ((pages-not-path
           (seq-remove
            (lambda (page) (string= (plist-get page :one-path) path))
-           pages-no-home)))
-    (when (<= 2 (length pages-no-home))
+           pages)))
+    (when (<= 2 (length pages))
       (let (prev
-            (tail pages-no-home)
-            (random (seq-random-elt pages-no-home/path)))
+            (tail pages)
+            (random (seq-random-elt pages-not-path)))
         (while (not (string= (plist-get (car tail) :one-path) path))
           (setq prev (car tail))
           (setq tail (cdr tail)))
         `(:div.nav
           ,(when prev `(:a (@ :href ,(plist-get prev :one-path)) "PREV"))
-          ,(when (<= 3 (length pages-no-home))
+          ,(when (<= 3 (length pages))
              `(:a (@ :href ,(plist-get random :one-path)) "RANDOM"))
           ,(when-let ((next (plist-get (cadr tail) :one-path)))
              `(:a (@ :href ,next) "NEXT")))))))
