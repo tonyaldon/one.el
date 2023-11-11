@@ -1459,7 +1459,8 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
                    (org-element-contents page-tree)
                    'one-ox nil))
          (website-name (one-default-website-name pages))
-         (pages-list (one-default-pages pages)))
+         ;; All pages but the home pages
+         (pages-list (one-default-pages pages "/.+")))
     (jack-html
      "<!DOCTYPE html>"
      `(:html
@@ -1588,8 +1589,11 @@ function sidebarHide() {
 }
 ")))))
 
-(defun one-default-pages (pages)
-  "Return `jack-html' list of PAGES component excluding the home page.
+(defun one-default-pages (pages &optional filter)
+  "Return `jack-html' list of PAGES component.
+
+If FILTER is non-nil, a page is listed only when its path (value
+of `:one-path' property) matches FILTER regexp.
 
 Evaluating the following form
 
@@ -1601,6 +1605,21 @@ Evaluating the following form
 returns:
 
     (:ul
+     (:li (:a (@ :href \"/\") \"HOME\"))
+     (:li (:a (@ :href \"/foo-1/\") \"FOO-1\"))
+     (:li (:a (@ :href \"/foo-2/\") \"FOO-2\")))
+
+And evaluating the following form with the filter \"/.+\"
+
+    (one-default-pages
+     \\='((:one-title \"HOME\" :one-path \"/\")
+       (:one-title \"FOO-1\" :one-path \"/foo-1/\")
+       (:one-title \"FOO-2\" :one-path \"/foo-2/\"))
+       \"/.+\")
+
+returns a list which doesn't include the home page:
+
+    (:ul
      (:li (:a (@ :href \"/foo-1/\") \"FOO-1\"))
      (:li (:a (@ :href \"/foo-2/\") \"FOO-2\")))"
   (when-let ((li-items
@@ -1609,7 +1628,7 @@ returns:
                      (lambda (page)
                        (let ((href (plist-get page :one-path))
                              (title (plist-get page :one-title)))
-                         (when (not (string= href "/"))
+                         (when (string-match-p (or filter ".*") href)
                            `(:li (:a (@ :href ,href) ,title)))))
                      pages))))
     `(:ul ,@li-items)))
