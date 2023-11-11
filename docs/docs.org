@@ -1,8 +1,9 @@
 * one.el
 :PROPERTIES:
-:ONE: one-default-home
+:ONE: one-default-doc
 :CUSTOM_ID: /
 :END:
+** Static Site Generator for Emacs Lisp programmers
 
 Have you ever wanted to write a blog:
 
