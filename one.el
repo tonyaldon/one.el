@@ -1295,12 +1295,14 @@ tree
     │   │   └── index.html
     │   ├── one-default-doc
     │   │   └── index.html
+    │   ├── one-default-with-sidebar
+    │   │   └── index.html
     │   └── one-default-with-toc
     │       └── index.html
     ├── index.html
     └── one.css
 
-7 directories, 8 files
+8 directories, 9 files
 #+end_example
 
 * The default page with a TOC
@@ -1314,10 +1316,10 @@ specified in the org property ~ONE~.
 
 ** Do you want a sidebar?
 
-Perhaps you want a sidebar listing all the pages on our website, as
+Perhaps you want a sidebar listing all the pages on your website, as
 many modern documentation sites do.  If so, you can use the default
-render function ~one-default-doc~ presented in [[#/blog/one-default-doc/][The default page with TOC
-and sidebar]].
+render function ~one-default-with-sidebar~ presented in [[#/blog/one-default-with-sidebar/][The default page
+with a sidebar]].
 
 ** Headline foo
 *** Headline bar
@@ -1344,12 +1346,65 @@ tree
     │   │   └── index.html
     │   ├── one-default-doc
     │   │   └── index.html
+    │   ├── one-default-with-sidebar
+    │   │   └── index.html
     │   └── one-default-with-toc
     │       └── index.html
     ├── index.html
     └── one.css
 
-7 directories, 8 files
+8 directories, 9 files
+#+end_example
+
+* The default page with a sidebar
+:PROPERTIES:
+:ONE: one-default-with-sidebar
+:CUSTOM_ID: /blog/one-default-with-sidebar/
+:END:
+
+This page is rendered with the render function ~one-default-with-sidebar~
+specified in the org property ~ONE~.
+
+** Do you want a sidebar and a TOC?
+
+Perhaps you want a sidebar listing all the pages on your website and a
+table of content, as many modern documentation sites do.  If so, you
+can use the default render function ~one-default-doc~ presented in [[#/blog/one-default-doc/][The
+default page with TOC and sidebar]].
+
+** Headline foo
+*** Headline bar
+
+Some content.
+
+*** Headline baz
+
+#+BEGIN_SRC bash :results verbatim
+tree
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+.
+├── assets
+│   └── one.css
+├── one.org
+└── public
+    ├── blog
+    │   ├── default
+    │   │   └── index.html
+    │   ├── default-home-list-pages
+    │   │   └── index.html
+    │   ├── one-default-doc
+    │   │   └── index.html
+    │   ├── one-default-with-sidebar
+    │   │   └── index.html
+    │   └── one-default-with-toc
+    │       └── index.html
+    ├── index.html
+    └── one.css
+
+8 directories, 9 files
 #+end_example
 
 * The default page with TOC and sidebar
@@ -1390,15 +1445,17 @@ tree
     │   │   └── index.html
     │   ├── one-default-doc
     │   │   └── index.html
+    │   ├── one-default-with-sidebar
+    │   │   └── index.html
     │   └── one-default-with-toc
     │       └── index.html
     ├── index.html
     └── one.css
 
-7 directories, 8 files
+8 directories, 9 files
 #+end_example
 "
-  "Default org file to start a new `one' project.
+  "Default org file to start a new `one.el' project.
 
 See `one-default-new-project'.")
 
