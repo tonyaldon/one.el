@@ -1520,11 +1520,7 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
                    'one-ox nil))
          (website-name (one-default-website-name pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
-         (toc (when headlines
-                `(:div.toc
-                  (:div
-                   (:div "Table of content")
-                   (:div ,(one-default-toc headlines))))))
+         (toc (one-default-toc-component headlines))
          (nav (one-default-nav path pages)))
     (jack-html
      "<!DOCTYPE html>"
