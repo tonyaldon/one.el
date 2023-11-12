@@ -964,6 +964,10 @@ img {
   padding: 1.8rem 0;
 }
 
+.title-empty {
+  padding-top: 1rem;
+}
+
 /* -------- one-default-home -------- */
 
 #home {
@@ -1492,8 +1496,9 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
         (:div.header (:a (@ :href "/") ,website-name))
         (:div.content
          (:div.title
-          ,(when (not (string= path "/"))
-             `(:h1 ,title)))
+          ,(if (not (string= path "/"))
+               `(:div.title (:h1 ,title))
+             '(:div.title-empty)))
          ,content
          ,nav))))))
 
@@ -1533,8 +1538,9 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
         (:div.header (:a (@ :href "/") ,website-name))
         (:div.content
          (:div.title
-          ,(when (not (string= path "/"))
-             `(:h1 ,title)))
+          ,(if (not (string= path "/"))
+               `(:div.title (:h1 ,title))
+             '(:div.title-empty)))
          ,toc
          ,content
          ,nav))))))
