@@ -1,6 +1,6 @@
 * one.el
 :PROPERTIES:
-:ONE: one-default-doc
+:ONE: one-default-with-sidebar
 :CUSTOM_ID: /
 :END:
 ** Static Site Generator for Emacs Lisp programmers
@@ -186,6 +186,8 @@ project's structure is now:
     │   ├── default-home-list-pages
     │   │   └── index.html
     │   ├── one-default-doc
+    │   │   └── index.html
+    │   ├── one-default-with-sidebar
     │   │   └── index.html
     │   └── one-default-with-toc
     │       └── index.html
@@ -390,8 +392,10 @@ instead of the dummy ~hello-world~ function:
   to the previous page, the next page or a random one,
 - ~one-default-with-toc~: same as ~one-default~ but with a table of
   content at the top of the page and
-- ~one-default-doc~: same as ~one-default-with-toc~ but with a sidebar
+- ~one-default-with-sidebar~: same as ~one-default~ but with a sidebar
   listing all the pages in the website,
+- ~one-default-doc~: same as ~one-default-with-sidebar~ but with a table
+  of content at the top of the page.
 
 Those default render functions use [[#/docs/one-ox/][one-ox]] custom org export backend and
 ~one-default-css~ custom CSS style sheet.
@@ -529,19 +533,21 @@ The page "Page 1" has been generated:
   <body>
     <div class="header"><a href="/">Home</a></div>
     <div class="content">
-      <div class="title"><h1>Page 1</h1></div>
+      <div class="title">
+        <div class="title"><h1>Page 1</h1></div>
+      </div>
       <div></div>
       <div>
-        <h2 id="one-104059b5fa">Headline foo 1</h2>
+        <h2 id="one-df8f0f16cc">Headline foo 1</h2>
         <div>
           <p><a href="/blog/page-2/">Link to Page 2</a></p>
         </div>
       </div>
 
       <div>
-        <h2 id="one-d62da39881">Headline foo 2</h2>
+        <h2 id="one-9c2f3b8536">Headline foo 2</h2>
         <div>
-          <h3 id="one-da3a2ac94b">Headline bar</h3>
+          <h3 id="one-fe469dd578">Headline bar</h3>
           <div><p>Some content.</p></div>
         </div>
 
@@ -552,7 +558,10 @@ The page "Page 1" has been generated:
           </div>
         </div>
       </div>
-      <div class="nav"><a href="/blog/page-2/">NEXT</a></div>
+      <div class="nav">
+        <a href="/">PREV</a><a href="/">RANDOM</a
+        ><a href="/blog/page-2/">NEXT</a>
+      </div>
     </div>
   </body>
 </html>
@@ -580,11 +589,15 @@ The page "Page 2" has been generated:
   <body>
     <div class="header"><a href="/">Home</a></div>
     <div class="content">
-      <div class="title"><h1>Page 2</h1></div>
+      <div class="title">
+        <div class="title"><h1>Page 2</h1></div>
+      </div>
       <div>
         <p><a href="/blog/page-1/#baz">Link to Headline baz in Page 1</a></p>
       </div>
-      <div class="nav"><a href="/blog/page-1/">PREV</a></div>
+      <div class="nav">
+        <a href="/blog/page-1/">PREV</a><a href="/">RANDOM</a>
+      </div>
     </div>
   </body>
 </html>
@@ -676,7 +689,9 @@ that data structure into a HTML string which was written on the file
 
 #+BEGIN_SRC emacs-lisp
 (defun one-default (page-tree pages _global)
-  ""
+  "Default render function.
+
+See `one-is-page', `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
@@ -694,7 +709,10 @@ that data structure into a HTML string which was written on the file
        (:body
         (:div.header (:a (@ :href "/") ,website-name))
         (:div.content
-         (:div.title (:h1 ,title))
+         (:div.title
+          ,(if (not (string= path "/"))
+               `(:div.title (:h1 ,title))
+             '(:div.title-empty)))
          ,content
          ,nav))))))
 #+END_SRC
