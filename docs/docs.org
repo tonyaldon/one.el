@@ -1485,7 +1485,7 @@ Considering the following org document
 :ONE: one-default
 :CUSTOM_ID: /blog/page-1/
 :END:
-,** headline 1 in page Page 1
+,** headline 1 in Page 1
 :PROPERTIES:
 :CUSTOM_ID: /blog/page-1/#headline-1
 :END:
