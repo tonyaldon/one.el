@@ -1000,7 +1000,7 @@ img {
   color: #ffffff;
 }
 
-/* -------- one-default, one-default-with-toc, one-default-doc -------- */
+/* -------- one-default, one-default-with-toc, one-default-with-sidebar, one-default-doc -------- */
 
 .nav {
   border-top: 1px solid #c5c5c5;
@@ -1052,9 +1052,9 @@ img {
   margin-bottom: 16px;
 }
 
-/* --------- one-default-doc --------- */
+/* --------- one-default-with-sidebar, one-default-doc --------- */
 
-#header-doc {
+#sidebar-header {
   color: #ffffff;
   font-size: 2em;
   font-weight: bold;
@@ -1071,13 +1071,13 @@ img {
   align-items: center;
 }
 
-#header-doc > a {
+#sidebar-header > a {
   color: inherit;
   cursor: pointer;
   text-decoration: none;
 }
 
-#header-doc > a:visited {
+#sidebar-header > a:visited {
   color: inherit;
 }
 
@@ -1090,7 +1090,7 @@ img {
   margin-right: 0.3em;
 }
 
-#content-doc {
+#sidebar-content {
   margin: 3.5rem auto;
   display: flex;
   margin-left: auto;
@@ -1202,10 +1202,10 @@ article {
   #sidebar {
     display: none;
   }
-  #content-doc {
+  #sidebar-content {
     justify-content: center;
   }
-  #header-doc {
+  #sidebar-header {
     justify-content: left;
   }
   article {
@@ -1545,10 +1545,19 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
          ,content
          ,nav))))))
 
-(defun one-default-doc (page-tree pages _global)
-  "Default render function with a table of content and a sidebar listing pages.
+(defun one-default-sidebar (page-tree pages _global &optional with-toc)
+  "Return a HTML string with PAGES listed in a sidebar.
 
-See `one-is-page', `one-render-pages', `one-default-css' and `one-default-pages'."
+The arguments PAGE-TREE, PAGES and _GLOBAL are the same as
+render functions take (See `one-is-page').
+
+When WITH-TOC is non-nil, add the table of content of PAGE-TREE
+in the HTML string.
+
+This function is meant to be used by `one-default-with-sidebar'
+and `one-default-doc' render functions.
+
+See `one-render-pages', `one-default-css' and `one-default-pages'."
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
@@ -1557,11 +1566,7 @@ See `one-is-page', `one-render-pages', `one-default-css' and `one-default-pages'
          (website-name (one-default-website-name pages))
          (pages-list (one-default-pages pages))
          (headlines (cdr (one-default-list-headlines page-tree)))
-         (toc (when headlines
-                `(:div.toc
-                  (:div
-                   (:div "Table of content")
-                   (:div ,(one-default-toc headlines))))))
+         (toc (one-default-toc-component headlines))
          (nav (one-default-nav path pages)))
     (jack-html
      "<!DOCTYPE html>"
@@ -1576,17 +1581,17 @@ See `one-is-page', `one-render-pages', `one-default-css' and `one-default-pages'
          (:div (:div "Pages"))
          ,pages-list)
         (:div/sidebar-main)
-        (:div/header-doc
+        (:div/sidebar-header
          (:svg/hamburger (@ :viewBox "0 0 24 24" :onclick "sidebarShow()")
           (:path (@ :d "M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z")))
          (:a (@ :href "/") ,website-name))
-        (:div/content-doc
+        (:div/sidebar-content
          (:div/sidebar ,pages-list)
          (:article
-          (:div.title
-           ,(when (not (string= path "/"))
-              `(:h1 ,title)))
-          ,toc
+          ,(if (not (string= path "/"))
+               `(:div.title (:h1 ,title))
+             '(:div.title-empty))
+          ,(when with-toc toc)
           ,content
           ,nav)))
        (:script "
@@ -1604,6 +1609,18 @@ function sidebarHide() {
   document.getElementById('sidebar-main').style.display = 'none';
 }
 ")))))
+
+(defun one-default-with-sidebar (page-tree pages _global)
+  "Default render function with a sidebar listing PAGES.
+
+See `one-default-sidebar'."
+  (one-default-sidebar page-tree pages _global))
+
+(defun one-default-doc (page-tree pages _global)
+  "Default render function with a sidebar listing PAGES and the table of content.
+
+See `one-default-sidebar'."
+  (one-default-sidebar page-tree pages _global 'with-toc))
 
 (defun one-default-pages (pages &optional filter)
   "Return `jack-html' list of PAGES component.
