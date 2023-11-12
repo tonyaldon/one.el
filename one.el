@@ -403,8 +403,14 @@ If HEADLINE is a page, return a plist with the properties
     compute those informations and to add them to `global'.
 
   You can see how to implement render functions looking at the
-  default render functions `one-default-home', `one-default',
-  `one-default-with-toc' and `one-default-doc'.
+  default render functions:
+
+  - `one-default-home',
+  - `one-default-home-list-pages'
+  - `one-default',
+  - `one-default-with-toc',
+  - `one-default-with-sidebar' and
+  - `one-default-doc'.
 
 - `:one-page-tree': the argument HEADLINE passed to `one-is-page'.
 
@@ -524,7 +530,8 @@ at `http://localhost:3000/blog/page-1/'.
 
 You can see how to implement render functions looking at the
 implementation of the default render functions `one-default-home',
-`one-default', `one-default-with-toc' and `one-default-doc'.
+`one-default-home-list-pages',`one-default', `one-default-with-toc',
+`one-default-with-sidebar' and `one-default-doc'.
 
 Note that `one-render-pages' doesn't copy files from
 `./assets/' directory to `./public/' directory.
@@ -1216,7 +1223,8 @@ article {
   "Default CSS style sheet.
 
 This style sheet is meant to be used with the default render functions
-`one-default-home',`one-default',`one-default-with-toc',`one-default-doc'.
+`one-default-home', `one-default-home-list-pages', `one-default',
+`one-default-with-toc', `one-default-with-sidebar' and `one-default-doc'.
 
 See `one-default-new-project' and `one-default-add-css-file'.")
 
@@ -1399,8 +1407,8 @@ See `one-default-new-project'.")
 
 See `one-default-new-project'.
 
-See the default render functions `one-default-home',`one-default',
-`one-default-with-toc',`one-default-doc'."
+See `one-default-home', `one-default-home-list-pages',`one-default',
+`one-default-with-toc', `one-default-with-sidebar' and `one-default-doc'."
   (interactive)
   (make-directory "assets" t)
   (with-temp-file "./assets/one.css" (insert one-default-css)))
@@ -1673,8 +1681,8 @@ This corresponds to the title (value of the property `:one-title')
 of the page in PAGES whom path is \"/\" (the home page).
 Return nil if the home page is not part of PAGES.
 
-See `one-default-home',`one-default',`one-default-with-toc'
-and `one-default-doc'."
+See `one-default-home', `one-default-home-list-pages', `one-default',
+`one-default-with-toc', `one-default-with-sidebar' and `one-default-doc'."
   (seq-some
    (lambda (page)
      (when (string= (plist-get page :one-path) "/")
@@ -1709,7 +1717,8 @@ returns (the \"RANDOM\" link could have been \"/\", \"/foo-1/\" or \"/foo-3/\")
      (:a (@ :href \"/foo-4/\") \"RANDOM\")
      (:a (@ :href \"/foo-3/\") \"NEXT\"))
 
-See `one-default',`one-default-with-toc' and `one-default-doc'."
+See `one-default', `one-default-with-toc', `one-default-with-sidebar'
+and `one-default-doc'."
 
   (let* ((pages-not-path
           (seq-remove
