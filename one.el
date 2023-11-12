@@ -29,10 +29,6 @@
 ;;     inlinetask, keyword, latex-environment, latex-fragment, line-break,
 ;;     node-property, planning, property-drawer, radio-target, special-block,
 ;;     statistics-cookie, table, table-cell, table-row,target, timestamp, verse-block
-;;
-;; As I don't export org files directly but via `one' HTML template system,
-;; I don't implement function for inner-template and template symbol use
-;; by org export when exporting files.
 
 ;;; Code
 
