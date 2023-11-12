@@ -1497,6 +1497,18 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
          ,content
          ,nav))))))
 
+(defun one-default-toc-component (headlines)
+  "Return the table of content from HEADLINES as a `jack-html' component.
+
+Return nil if HEADLINES is nil.
+
+See `one-default-list-headlines' and `one-default-toc'."
+  (when headlines
+    `(:div.toc
+      (:div
+       (:div "Table of content")
+       (:div ,(one-default-toc headlines))))))
+
 (defun one-default-with-toc (page-tree pages _global)
   "Default render function with a table of content.
 
