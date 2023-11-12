@@ -131,7 +131,7 @@
   (let* ((type (pcase (org-element-property :type plain-list)
                  (`ordered "ol")
                  (`unordered "ul")
-                 (other (error "`one' doesn't support list type: %s" other)))))
+                 (other (error "`one-ox' doesn't support list type: %s" other)))))
     (format "<%s>%s</%s>" type contents type)))
 
 (defun one-ox-item (_item contents _info)
@@ -270,7 +270,7 @@ INFO is a plist holding contextual information."
         (format "<a href=\"%s\">%s</a>"
                 href (or (org-string-nw-p desc) href)))))
 
-;;; Commands to build `one' web sites
+;;; Commands to build `one.el' web sites
 
 (defvar one-add-to-global
   '((:one-global-property :one-tree
@@ -379,7 +379,7 @@ we add the property `:one-internal-id' to each headline."
     tree))
 
 (defun one-is-page (headline)
-  "Return nil if HEADLINE element is not a `one' page.
+  "Return nil if HEADLINE element is not a `one.el' page.
 
 If HEADLINE is a page, return a plist with the properties
 `:one-title', `:one-path', `:one-render-page-function' and
@@ -396,10 +396,10 @@ If HEADLINE is a page, return a plist with the properties
   - `page-tree' which correspond to the data in `:one-page-tree',
   - `pages' list of pages,
   - `global' a plist of global informations that are computed once
-    when `one' website is built (before rendering the pages), see
+    when `one.el' website is built (before rendering the pages), see
     `one-render-pages' and `one-build'.  This argument can be
     modified by the user at build time.  That means that if your
-    render function needs extra information you can tell `one' to
+    render function needs extra information you can tell `one.el' to
     compute those informations and to add them to `global'.
 
   You can see how to implement render functions looking at the
@@ -531,7 +531,7 @@ Note that `one-render-pages' doesn't copy files from
 
 See `one-build'.
 
-If you want to start a new `one' project with the default style
+If you want to start a new `one.el' project with the default style
 see `one-default-new-project' command.
 
 Note: I use https://browsersync.io to serve the website in `./public/'
@@ -1403,7 +1403,7 @@ See the default render functions `one-default-home',`one-default',
 
 ;;;###autoload
 (defun one-default-new-project ()
-  "Initialize a new `one' project in the current directory with the default style.
+  "Initialize a new `one.el' project in the current directory with the default style.
 
 It is structured like this:
 
@@ -1415,7 +1415,7 @@ It is structured like this:
 The content of the file `./assets/one.css' is `one-default-css'.
 The content of the file `./one.org' is `one-default-org-content'.
 
-Once you've initialized this new `one' project, you can build it
+Once you've initialized this new `one.el' project, you can build it
 calling `one-build' command while visiting the file `./one.org'.
 This results in producing the website under the subdirectory `./public/'.
 
