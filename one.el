@@ -30,7 +30,7 @@
 ;;     node-property, planning, property-drawer, radio-target, special-block,
 ;;     statistics-cookie, table, table-cell, table-row,target, timestamp, verse-block
 
-;;; Code
+;;; Code:
 
 (require 'jack)
 (require 'ox)
@@ -86,9 +86,13 @@
 ;;;; headline, section, paragraph, etc.
 
 (defun one-ox-headline (headline contents _info)
-  ;; Note that markups and links are not exported if
-  ;; used in headlines, only the raw value string.
-  ;; So don't use them in headlines.
+  "Transcode a HEADLINE element from Org to HTML.
+
+CONTENTS holds the contents of the headline.
+
+Note that markups and links are not exported if used in headlines,
+only the raw value string.  So don't use them in headlines."
+
   (let* ((level (org-element-property :level headline))
          (title (org-element-property :raw-value headline))
          ;; the property `:one-internal-id' is set by
@@ -99,35 +103,61 @@
     (format "<div><h%s id=\"%s\">%s</h%s>%s</div>" level id title level ct)))
 
 (defun one-ox-section (_section contents _info)
+  "Transcode a SECTION element from Org to HTML.
+
+CONTENTS holds the contents of the section."
   (if (null contents) "" (format "<div>%s</div>" contents)))
 
 (defun one-ox-paragraph (_paragraph contents _info)
+  "Transcode a PARAGRAPH element from Org to HTML.
+
+CONTENTS is the contents of the paragraph, as a string."
   (format "<p>%s</p>" contents))
 
 (defun one-ox-plain-text (text _info)
+  "Transcode a TEXT string from Org to HTML.
+
+TEXT is the string to transcode."
   (one-escape text))
 
 (defun one-ox-bold (_bold contents _info)
+  "Transcode BOLD from Org to HTML.
+
+CONTENTS is the text with bold markup."
   (format "<b>%s</b>" contents))
 
 (defun one-ox-italic (_italic contents _info)
+  "Transcode ITALIC from Org to HTML.
+
+CONTENTS is the text with italic markup."
   (format "<i>%s</i>" contents))
 
 (defun one-ox-strike-through (_strike-through contents _info)
+  "Transcode STRIKE-THROUGH from Org to HTML.
+
+CONTENTS is the text with strike-through markup."
   (format "<del>%s</del>" contents))
 
 (defun one-ox-underline (_underline contents _info)
+  "Transcode UNDERLINE from Org to HTML.
+
+CONTENTS is the text with underline markup."
   (format "<u>%s</u>" contents))
 
 (defun one-ox-code (code _contents _info)
+  "Transcode CODE from Org to HTML."
   (format "<code class=\"one-hl one-hl-inline\">%s</code>"
           (one-escape (org-element-property :value code))))
 
 (defun one-ox-verbatim (verbatim _contents _info)
+  "Transcode VERBATIM from Org to HTML."
   (format "<code class=\"one-hl one-hl-inline\">%s</code>"
           (one-escape (org-element-property :value verbatim))))
 
 (defun one-ox-plain-list (plain-list contents _info)
+  "Transcode a PLAIN-LIST element from Org to HTML.
+
+CONTENTS is the contents of the list."
   (let* ((type (pcase (org-element-property :type plain-list)
                  (`ordered "ol")
                  (`unordered "ul")
@@ -135,18 +165,28 @@
     (format "<%s>%s</%s>" type contents type)))
 
 (defun one-ox-item (_item contents _info)
+  "Transcode an ITEM element from Org to HTML.
+
+CONTENTS holds the contents of the item."
   (format "<li>%s</li>" contents))
 
 (defun one-ox-no-subscript (_subscript contents _info)
+  "Transcode a SUBSCRIPT object from Org to HTML.
+
+CONTENTS is the contents of the object."
   (concat "_" contents))
 
 (defun one-ox-no-superscript (_superscript contents _info)
+  "Transcode a SUPERSCRIPT object from Org to HTML.
+
+CONTENTS is the contents of the object."
   (concat "^" contents))
 
 ;;;; blocks
 
 (defun one-ox-fontify-code (code lang)
   "Color CODE with htmlize library.
+
 CODE is a string representing the source code to colorize.  LANG
 is the language used for CODE, as a string, or nil."
   (when code
@@ -217,6 +257,9 @@ If nil, the CSS class is `one-hl one-hl-block'."
     (one-ox-htmlize code lang is-results-p)))
 
 (defun one-ox-quote-block (_quote-block contents _info)
+  "Transcode a QUOTE-BLOCK element from Org to HTML.
+
+CONTENTS holds the contents of the block."
   (format "<blockquote class=\"one-blockquote\">%s</blockquote>" contents))
 
 ;;;; links
@@ -433,7 +476,9 @@ are pages."
     (lambda (headline) (one-is-page headline))))
 
 (defun one-render-page (page pages global)
-  ""
+  "Render the webpage PAGE.
+
+See `one-is-page' for the meaning of PAGES and GLOBAL argument."
   (let* ((path (concat "./public" (plist-get page :one-path)))
          (file (concat path "index.html"))
          (render-page-function (plist-get page :one-render-page-function))
@@ -1472,7 +1517,7 @@ See `one-default-home', `one-default-home-list-pages',`one-default',
 
 ;;;###autoload
 (defun one-default-new-project ()
-  "Initialize a new `one.el' project in the current directory with the default style.
+  "Initialize a new project in the current directory with the default style.
 
 It is structured like this:
 
@@ -1497,7 +1542,9 @@ See `one-render-pages'."
 (defun one-default-home (page-tree pages _global)
   "Default render function to use in the home page.
 
-See `one-is-page', `one-render-pages' and `one-default-css'."
+See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+
+Also see `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
@@ -1518,7 +1565,9 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
 (defun one-default-home-list-pages (page-tree pages _global)
   "Default render function to use in the home page that lists pages.
 
-See `one-is-page', `one-render-pages' and `one-default-css'."
+See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+
+Also see `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (content (org-export-data-with-backend
                    (org-element-contents page-tree)
@@ -1542,7 +1591,9 @@ See `one-is-page', `one-render-pages' and `one-default-css'."
 (defun one-default (page-tree pages _global)
   "Default render function.
 
-See `one-is-page', `one-render-pages' and `one-default-css'."
+See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+
+Also see `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
@@ -1582,7 +1633,9 @@ See `one-default-list-headlines' and `one-default-toc'."
 (defun one-default-with-toc (page-tree pages _global)
   "Default render function with a table of content.
 
-See `one-is-page', `one-render-pages' and `one-default-css'."
+See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+
+Also see `one-render-pages' and `one-default-css'."
   (let* ((title (org-element-property :raw-value page-tree))
          (path (org-element-property :CUSTOM_ID page-tree))
          (content (org-export-data-with-backend
@@ -1678,13 +1731,17 @@ function sidebarHide() {
 (defun one-default-with-sidebar (page-tree pages _global)
   "Default render function with a sidebar listing PAGES.
 
-See `one-default-sidebar'."
+See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+
+Also see `one-default-sidebar', `one-render-pages' and `one-default-css'."
   (one-default-sidebar page-tree pages _global))
 
 (defun one-default-doc (page-tree pages _global)
   "Default render function with a sidebar listing PAGES and the table of content.
 
-See `one-default-sidebar'."
+See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+
+Also see `one-default-sidebar', `one-render-pages' and `one-default-css'."
   (one-default-sidebar page-tree pages _global 'with-toc))
 
 (defun one-default-pages (pages &optional filter)
