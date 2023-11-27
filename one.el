@@ -2,7 +2,7 @@
 ;;
 ;; Copyright (C) 2021-2022 Tony Aldon
 
-;; Author: Tony Aldon <tony.aldon.adm@gmail.com>
+;; Author: Tony Aldon <tony@tonyaldon.com>
 ;; Version: 0.0
 ;; Package-Requires: ((emacs "28.1") (jack "1.0") (htmlize "1.57"))
 ;; Keywords: html, org, static-site, blog
@@ -23,7 +23,9 @@
 
 ;;; Commentary:
 ;;
-;; the following org-element nodes are not supported:
+;; You can find the documentation at https://one.tonyaldon.com.
+;;
+;; The following org-element nodes are not supported:
 ;;     center-block, clock, drawer, dynamic-block, entity, export-block,
 ;;     export-snippet, footnote-reference, horizontal-rule, inline-src-block,
 ;;     inlinetask, keyword, latex-environment, latex-fragment, line-break,
