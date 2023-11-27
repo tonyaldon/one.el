@@ -3,7 +3,7 @@
 ;; Copyright (C) 2021-2022 Tony Aldon
 
 ;; Author: Tony Aldon <tony@tonyaldon.com>
-;; Version: 0.0
+;; Version: 1.0
 ;; Package-Requires: ((emacs "28.1") (jack "1.0") (htmlize "1.57"))
 ;; Keywords: html, org, static-site, blog
 ;; Homepage: https://github.com/tonyaldon/one.el
