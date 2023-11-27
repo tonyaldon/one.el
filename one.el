@@ -1730,21 +1730,21 @@ function sidebarHide() {
 }
 ")))))
 
-(defun one-default-with-sidebar (page-tree pages _global)
+(defun one-default-with-sidebar (page-tree pages global)
   "Default render function with a sidebar listing PAGES.
 
-See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+See `one-is-page' for the meaning of PAGE-TREE and GLOBAL.
 
 Also see `one-default-sidebar', `one-render-pages' and `one-default-css'."
-  (one-default-sidebar page-tree pages _global))
+  (one-default-sidebar page-tree pages global))
 
-(defun one-default-doc (page-tree pages _global)
+(defun one-default-doc (page-tree pages global)
   "Default render function with a sidebar listing PAGES and the table of content.
 
-See `one-is-page' for the meaning of PAGE-TREE and PAGES.
+See `one-is-page' for the meaning of PAGE-TREE and GLOBAL.
 
 Also see `one-default-sidebar', `one-render-pages' and `one-default-css'."
-  (one-default-sidebar page-tree pages _global 'with-toc))
+  (one-default-sidebar page-tree pages global 'with-toc))
 
 (defun one-default-pages (pages &optional filter)
   "Return `jack-html' list of PAGES component.
