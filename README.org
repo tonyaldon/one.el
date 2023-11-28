@@ -6,3 +6,10 @@ Check the docs: https://one.tonyaldon.com.
 Note that the docs are built using ~one.el~ itself.  To build them,
 visit [[./docs/docs.org]] and call ~one-build~ command.  This will build the
 docs under ~./docs/public/~ subdirectory.
+
+To run the tests, visit [[./one-tests.el]] and call the ~eval-buffer~
+and ~ert~ commands like this:
+
+- M-x eval-buffer
+- M-x ert RET RET
+
