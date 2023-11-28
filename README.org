@@ -13,3 +13,4 @@ and ~ert~ commands like this:
 - M-x eval-buffer
 - M-x ert RET RET
 
+Check the [[./LICENSE]].
