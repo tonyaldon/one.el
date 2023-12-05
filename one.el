@@ -200,7 +200,7 @@ is the language used for CODE, as a string, or nil."
                     (with-temp-buffer
                       (funcall lang-mode)
                       (insert code)
-                      (org-font-lock-ensure)
+                      (font-lock-ensure)
                       (org-src-mode)
                       (set-buffer-modified-p nil)
                       (let* ((htmlize-output-type 'css)
