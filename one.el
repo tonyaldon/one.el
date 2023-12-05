@@ -685,7 +685,7 @@ Doesn't move point nor change the match data."
   (save-match-data
     (save-excursion
       (org-with-wide-buffer
-       (goto-char (point-at-bol))
+       (goto-char (line-beginning-position))
        (when (not (looking-at "^\\* "))
          (search-backward-regexp "^\\* " nil t))
        (org-element-property :CUSTOM_ID (org-element-at-point))))))
