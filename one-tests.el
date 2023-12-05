@@ -1,5 +1,6 @@
 ;;; require
 
+(require 'one)
 (require 'ert)
 (require 'cl) ; flet
 
