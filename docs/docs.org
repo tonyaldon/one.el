@@ -5,6 +5,8 @@
 :END:
 ** Static Site Generator for Emacs Lisp programmers
 
+[[youtube:GGP2mxZn4mY]]
+
 Have you ever wanted to write a blog:
 
 - contained in a unique org file,
