@@ -5,7 +5,7 @@
 ;; Author: Tony Aldon <tony@tonyaldon.com>
 ;; Version: 1.0
 ;; Package-Requires: ((emacs "28.1") (jack "1.0") (htmlize "1.57"))
-;; Keywords: html, org, static-site, blog
+;; Keywords: hypermedia, outlines
 ;; Homepage: https://github.com/tonyaldon/one.el
 
 ;; This program is free software: you can redistribute it and/or modify
