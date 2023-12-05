@@ -661,7 +661,7 @@ See `one-render-pages'."
                          (if one-path
                              (message "Build page `%s'...done" one-path)
                            (message "Build pages...done"))
-                       (message "%s, check buffer `*one*'"
+                       (message "%s, check buffer `%s'"
                                 (string-trim-right msg)
                                 (buffer-name (process-buffer process)))))))
     (with-temp-file org-content-file (insert org-content))
@@ -752,7 +752,7 @@ See `one-build'."
                      (internal-default-process-sentinel process msg)
                      (if (string-match-p "finished" msg)
                          (message "Build pages...done")
-                       (message "%s, check buffer `*one*'"
+                       (message "%s, check buffer `%s'"
                                 (string-trim-right msg)
                                 (buffer-name (process-buffer process)))))))
     (with-temp-file org-content-file (insert org-content))
