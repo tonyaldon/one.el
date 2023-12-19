@@ -129,6 +129,7 @@ all built with ~one.el~.
 :ONE: one-default-doc
 :CUSTOM_ID: /docs/install-one-el/
 :END:
+** Manually
 
 ~one.el~ depends on [[https://jack.tonyaldon.com/][jack]] and [[https://github.com/hniksic/emacs-htmlize][htmlize]] packages that are available on
 [[https://melpa.org/][Melpa]].  Once you have them installed you can add ~one.el~ to your
@@ -139,13 +140,31 @@ all built with ~one.el~.
 (require 'one)
 #+END_SRC
 
+** With package-install
+
+~one.el~ is also available on [[https://melpa.org/][Melpa]] so you can install it like this:
+
+#+BEGIN_SRC text
+M-x package-install <RET> one <RET>
+#+END_SRC
+
+** With straight.el
+
 If you're using [[https://github.com/radian-software/straight.el][straight.el]], to install ~one.el~ you just have to add
 this sexp to your init file:
 
 #+BEGIN_SRC emacs-lisp
 (straight-use-package
- '(one :type git :host github :repo "tonyaldon/one.el"))
+ '(one :type git :host github :repo "tonyaldon/one.el"
+       :build (:not compile)))
 #+END_SRC
+
+Note that ~:build (:not compile)~ is important.  It tells ~straight.el~
+not to byte compile ~one.el~.  Something happened in ~straight.el~
+between commits ~3eca39d~ and ~b3760f5~ which broke byte compilation of
+~one.el~ if done by ~straight.el~.
+
+** Let's go
 
 Now you can create a new website by calling ~one-default-new-project~
 (preferably in an empty directory) and you can build it by calling
