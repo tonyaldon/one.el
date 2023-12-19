@@ -1,19 +1,45 @@
-<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Install one.el</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="sidebar-header"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="sidebar-content"><div id="sidebar"><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>Install one.el</h1></div><div><p><code class="one-hl one-hl-inline">one.el</code> depends on <a href="https://jack.tonyaldon.com/">jack</a> and <a href="https://github.com/hniksic/emacs-htmlize">htmlize</a> packages that are available on
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Install one.el</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="sidebar-header"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="sidebar-content"><div id="sidebar"><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>Install one.el</h1></div><div class="toc"><div><div>Table of content</div><div>
+<ul>
+<li><a href="#one-f04e15bc3b">Manually</a></li>
+<li><a href="#one-eff59a834">With package-install</a></li>
+<li><a href="#one-49e76ed24a">With straight.el</a></li>
+<li><a href="#one-10672fe71f">Let's go</a></li>
+</ul>
+</div></div></div><div></div>
+<div><h2 id="one-f04e15bc3b">Manually</h2><div><p><code class="one-hl one-hl-inline">one.el</code> depends on <a href="https://jack.tonyaldon.com/">jack</a> and <a href="https://github.com/hniksic/emacs-htmlize">htmlize</a> packages that are available on
 <a href="https://melpa.org/">Melpa</a>.  Once you have them installed you can add <code class="one-hl one-hl-inline">one.el</code> to your
 <code class="one-hl one-hl-inline">load-path</code> and require it like this:
 </p>
 
 <pre><code class="one-hl one-hl-block">(add-to-list 'load-path <span class="one-hl-string">"/path/to/one.el/"</span>)
 (<span class="one-hl-keyword">require</span> '<span class="one-hl-constant">one</span>)</code></pre>
+</div>
+</div>
 
-<p>If you&apos;re using <a href="https://github.com/radian-software/straight.el">straight.el</a>, to install <code class="one-hl one-hl-inline">one.el</code> you just have to add
+<div><h2 id="one-eff59a834">With package-install</h2><div><p><code class="one-hl one-hl-inline">one.el</code> is also available on <a href="https://melpa.org/">Melpa</a> so you can install it like this:
+</p>
+
+<pre><code class="one-hl one-hl-block">M-x package-install &lt;RET&gt; one &lt;RET&gt;</code></pre>
+</div>
+</div>
+
+<div><h2 id="one-49e76ed24a">With straight.el</h2><div><p>If you&apos;re using <a href="https://github.com/radian-software/straight.el">straight.el</a>, to install <code class="one-hl one-hl-inline">one.el</code> you just have to add
 this sexp to your init file:
 </p>
 
 <pre><code class="one-hl one-hl-block">(straight-use-package
- '(one <span class="one-hl-ta-colon-keyword">:type</span> git <span class="one-hl-ta-colon-keyword">:host</span> github <span class="one-hl-ta-colon-keyword">:repo</span> <span class="one-hl-string">"tonyaldon/one.el"</span>))</code></pre>
+ '(one <span class="one-hl-ta-colon-keyword">:type</span> git <span class="one-hl-ta-colon-keyword">:host</span> github <span class="one-hl-ta-colon-keyword">:repo</span> <span class="one-hl-string">"tonyaldon/one.el"</span>
+       <span class="one-hl-ta-colon-keyword">:build</span> (<span class="one-hl-ta-colon-keyword">:not</span> compile)))</code></pre>
 
-<p>Now you can create a new website by calling <code class="one-hl one-hl-inline">one-default-new-project</code>
+<p>Note that <code class="one-hl one-hl-inline">:build (:not compile)</code> is important.  It tells <code class="one-hl one-hl-inline">straight.el</code>
+not to byte compile <code class="one-hl one-hl-inline">one.el</code>.  Something happened in <code class="one-hl one-hl-inline">straight.el</code>
+between commits <code class="one-hl one-hl-inline">3eca39d</code> and <code class="one-hl one-hl-inline">b3760f5</code> which broke byte compilation of
+<code class="one-hl one-hl-inline">one.el</code> if done by <code class="one-hl one-hl-inline">straight.el</code>.
+</p>
+</div>
+</div>
+
+<div><h2 id="one-10672fe71f">Let's go</h2><div><p>Now you can create a new website by calling <code class="one-hl one-hl-inline">one-default-new-project</code>
 (preferably in an empty directory) and you can build it by calling
 <code class="one-hl one-hl-inline">one-build</code> command.
 </p>
@@ -22,8 +48,9 @@ this sexp to your init file:
 page might be helpful.
 </p>
 </div>
+</div>
 
-<div class="nav"><a href="/">PREV</a><a href="/docs/one-ox-links/">RANDOM</a><a href="/docs/getting-started/">NEXT</a></div></article></div></body><script>
+<div class="nav"><a href="/">PREV</a><a href="/docs/getting-started/">RANDOM</a><a href="/docs/getting-started/">NEXT</a></div></article></div></body><script>
 function sidebarShow() {
   if (window.innerWidth < 481)
     document.getElementById('sidebar-left').style.width = '75vw';
