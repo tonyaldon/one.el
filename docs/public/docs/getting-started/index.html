@@ -1,16 +1,16 @@
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Getting started</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="sidebar-header"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="sidebar-content"><div id="sidebar"><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>Getting started</h1></div><div class="toc"><div><div>Table of content</div><div>
 <ul>
-<li><a href="#one-a34568ad01">Start a new project</a></li>
-<li><a href="#one-c3f017529">Modify the content with live reloading</a></li>
-<li><a href="#one-efb5845c29">CSS style sheet</a>
+<li><a href="#one-fff84715f6">Start a new project</a></li>
+<li><a href="#one-ced66c2cf7">Modify the content with live reloading</a></li>
+<li><a href="#one-ad763b19d6">CSS style sheet</a>
 <ul>
-<li><a href="#one-9ae9a1632e">Modify the CSS style sheet with live reloading</a></li>
-<li><a href="#one-480a4a97ee">Source blocks</a></li>
+<li><a href="#one-7485554214">Modify the CSS style sheet with live reloading</a></li>
+<li><a href="#one-1aac4eaf20">Source blocks</a></li>
 </ul>
 </li>
 </ul>
 </div></div></div><div></div>
-<div><h2 id="one-a34568ad01">Start a new project</h2><div><p>By calling <code class="one-hl one-hl-inline">one-default-new-project</code> command (preferably in an empty
+<div><h2 id="one-fff84715f6">Start a new project</h2><div><p>By calling <code class="one-hl one-hl-inline">one-default-new-project</code> command (preferably in an empty
 directory) we produce a new <code class="one-hl one-hl-inline">one.el</code> project with the following
 structure:
 </p>
@@ -46,7 +46,7 @@ project&apos;s structure is now:
 </div>
 </div>
 
-<div><h2 id="one-c3f017529">Modify the content with live reloading</h2><div><p>To get our website up and running, we serve the files in <code class="one-hl one-hl-inline">./public/</code>
+<div><h2 id="one-ced66c2cf7">Modify the content with live reloading</h2><div><p>To get our website up and running, we serve the files in <code class="one-hl one-hl-inline">./public/</code>
 subdirectory using <a href="https://browsersync.io">brower-sync</a> (any webserver serving files is OK).
 Once we have it installed, to start a webserver with live reloading,
 we run the following commands (in a terminal):
@@ -69,7 +69,7 @@ commands <code class="one-hl one-hl-inline">one-build-async</code>, <code class=
 </div>
 </div>
 
-<div><h2 id="one-efb5845c29">CSS style sheet</h2><div><p>When we call <code class="one-hl one-hl-inline">one-build</code> (or <code class="one-hl one-hl-inline">one-build-async</code>) command the pages of the
+<div><h2 id="one-ad763b19d6">CSS style sheet</h2><div><p>When we call <code class="one-hl one-hl-inline">one-build</code> (or <code class="one-hl one-hl-inline">one-build-async</code>) command the pages of the
 website are rendered in the directory <code class="one-hl one-hl-inline">./public/</code> and the files in
 <code class="one-hl one-hl-inline">./assets/</code> directory are copied into <code class="one-hl one-hl-inline">./public/</code> subdirectory.
 </p>
@@ -86,7 +86,7 @@ with <code class="one-hl one-hl-inline">one-build</code>, <code class="one-hl on
 </p>
 </div>
 
-<div><h3 id="one-9ae9a1632e">Modify the CSS style sheet with live reloading</h3><div><p>To get the file <code class="one-hl one-hl-inline">./assets/one.css</code> copied into <code class="one-hl one-hl-inline">./public/</code> directory each
+<div><h3 id="one-7485554214">Modify the CSS style sheet with live reloading</h3><div><p>To get the file <code class="one-hl one-hl-inline">./assets/one.css</code> copied into <code class="one-hl one-hl-inline">./public/</code> directory each
 time we modify it we can use <a href="https://eradman.com/entrproject/">entr</a> utility like this (being at the root
 of our project):
 </p>
@@ -99,7 +99,7 @@ programmer experience.
 </div>
 </div>
 
-<div><h3 id="one-480a4a97ee">Source blocks</h3><div><p>When we use the default render functions and the default CSS style
+<div><h3 id="one-1aac4eaf20">Source blocks</h3><div><p>When we use the default render functions and the default CSS style
 sheet, the org content is exported into HTML strings using <code class="one-hl one-hl-inline">one-ox</code> org
 export backend.  Consequently, <code class="one-hl one-hl-inline">src-block</code> elements are highlighted
 using <a href="https://github.com/hniksic/emacs-htmlize">htmlize</a>.
@@ -111,7 +111,7 @@ using <a href="https://github.com/hniksic/emacs-htmlize">htmlize</a>.
 </div>
 </div>
 
-<div class="nav"><a href="/docs/install-one-el/">PREV</a><a href="/docs/one-ox-fixed-width-and-example-block/">RANDOM</a><a href="/docs/how-does-one-el-work/">NEXT</a></div></article></div></body><script>
+<div class="nav"><a href="/docs/install-one-el/">PREV</a><a href="/docs/how-does-one-el-work/">RANDOM</a><a href="/docs/how-does-one-el-work/">NEXT</a></div></article></div></body><script>
 function sidebarShow() {
   if (window.innerWidth < 481)
     document.getElementById('sidebar-left').style.width = '75vw';

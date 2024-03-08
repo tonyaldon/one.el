@@ -1,29 +1,35 @@
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Miscellaneous</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="sidebar-header"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="sidebar-content"><div id="sidebar"><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>Miscellaneous</h1></div><div class="toc"><div><div>Table of content</div><div>
 <ul>
-<li><a href="#one-9642a88c38">Page at point</a></li>
-<li><a href="#one-9a2613d8b2">onerc.el file</a></li>
+<li><a href="#one-7849b76119">Page at point</a></li>
+<li><a href="#one-5e7668f9">onerc.el file</a></li>
 <li><a href="#one-add-to-global">one-add-to-global</a></li>
-<li><a href="#one-9fe786e5e4">one-hook</a>
+<li><a href="#one-2bb1fb9f9c">one-hook</a>
 <ul>
-<li><a href="#one-af64bd8620">Example</a></li>
+<li><a href="#one-4b5c864e3">feed.xml example</a></li>
+<li><a href="#one-b384e1a8d3">robot.txt and sitemap.txt</a>
+<ul>
+<li><a href="#one-cec93f2132">robot.txt</a></li>
+<li><a href="#one-79c7819a9f">sitemap.txt</a></li>
 </ul>
 </li>
-<li><a href="#one-e75ec412aa">Async commands</a></li>
+</ul>
+</li>
+<li><a href="#one-aea745fd2f">Async commands</a></li>
 <li><a href="#extend-one-ox-org-backend">Extend one-ox org backend</a>
 <ul>
-<li><a href="#one-a74f33aad2">Extend one-ox with horizontal-rule org elements</a></li>
+<li><a href="#one-b24de69c14">Extend one-ox with horizontal-rule org elements</a></li>
 </ul>
 </li>
 </ul>
 </div></div></div><div></div>
-<div><h2 id="one-9642a88c38">Page at point</h2><div><p>If we need to render only the page at point, meaning the headline of
+<div><h2 id="one-7849b76119">Page at point</h2><div><p>If we need to render only the page at point, meaning the headline of
 level 1 with <code class="one-hl one-hl-inline">ONE</code> and <code class="one-hl one-hl-inline">CUSTOM_ID</code> org properties set, we can use the
 commands <code class="one-hl one-hl-inline">one-render-page-at-point</code> and <code class="one-hl one-hl-inline">one-render-page-at-point-async</code>.
 </p>
 </div>
 </div>
 
-<div><h2 id="one-9a2613d8b2">onerc.el file</h2><div><p>We can use an Emacs Lisp file called <code class="one-hl one-hl-inline">onerc.el</code> to customize our
+<div><h2 id="one-5e7668f9">onerc.el file</h2><div><p>We can use an Emacs Lisp file called <code class="one-hl one-hl-inline">onerc.el</code> to customize our
 website.  It must be in the same directory of the org file containing
 the content of our website.
 </p>
@@ -93,7 +99,7 @@ passed to the render functions.
 </div>
 </div>
 
-<div><h2 id="one-9fe786e5e4">one-hook</h2><div><p>Each function in <code class="one-hl one-hl-inline">one-hook</code> is called once in <code class="one-hl one-hl-inline">one-render-pages</code>.
+<div><h2 id="one-2bb1fb9f9c">one-hook</h2><div><p>Each function in <code class="one-hl one-hl-inline">one-hook</code> is called once in <code class="one-hl one-hl-inline">one-render-pages</code>.
 </p>
 
 <p>Those functions take three arguments:
@@ -115,15 +121,82 @@ that argument has been let binded using <code class="one-hl one-hl-inline">one-a
 </p>
 </div>
 
-<div><h3 id="one-af64bd8620">Example</h3><div><p>This hook is used to build <code class="one-hl one-hl-inline">feed.xml</code> file of <a href="https://minibuffer.tonyaldon.com">minibuffer.tonyaldon.com</a>
+<div><h3 id="one-4b5c864e3">feed.xml example</h3><div><p>This hook is used to build <code class="one-hl one-hl-inline">feed.xml</code> file of <a href="https://minibuffer.tonyaldon.com">minibuffer.tonyaldon.com</a>
 website.  You can check <code class="one-hl one-hl-inline">onerc.el</code> file of
 <a href="https://github.com/tonyaldon/minibuffer.tonyaldon.com">tonyaldon/minibuffer.tonyaldon.com</a> repository to see how it is done.
 </p>
 </div>
 </div>
+
+<div><h3 id="one-b384e1a8d3">robot.txt and sitemap.txt</h3><div><p>If we want to add a <code class="one-hl one-hl-inline">sitemap.txt</code> file to our website we can do so using
+<code class="one-hl one-hl-inline">one-hook</code>.
+</p>
 </div>
 
-<div><h2 id="one-e75ec412aa">Async commands</h2><div><p>The function <code class="one-hl one-hl-inline">one-render-pages-async</code> and <code class="one-hl one-hl-inline">one-build-async</code> spawn an
+<div><h4 id="one-cec93f2132">robot.txt</h4><div><p>First we need to indicate in a <code class="one-hl one-hl-inline">robots.txt</code> where our <code class="one-hl one-hl-inline">sitemap.txt</code> is
+located.
+</p>
+
+<p>Assuming our website is <code class="one-hl one-hl-inline">https://example.com</code> and our <code class="one-hl one-hl-inline">sitemap.txt</code> file
+is at the root of it, we can add the following <code class="one-hl one-hl-inline">robots.txt</code> file in the
+<code class="one-hl one-hl-inline">assets</code> directory (<code class="one-hl one-hl-inline">./assets/robots.txt</code>):
+</p>
+
+<pre><code class="one-hl one-hl-block">User-Agent: *
+Allow: /
+Sitemap: https://domain.com/sitemap.txt</code></pre>
+</div>
+</div>
+
+<div><h4 id="one-79c7819a9f">sitemap.txt</h4><div><p>Now in <code class="one-hl one-hl-inline">onerc.el</code> file:
+</p>
+
+<ol><li><p>we set our domain with protocol in the variable <code class="one-hl one-hl-inline">domain</code>,
+</p>
+</li>
+<li><p>then we define <code class="one-hl one-hl-inline">make-sitemap</code> function which will create the file
+<code class="one-hl one-hl-inline">sitemap.txt</code> in the <code class="one-hl one-hl-inline">public</code> directory (<code class="one-hl one-hl-inline">./public/sitemap.txt</code>) each
+time be build our website,
+</p>
+</li>
+<li><p>Finally, to tell <code class="one-hl one-hl-inline">one.el</code> to actually create <code class="one-hl one-hl-inline">sitemap.txt</code> file using
+<code class="one-hl one-hl-inline">make-sitemap</code> function each time be build our website, we add it
+to <code class="one-hl one-hl-inline">one-hook</code>:
+</p>
+</li>
+</ol>
+
+<pre><code class="one-hl one-hl-block">(<span class="one-hl-keyword">defvar</span> <span class="one-hl-variable-name">domain</span> <span class="one-hl-string">"https://example.com"</span>
+  <span class="one-hl-doc">"Domain with protocol to be used to produce sitemap file.
+
+See `</span><span class="one-hl-doc"><span class="one-hl-constant">make-sitemap</span></span><span class="one-hl-doc">'."</span>)
+
+(<span class="one-hl-keyword">defun</span> <span class="one-hl-function-name">make-sitemap</span> (pages tree global)
+  <span class="one-hl-doc">"Produce file ./public/sitemap.txt
+
+Global variable `</span><span class="one-hl-doc"><span class="one-hl-constant">domain</span></span><span class="one-hl-doc">' is used as domain with protocol.
+This function is meant to be added to `</span><span class="one-hl-doc"><span class="one-hl-constant">one-hook</span></span><span class="one-hl-doc">'."</span>
+  (<span class="one-hl-keyword">with-temp-file</span> <span class="one-hl-string">"./public/sitemap.txt"</span>
+    (insert
+     (mapconcat 'identity
+                (mapcar
+                 (<span class="one-hl-keyword">lambda</span> (page)
+                   (<span class="one-hl-keyword">let*</span> ((path (plist-get page <span class="one-hl-ta-colon-keyword">:one-path</span>))
+                          (link (concat domain path)))
+                     link))
+                 pages)
+                <span class="one-hl-string">"\n"</span>))))
+
+(add-hook 'one-hook 'make-sitemap)</code></pre>
+
+<p>Thanks <a href="https://github.com/tanrax">@tanrax</a> for the code snippet (see <a href="https://github.com/tonyaldon/one.el/issues/6">issue #6</a>).
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div><h2 id="one-aea745fd2f">Async commands</h2><div><p>The function <code class="one-hl one-hl-inline">one-render-pages-async</code> and <code class="one-hl one-hl-inline">one-build-async</code> spawn an
 <code class="one-hl one-hl-inline">emacs</code> subprocess in order to build html pages asynchronously.  The
 arguments passed to <code class="one-hl one-hl-inline">emacs</code> depends on <code class="one-hl one-hl-inline">one-emacs-cmd-line-args-async</code> value.
 </p>
@@ -192,7 +265,7 @@ transcoder functions.
 </p>
 </div>
 
-<div><h3 id="one-a74f33aad2">Extend one-ox with horizontal-rule org elements</h3><div><p>Lines consisting of only dashes (at least 5) are parsed by the org
+<div><h3 id="one-b24de69c14">Extend one-ox with horizontal-rule org elements</h3><div><p>Lines consisting of only dashes (at least 5) are parsed by the org
 parser as <code class="one-hl one-hl-inline">horizontal-rule</code> org elements.  <code class="one-hl one-hl-inline">one-ox</code> doesn&apos;t provide a
 transcoder function for <code class="one-hl one-hl-inline">horizontal-rule</code> so we can&apos;t use it directly if
 we want to have them exported as <code class="one-hl one-hl-inline">&lt;hr&gt;</code> tags in our website.
@@ -290,7 +363,7 @@ with <code class="one-hl one-hl-inline">&lt;hr&gt;</code> tags.
 </div>
 </div>
 
-<div class="nav"><a href="/docs/one-default-render-function/">PREV</a><a href="/docs/one-ox-plain-list/">RANDOM</a><a href="/docs/one-ox/">NEXT</a></div></article></div></body><script>
+<div class="nav"><a href="/docs/one-default-render-function/">PREV</a><a href="/docs/one-ox-links/">RANDOM</a><a href="/docs/one-ox/">NEXT</a></div></article></div></body><script>
 function sidebarShow() {
   if (window.innerWidth < 481)
     document.getElementById('sidebar-left').style.width = '75vw';
