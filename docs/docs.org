@@ -818,11 +818,70 @@ Those functions take three arguments:
 As those functions take ~global~ argument they are called after
 that argument has been let binded using ~one-add-to-global~.
 
-*** Example
+*** feed.xml example
 
 This hook is used to build ~feed.xml~ file of [[https://minibuffer.tonyaldon.com][minibuffer.tonyaldon.com]]
 website.  You can check ~onerc.el~ file of
 [[https://github.com/tonyaldon/minibuffer.tonyaldon.com][tonyaldon/minibuffer.tonyaldon.com]] repository to see how it is done.
+
+*** robot.txt and sitemap.txt
+
+If we want to add a ~sitemap.txt~ file to our website we can do so using
+~one-hook~.
+
+**** robot.txt
+
+First we need to indicate in a ~robots.txt~ where our ~sitemap.txt~ is
+located.
+
+Assuming our website is ~https://example.com~ and our ~sitemap.txt~ file
+is at the root of it, we can add the following ~robots.txt~ file in the
+~assets~ directory (~./assets/robots.txt~):
+
+#+BEGIN_SRC text
+User-Agent: *
+Allow: /
+Sitemap: https://domain.com/sitemap.txt
+#+END_SRC
+
+**** sitemap.txt
+
+Now in ~onerc.el~ file:
+
+1) we set our domain with protocol in the variable ~domain~,
+2) then we define ~make-sitemap~ function which will create the file
+   ~sitemap.txt~ in the ~public~ directory (~./public/sitemap.txt~) each
+   time be build our website,
+3) Finally, to tell ~one.el~ to actually create ~sitemap.txt~ file using
+   ~make-sitemap~ function each time be build our website, we add it
+   to ~one-hook~:
+
+#+BEGIN_SRC emacs-lisp
+(defvar domain "https://example.com"
+  "Domain with protocol to be used to produce sitemap file.
+
+See `make-sitemap'.")
+
+(defun make-sitemap (pages tree global)
+  "Produce file ./public/sitemap.txt
+
+Global variable `domain' is used as domain with protocol.
+This function is meant to be added to `one-hook'."
+  (with-temp-file "./public/sitemap.txt"
+    (insert
+     (mapconcat 'identity
+                (mapcar
+			           (lambda (page)
+			             (let* ((path (plist-get page :one-path))
+                          (link (concat domain path)))
+			               link))
+			           pages)
+                "\n"))))
+
+(add-hook 'one-hook 'make-sitemap)
+#+END_SRC
+
+Thanks [[https://github.com/tanrax][@tanrax]] for the code snippet (see [[https://github.com/tonyaldon/one.el/issues/6][issue #6]]).
 
 ** Async commands
 
