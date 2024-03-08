@@ -1601,6 +1601,7 @@ See `one-render-pages'."
      (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1.0, shrink-to-fit=no"))
      (:meta (@ :name "generator" :content "One.el"))
      (:title ,title)
+     ;; Styles
      (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css")))))
 
 (defun one-default-home (page-tree pages _global)
