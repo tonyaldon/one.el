@@ -483,6 +483,7 @@ If HEADLINE is a page, return a plist with the properties
 
 - `:one-title': the raw value of the first headline of HEADLINE,
 - `:one-path': the path of the page as a string,
+- `:one-date': the raw value of the date property,
 - `:one-render-page-function': the function to render the page as
   a symbol.  This function is declared in the org buffer for
   each page using the org property ONE.
@@ -513,9 +514,11 @@ If HEADLINE is a page, return a plist with the properties
 See `one-list-pages'."
   (when (= (org-element-property :level headline) 1)
     (when-let ((path (org-element-property :CUSTOM_ID headline))
-               (render-page-function (org-element-property :ONE headline)))
+                (render-page-function (org-element-property :ONE headline)))
+      (message (concat ">>>> " (org-element-property :DATE headline)))
       `(:one-title ,(org-element-property :raw-value headline)
-        :one-path ,path
+         :one-path ,path
+         :one-date ,(org-element-property :DATE headline)
         :one-render-page-function ,(intern render-page-function)
         :one-page-tree ,headline))))
 
