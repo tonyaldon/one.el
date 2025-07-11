@@ -380,20 +380,20 @@ img {
   display: flex;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1140px;
+  max-width: 950px;
   width: 100%;
   padding: 1em 16px;
 }
 
 #sidebar {
-  border-right: 2px solid #31424a;
+  position: fixed;
   top: 4.5rem;
-  position: sticky;
-  padding-top: 2.2em;
-  padding-bottom: 6em;
+  bottom: 1em;
+  left: calc((100vw - 950px)/2);
   width: 250px;
-  max-height: 100vh;
   overflow-y: auto;
+  padding: 2.2em 0 6em;
+  border-right: 2px solid #31424a;
 }
 
 #sidebar a {
@@ -419,6 +419,7 @@ img {
 }
 
 article {
+  margin-left: 250px;
   padding: 0 1.5em;
   max-width: 640px;
   width: 100%;
@@ -480,7 +481,7 @@ article {
   z-index: 2;
 }
 
-@media (max-width: 840px) {
+@media (max-width: 950px) {
   #hamburger {
     display: block;
   }
@@ -494,6 +495,7 @@ article {
     justify-content: left;
   }
   article {
-    padding: 0;
+    margin-left: 0;
+    padding: 0 1em;
   }
 }
