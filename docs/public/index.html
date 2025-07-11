@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one.el</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="sidebar-header"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="sidebar-content"><div id="sidebar"><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title-empty"></div><div></div>
-<div><h2 id="one-c1672d88a8">Static Site Generator for Emacs Lisp programmers</h2><div><p><iframe style="width:100%;aspect-ratio: 16 / 9;" src="https://www.youtube.com/embed/GGP2mxZn4mY?&amp;fs=1&amp;modestbranding=1&amp;rel=0&amp;widget_referrer=https://one.tonyaldon.com" title="YouTube video player playing " frameborder="0" allow="fullscreen;accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"></iframe>
+<div><h2 id="one-a350dda16a">Static Site Generator for Emacs Lisp programmers</h2><div><p><iframe style="width:100%;aspect-ratio: 16 / 9;" src="https://www.youtube.com/embed/GGP2mxZn4mY?&amp;fs=1&amp;modestbranding=1&amp;rel=0&amp;widget_referrer=https://one.tonyaldon.com" title="YouTube video player playing " frameborder="0" allow="fullscreen;accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"></iframe>
 </p>
 
 <p>Have you ever wanted to write a blog:
@@ -48,27 +48,27 @@ relying on <code class="one-hl one-hl-inline">one.el</code>.
 that we build by calling <code class="one-hl one-hl-inline">one-build</code> command while we are visiting it:
 </p>
 
-<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">* My website</span>
-<span class="one-hl-org-drawer">:PROPERTIES:</span>
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">&#9673; My website</span>
+ properties
 <span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default-home</span>
 <span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span>
-<span class="one-hl-org-drawer">:END:</span>
+ &#8901;
 
 Welcome to my website!
 
-<span class="one-hl-org-level-1">* Blog post 1</span>
-<span class="one-hl-org-drawer">:PROPERTIES:</span>
+&#9673;<span class="one-hl-org-level-1"> Blog post 1</span>
+ properties
 <span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default</span>
 <span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span><span class="one-hl-org-property-value"><span class="one-hl-italic">blog/page-1</span></span><span class="one-hl-org-property-value">/</span>
-<span class="one-hl-org-drawer">:END:</span>
+ &#8901;
 
 My first blog post!
 
-<span class="one-hl-org-level-1">* Blog post 2</span>
-<span class="one-hl-org-drawer">:PROPERTIES:</span>
+&#9673;<span class="one-hl-org-level-1"> Blog post 2</span>
+ properties
 <span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">one-default</span>
 <span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span><span class="one-hl-org-property-value"><span class="one-hl-italic">blog/page-2</span></span><span class="one-hl-org-property-value">/</span>
-<span class="one-hl-org-drawer">:END:</span>
+ &#8901;
 
 My second blog post!</code></pre>
 
@@ -172,7 +172,7 @@ works well if you want to build websites like
 </div>
 </div>
 
-<div class="nav"><a href="/docs/one-ox/">RANDOM</a><a href="/docs/install-one-el/">NEXT</a></div></article></div></body><script>
+<div class="nav"><a href="/docs/one-ox-links/">RANDOM</a><a href="/docs/install-one-el/">NEXT</a></div></article></div></body><script>
 function sidebarShow() {
   if (window.innerWidth < 481)
     document.getElementById('sidebar-left').style.width = '75vw';
