@@ -292,12 +292,12 @@ A simple example
      (string=
       (org-test-with-temp-text "[[./assets/images/one.png]]"
         (org-export-as backend))
-      "<p><img src=\"/images/one.png\" alt=\"/images/one.png\" /></p>\n"))
+      "<img src=\"/images/one.png\" alt=\"/images/one.png\" />\n"))
     (should
      (string=
       (org-test-with-temp-text "[[./assets/images/one.png][one image]]"
         (org-export-as backend))
-      "<p><img src=\"/images/one.png\" alt=\"one image\" /></p>\n"))))
+      "<img src=\"/images/one.png\" alt=\"one image\" />\n"))))
 
 (ert-deftest one-ox-link--custom-type-test ()
   ;; link type with an export function defined with `org-link-set-parameters'

@@ -361,7 +361,7 @@ INFO is a plist holding contextual information."
     (or custom-type-link
         (and
          (string-match one-ox-link-image-extensions path)
-         (format "<p><img src=\"%s\" alt=\"%s\" /></p>"
+         (format "<img src=\"%s\" alt=\"%s\" />"
                  href (or (org-string-nw-p desc) href)) )
         (format "<a href=\"%s\">%s</a>"
                 href (or (org-string-nw-p desc) href)))))
