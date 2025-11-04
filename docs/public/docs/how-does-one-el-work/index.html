@@ -51,16 +51,16 @@ like this.  In an empty directory, we create a file named <code class="one-hl on
 the following content:
 </p>
 
-<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">&#9673; The home page</span>
- properties
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-level-1">* The home page</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
 <span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">hello-world</span>
 <span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span>
- &#8901;
-&#9673;<span class="one-hl-org-level-1"> Blog post 1</span>
- properties
+<span class="one-hl-org-drawer">:END:</span>
+<span class="one-hl-org-level-1">* Blog post 1</span>
+<span class="one-hl-org-drawer">:PROPERTIES:</span>
 <span class="one-hl-org-special-keyword">:ONE:</span> <span class="one-hl-org-property-value">hello-world</span>
-<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value">/</span><span class="one-hl-org-property-value"><span class="one-hl-italic">blog/page-1</span></span><span class="one-hl-org-property-value">/</span>
- &#8901;</code></pre>
+<span class="one-hl-org-special-keyword">:CUSTOM_ID:</span> <span class="one-hl-org-property-value"><span class="one-hl-italic">/blog/page-1/</span></span>
+<span class="one-hl-org-drawer">:END:</span></code></pre>
 
 <p>We visit that file and call <code class="one-hl one-hl-inline">one-build</code> command.  It produces the
 following files
@@ -101,7 +101,7 @@ render functions.
 </p>
 </div>
 
-<div class="nav"><a href="/docs/getting-started/">PREV</a><a href="/docs/one-ox-src-block/">RANDOM</a><a href="/docs/one-default-render-function/">NEXT</a></div></article></div></body><script>
+<div class="nav"><a href="/docs/getting-started/">PREV</a><a href="/docs/one-ox-links/">RANDOM</a><a href="/docs/one-default-render-function/">NEXT</a></div></article></div></body><script>
 function sidebarShow() {
   if (window.innerWidth < 481)
     document.getElementById('sidebar-left').style.width = '75vw';

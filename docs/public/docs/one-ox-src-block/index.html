@@ -1,20 +1,20 @@
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>one-ox | src-block</title></head><body><div id="sidebar-left" onclick="followSidebarLink()"><div><div>Pages</div></div><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><div id="sidebar-main"></div><div id="sidebar-header"><svg id="hamburger" viewBox="0 0 24 24" onclick="sidebarShow()"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"></path></svg><a href="/">one.el</a></div><div id="sidebar-content"><div id="sidebar"><ul><li><a href="/">one.el</a></li><li><a href="/docs/install-one-el/">Install one.el</a></li><li><a href="/docs/getting-started/">Getting started</a></li><li><a href="/docs/how-does-one-el-work/">How does one.el work?</a></li><li><a href="/docs/one-default-render-function/">one-default render function</a></li><li><a href="/docs/miscellaneous/">Miscellaneous</a></li><li><a href="/docs/one-ox/">one-ox</a></li><li><a href="/docs/one-ox-headline/">one-ox | headline</a></li><li><a href="/docs/one-ox-src-block/">one-ox | src-block</a></li><li><a href="/docs/one-ox-quote-block/">one-ox | quote-block</a></li><li><a href="/docs/one-ox-fixed-width-and-example-block/">one-ox | fixed-width and example-block</a></li><li><a href="/docs/one-ox-links/">one-ox | links</a></li><li><a href="/docs/one-ox-plain-list/">one-ox | plain-list and item</a></li></ul></div><article><div class="title"><h1>one-ox | src-block</h1></div><div class="toc"><div><div>Table of content</div><div>
 <ul>
-<li><a href="#one-3713a23f87">Code highlighting with htmlize</a>
+<li><a href="#one-3e2ad9341f">Code highlighting with htmlize</a>
 <ul>
-<li><a href="#one-e6407ce9cb">Description</a></li>
-<li><a href="#one-4ec5f5d107">Example with Bash code</a></li>
+<li><a href="#one-a1d66bd310">Description</a></li>
+<li><a href="#one-6a59bcdd28">Example with Bash code</a></li>
 </ul>
 </li>
 <li><a href="#org-keywords-results-and-attr_one_results">Org keyword RESULTS</a>
 <ul>
-<li><a href="#one-2a36ac601f">Example using org keyword 'RESULTS'</a></li>
+<li><a href="#one-c245e8a890">Example using org keyword 'RESULTS'</a></li>
 </ul>
 </li>
-<li><a href="#one-4b6390e35b">Code blocks inside list</a></li>
+<li><a href="#one-e0e8ea6086">Code blocks inside list</a></li>
 </ul>
 </div></div></div><div></div>
-<div><h2 id="one-3713a23f87">Code highlighting with htmlize</h2><div><h3 id="one-e6407ce9cb">Description</h3><div><p><code class="one-hl one-hl-inline">one-ox</code> highlights code via the function <code class="one-hl one-hl-inline">one-ox-htmlize</code> that uses
+<div><h2 id="one-3e2ad9341f">Code highlighting with htmlize</h2><div><h3 id="one-a1d66bd310">Description</h3><div><p><code class="one-hl one-hl-inline">one-ox</code> highlights code via the function <code class="one-hl one-hl-inline">one-ox-htmlize</code> that uses
 <a href="https://github.com/hniksic/emacs-htmlize">htmlize</a> to do the work.
 </p>
 
@@ -61,15 +61,15 @@ have been done, is wrapped:
 </div>
 </div>
 
-<div><h3 id="one-4ec5f5d107">Example with Bash code</h3><div><p>For instance, the following org src-block, containing some <code class="one-hl one-hl-inline">bash</code> code:
+<div><h3 id="one-6a59bcdd28">Example with Bash code</h3><div><p>For instance, the following org src-block, containing some <code class="one-hl one-hl-inline">bash</code> code:
 </p>
 
-<pre><code class="one-hl one-hl-block"><span class="one-hl-org-block-begin-line"> bash
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-block-begin-line">#+BEGIN_SRC bash
 </span><span class="one-hl-org-block"><span class="one-hl-builtin">echo</span></span><span class="one-hl-org-block"> </span><span class="one-hl-org-block"><span class="one-hl-string">"list file's extensions in current dir:"</span></span><span class="one-hl-org-block">
 </span><span class="one-hl-org-block"><span class="one-hl-keyword">for</span></span><span class="one-hl-org-block"> f</span><span class="one-hl-org-block"><span class="one-hl-keyword"> in</span></span><span class="one-hl-org-block"> </span><span class="one-hl-org-block"><span class="one-hl-sh-quoted-exec">`ls`</span></span><span class="one-hl-org-block">; </span><span class="one-hl-org-block"><span class="one-hl-keyword">do</span></span><span class="one-hl-org-block">
     </span><span class="one-hl-org-block"><span class="one-hl-builtin">echo</span></span><span class="one-hl-org-block"> ${</span><span class="one-hl-org-block"><span class="one-hl-variable-name">f</span></span><span class="one-hl-org-block">##*.}
 </span><span class="one-hl-org-block"><span class="one-hl-keyword">done</span></span><span class="one-hl-org-block">
- &#8901;</span></code></pre>
+</span><span class="one-hl-org-block-end-line">#+END_SRC</span></code></pre>
 
 <p>is exported as follow:
 </p>
@@ -138,14 +138,14 @@ than normal blocks as we can see in the following example.
 </p>
 </div>
 
-<div><h3 id="one-2a36ac601f">Example using org keyword 'RESULTS'</h3><div><p>The following org snippet:
+<div><h3 id="one-c245e8a890">Example using org keyword 'RESULTS'</h3><div><p>The following org snippet:
 </p>
 
-<pre><code class="one-hl one-hl-block"><span class="one-hl-org-block-begin-line"> bash :results output
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-block-begin-line">#+BEGIN_SRC bash :results output
 </span><span class="one-hl-org-block">ls
- &#8901;</span><span class="one-hl-org-block-end-line">
+</span><span class="one-hl-org-block-end-line">#+END_SRC
 </span>
-<span class="one-hl-org-meta-line">RESULTS:</span>
+<span class="one-hl-org-meta-line">#+RESULTS:</span>
 <span class="one-hl-org-code">: assets
 : docs.org
 : public</span></code></pre>
@@ -171,15 +171,15 @@ public</code></pre>
 </div>
 </div>
 
-<div><h2 id="one-4b6390e35b">Code blocks inside list</h2><div><p>Lists can contain source blocks as we can see in the following org
+<div><h2 id="one-e0e8ea6086">Code blocks inside list</h2><div><p>Lists can contain source blocks as we can see in the following org
 snippet
 </p>
 
 <pre><code class="one-hl one-hl-block">1. item 1
 
-<span class="one-hl-org-block-begin-line"> emacs-lisp
+<span class="one-hl-org-block-begin-line">   #+BEGIN_SRC emacs-lisp
 </span><span class="one-hl-org-block">   (message </span><span class="one-hl-org-block"><span class="one-hl-string">"src-block in item 1"</span></span><span class="one-hl-org-block">)
-</span><span class="one-hl-org-block-end-line"> &#8901;
+</span><span class="one-hl-org-block-end-line">   #+END_SRC
 </span>
 2. item 2
 3. item 3</code></pre>
