@@ -155,14 +155,8 @@ this sexp to your init file:
 
 #+BEGIN_SRC emacs-lisp
 (straight-use-package
- '(one :type git :host github :repo "tonyaldon/one.el"
-       :build (:not compile)))
+ '(one :type git :host github :repo "tonyaldon/one.el"))
 #+END_SRC
-
-Note that ~:build (:not compile)~ is important.  It tells ~straight.el~
-not to byte compile ~one.el~.  Something happened in ~straight.el~
-between commits ~3eca39d~ and ~b3760f5~ which broke byte compilation of
-~one.el~ if done by ~straight.el~.
 
 ** Let's go
 
