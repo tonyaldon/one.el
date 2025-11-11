@@ -213,7 +213,7 @@ project's structure is now:
 ** Modify the content with live reloading
 
 To get our website up and running, we serve the files in ~./public/~
-subdirectory using [[https://browsersync.io][brower-sync]] (any webserver serving files is OK).
+subdirectory using [[https://browsersync.io][browser-sync]] (any webserver serving files is OK).
 Once we have it installed, to start a webserver with live reloading,
 we run the following commands (in a terminal):
 
