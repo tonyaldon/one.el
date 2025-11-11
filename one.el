@@ -1594,6 +1594,18 @@ See `one-render-pages'."
   (with-temp-file "one.org" (insert one-default-org-content))
   (find-file "one.org"))
 
+(defun head-layout (title)
+  "Render the HTML layout of the head."
+  (jack-html
+   `(:head
+     ;; Generals
+     (:meta (@ :charset "utf-8"))
+     (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1.0, shrink-to-fit=no"))
+     (:meta (@ :name "generator" :content "One.el"))
+     (:title ,title)
+     ;; Styles
+     (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css")))))
+
 (defun one-default-home (page-tree pages _global)
   "Default render function to use in the home page.
 
@@ -1608,10 +1620,7 @@ Also see `one-render-pages' and `one-default-css'."
     (jack-html
      "<!DOCTYPE html>"
      `(:html
-       (:head
-        (:meta (@ :name "viewport" :content "width=device-width,initial-scale=1"))
-        (:link (@ :rel "stylesheet" :type "text/css" :href "/one.css"))
-        (:title ,title))
+       (head-layout title)
        (:body
         (:div.header ,website-name)
         (:div.content
